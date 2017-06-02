@@ -1,0 +1,355 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion '25.0.0'
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 23
+        versionCode 3
+        versionName "1.2"
+    }
+
+
+    signingConfigs {
+       release {
+            storeFile file("/Users/shashanktiwari/Downloads/rottweiler-release-key.keystore")
+            storePassword "fst@123"
+            keyAlias "rottweiler"
+            keyPassword "fst@123"
+        }
+    }
+
+    productFlavors {
+        ftelematics{
+            flavorDimension "ftelematics"
+            applicationId "com.fst.apps.ftelematics"
+            resValue "string", "app_name", "VTS System"
+            versionCode 17
+            versionName "1.2.3"
+        }
+
+        rottweiler{
+            flavorDimension "rottweiler"
+            applicationId "com.fst.apps.rottweilertrackers"
+            resValue "string", "app_name", "Rottweiler Trackers"
+            versionCode 5
+            versionName "1.4"
+        }
+
+        xdtracker{
+            flavorDimension "xdtracker"
+            applicationId "com.fst.apps.xdtracker"
+            resValue "string", "app_name", "XD Tracker"
+            versionCode 5
+            versionName "1.4"
+        }
+
+        tracknow{
+            flavorDimension "tracknow"
+            applicationId "com.fst.apps.tracknow"
+            resValue "string", "app_name", "TrackNow Pro"
+            versionCode 5
+            versionName "1.4"
+        }
+
+        gpspro{
+            flavorDimension "gpspro"
+            applicationId "com.fst.apps.gpspro"
+            resValue "string", "app_name", "GPS Pro"
+            versionCode 5
+            versionName "1.4"
+        }
+
+        secureme{
+            flavorDimension "secureme"
+            applicationId "com.fst.apps.secureme"
+            resValue "string", "app_name", "Secure Me"
+            versionCode 3
+            versionName "1.2"
+        }
+
+        libi{
+           flavorDimension "libi"
+            applicationId "com.fst.apps.libi"
+            resValue "string", "app_name", "Libi Track Pro"
+            versionCode 3
+            versionName "1.2"
+        }
+
+        gwtrackers{
+            flavorDimension "libi"
+            applicationId "com.fst.apps.gwtrackers"
+            resValue "string", "app_name", "GW Trackers Pro"
+            versionCode 3
+            versionName "1.2"
+        }
+
+        queen{
+            flavorDimension "queen"
+            applicationId "com.fst.apps.queen"
+            resValue "string", "app_name", "Queen VTS Pro"
+            versionCode 4
+            versionName "1.3"
+        }
+
+        zeestar{
+            flavorDimension "zeestar"
+            applicationId "com.fst.apps.zeestar"
+            resValue "string", "app_name", "Zee Star Track Pro"
+            versionCode 3
+            versionName "1.3"
+        }
+
+        scanmoto{
+            flavorDimension "scanmoto"
+            applicationId "com.fst.apps.scanmoto"
+            resValue "string", "app_name", "Scan Moto Track Pro"
+            versionCode 4
+            versionName "1.4"
+        }
+
+        rkdk{
+            flavorDimension "rkdk"
+            applicationId "com.fst.apps.rkdk"
+            resValue "string", "app_name", "VTS Pro"
+            versionCode 4
+            versionName "1.3"
+        }
+
+        trackall{
+            flavorDimension "trackall"
+            applicationId "com.fst.apps.trackall"
+            resValue "string", "app_name", "Track All"
+            versionCode 3
+            versionName "1.2"
+        }
+
+        shreegroup{
+            flavorDimension "shreegroup"
+            applicationId "com.fst.apps.shreegroup"
+            resValue "string", "app_name", "Shree Group"
+            versionCode 2
+            versionName "1.1"
+        }
+
+        kss{
+            flavorDimension "kss"
+            applicationId "com.fst.apps.kss"
+            resValue "string", "app_name","KSS Trackers"
+            versionCode 2
+            versionName "1.1"
+        }
+
+        fleetonix{
+            flavorDimension "fleetonix"
+            applicationId "com.fst.apps.fleetonix"
+            resValue "string", "app_name","Fleetonix Trackers"
+            versionCode 2
+            versionName "1.1"
+        }
+
+        pandher{
+            flavorDimension "pandher"
+            applicationId "com.fst.apps.pandher"
+            resValue "string", "app_name","Pandher Vehicle Trackers"
+            versionCode 2
+            versionName "1.1"
+        }
+
+        jvs{
+            flavorDimension "jvs"
+            applicationId "com.fst.apps.jvs"
+            resValue "string", "app_name","JVS Trackers"
+            versionCode 2
+            versionName "1.1"
+        }
+
+        fguard{
+            flavorDimension "fguard"
+            applicationId "com.fst.apps.fguard"
+            resValue "string", "app_name","Fleet Guard Pro"
+            versionCode 3
+            versionName "1.2"
+        }
+
+        attrack{
+            flavorDimension "attrack"
+            applicationId "com.fst.apps.attrack"
+            resValue "string", "app_name","At Track"
+            versionCode 3
+            versionName "1.2"
+        }
+
+        cloud9{
+            flavorDimension "cloud9"
+            applicationId "com.fst.apps.cloud9tracker"
+            resValue "string", "app_name","Cloud9 true tracker"
+            versionCode 2
+            versionName "1.1"
+        }
+
+        nps{
+            flavorDimension "nps"
+            applicationId "com.fst.apps.nps"
+            resValue "string", "app_name","NPS Tracking System"
+            versionCode 3
+            versionName "1.2"
+        }
+
+        tgi{
+            flavorDimension "tgi"
+            applicationId "com.fst.apps.tgi"
+            resValue "string", "app_name","TGI GPS"
+            versionCode 2
+            versionName "1.1"
+        }
+
+        avam{
+            flavorDimension "avam"
+            applicationId "com.fst.apps.avam"
+            resValue "string", "app_name","Avam Tracker"
+            versionCode 2
+            versionName "1.1"
+        }
+
+        zelus{
+            flavorDimension "zelus"
+            applicationId "com.fst.apps.zelus"
+            resValue "string", "app_name","Zelus Trackers"
+            versionCode 2
+            versionName "1.1"
+        }
+
+        sampurn{
+            flavorDimension "sampurn"
+            applicationId "com.fst.apps.sampurn"
+            resValue "string", "app_name","Sampurn Vehicle Tracking"
+            versionCode 3
+            versionName "1.1"
+        }
+
+        lakshya{
+            flavorDimension "lakshya"
+            applicationId "com.fst.apps.lakshya"
+            resValue "string", "app_name","ILakshya Track"
+            versionCode 2
+            versionName "1.1"
+        }
+
+        guruseva{
+            flavorDimension "guruseva"
+            applicationId "com.fst.apps.guruseva"
+            resValue "string", "app_name","Guruseva VTS SYSTEM"
+            versionCode 2
+            versionName "1.1"
+        }
+
+        trackvision{
+            flavorDimension "trackvision"
+            applicationId "com.fst.apps.trackvision"
+            resValue "string", "app_name","Track Vision"
+            versionCode 2
+            versionName "1.1"
+        }
+
+        swastik{
+            flavorDimension "swastik"
+            applicationId "com.fst.apps.swastik"
+            resValue "string", "app_name","Swastik"
+            versionCode 2
+            versionName "1.1"
+        }
+
+        halcon{
+            flavorDimension "halcon"
+            applicationId "com.fst.apps.halcon"
+            resValue "string", "app_name","Halcon"
+            versionCode 4
+            versionName "1.3"
+        }
+
+        single{
+            flavorDimension "single"
+            applicationId "com.fst.apps.single"
+            resValue "string", "app_name","Finger Trackers"
+            versionCode 2
+            versionName "1.1"
+        }
+
+        national{
+            flavorDimension "national"
+            applicationId "com.fst.apps.national"
+            resValue "string", "app_name","National Trackers"
+            versionCode 3
+            versionName "1.2"
+        }
+
+        wavetech{
+            flavorDimension "wavetech"
+            applicationId "com.fst.apps.wavetech"
+            resValue "string", "app_name","WaveTech Trackers"
+            versionCode 2
+            versionName "1.1"
+        }
+
+        kansara{
+            flavorDimension "kansara"
+            applicationId "com.fst.apps.kansara"
+            resValue "string", "app_name","Kansara Technosis"
+            versionCode 2
+            versionName "1.1"
+        }
+
+        technosoft{
+            flavorDimension "technosoft"
+            applicationId "com.fst.apps.technosoft"
+            resValue "string", "app_name"," Technosoft Technology"
+            versionCode 2
+            versionName "1.1"
+        }
+
+        jktrackers{
+            flavorDimension "jktrackers"
+            applicationId "com.fst.apps.jktrackers"
+            resValue "string", "app_name"," JK Trackers"
+            versionCode 1
+            versionName "1.0"
+        }
+    }
+
+    buildTypes {
+       /* release {
+            signingConfig signingConfigs.release
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }*/
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+}
+
+repositories {
+    maven { url "https://jitpack.io" }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:3.8.2'
+    compile ('com.android.support:appcompat-v7:23.1.1')
+            {
+                exclude module: 'support-v4'
+            }
+    compile 'com.android.support:design:23.1.1'
+    compile 'com.android.support:cardview-v7:23.1.1'
+    compile 'com.android.support:recyclerview-v7:23.1.1'
+    compile 'com.google.android.gms:play-services-gcm:8.4.0'
+    compile 'com.google.code.gson:gson:2.5'
+    compile 'com.google.android.gms:play-services-maps:8.4.0'
+    compile 'com.joanzapata.iconify:android-iconify-fontawesome:2.1.1'
+    compile 'com.github.PhilJay:MPAndroidChart:v2.2.4'
+}

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:clickable="true"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dip" >
+
+        <TextView
+            android:id="@+id/seekBarText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/seekBarLabel"
+            android:textColor="@color/teal" />
+
+        <SeekBar
+            android:id="@+id/autoRefreshSeek"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/seekBarText"
+            android:max="60"
+            android:progress="0" />
+
+        <LinearLayout
+            android:id="@+id/seekBarLabels"
+            android:layout_below="@+id/autoRefreshSeek"
+            android:layout_width="match_parent"
+            android:padding="10dip"
+            android:weightSum="60"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_weight="10"
+                android:text="@string/seekBarValueStart"/>
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_weight="20"
+                android:text="@string/seekBarValue10"/>
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_weight="28"
+                android:text="@string/seekBarValueMid"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="@string/seekBarValueEnd" />
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/divider1"
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:layout_below="@+id/seekBarLabels"
+            android:background="@color/grey" />
+
+        <TextView
+            android:id="@+id/notificationSettingLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/divider1"
+            android:text="@string/notificationSettingLabel"
+            android:textColor="@color/teal" />
+
+        <RelativeLayout
+            android:id="@+id/notificationContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/notificationSettingLabel"
+            android:layout_margin="10dip" >
+
+            <TextView
+                android:id="@+id/notificationSettingText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:text="@string/notificationSettingText"
+                android:textSize="12sp" />
+
+            <CheckBox
+                android:id="@+id/notificationsCB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/speech_notfication_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/notificationContainer"
+            android:layout_margin="10dip" >
+
+            <TextView
+                android:id="@+id/speech_notification_setting_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:text="@string/speechNotificationSettingText"
+                android:textSize="12sp" />
+
+            <CheckBox
+                android:id="@+id/speech_notificationsCB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true" />
+        </RelativeLayout>
+
+        <View
+            android:id="@+id/divider2"
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:layout_below="@+id/speech_notfication_container"
+            android:background="@color/grey" />
+    </RelativeLayout>
+
+</ScrollView>
