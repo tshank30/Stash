@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/daily"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:text="Daily Report"
+        android:gravity="center_vertical"
+        android:paddingLeft="20dp"
+        android:textSize="16sp"
+        android:textStyle="bold"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/grey"
+        android:layout_margin="5dp"
+        android:layout_marginRight="5dp"
+        />
+
+    <TextView
+        android:id="@+id/stoppage"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:text="Stoppage Report"
+        android:gravity="center_vertical"
+        android:paddingLeft="20dp"
+        android:textSize="16sp"
+        android:textStyle="bold"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/grey"
+        android:layout_margin="5dp"
+        android:layout_marginRight="5dp"/>
+    <TextView
+        android:id="@+id/trip"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:text="Trip Report"
+        android:gravity="center_vertical"
+        android:paddingLeft="20dp"
+        android:textSize="16sp"
+        android:textStyle="bold"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/grey"
+        android:layout_margin="5dp"
+        android:layout_marginRight="5dp"/>
+    <TextView
+        android:id="@+id/idling"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:text="Idling Report"
+        android:gravity="center_vertical"
+        android:paddingLeft="20dp"
+        android:textSize="16sp"
+        android:textStyle="bold"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/grey"
+        android:layout_margin="5dp"
+        android:layout_marginRight="5dp"/>
+
+    <TextView
+        android:id="@+id/fuel"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:text="Fuel Report"
+        android:gravity="center_vertical"
+        android:paddingLeft="20dp"
+        android:textSize="16sp"
+        android:textStyle="bold"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/grey"
+        android:layout_margin="5dp"
+        android:layout_marginRight="5dp"/>
+
+    <TextView
+        android:id="@+id/distance"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:text="Distance Report"
+        android:gravity="center_vertical"
+        android:paddingLeft="20dp"
+        android:textSize="16sp"
+        android:textStyle="bold"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/grey"
+        android:layout_margin="5dp"
+        android:layout_marginRight="5dp"/>
+
+</LinearLayout>

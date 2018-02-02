@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#7DD4B3</color>
+    <color name="colorPrimaryDark">#07BD80</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="parrot">#009688</color>
+    <color name="purpler">#9B26AF</color>
+    <color name="brown">#785447</color>
+    <color name="blue">#5628FF</color>
+    <color name="grey">#cccccc</color>
+    <color name="white">#ffffff</color>
+    <color name="orange">#FFA70F</color>
+    <color name="feed_bg">#d3d6db</color>
+    <color name="feed_item_bg">#ffffff</color>
+    <color name="feed_item_border">#c2c3c8</color>
+    <color name="link">#0a80d1</color>
+    <color name="timestamp">#a0a3a7</color>
+    <color name="bloodRed">#D84F43</color>
+    <color name="teal">#009587</color>
+    <array name="vehicle_status_color">
+        <item name="moving">#07BD80</item>
+        <item name="stop">#FE0501</item>
+        <item name="dormant">#FFA70F</item>
+        <item name="notworking">#0a80d1</item>
+    </array>
+
+    <color name="moving">#07BD80</color>
+    <color name="stop">#FE0501</color>
+    <color name="dormant">#FFA70F</color>
+    <color name="notworking">#0a80d1</color>
+
+    <color name="rectangle_1_copy_color">#FFFFFF</color>
+    <color name="rectangle_1_color">#03A9F5</color>
+    <color name="rounded_rectangle_3_copy_color">#E5FE0E</color>
+    <color name="india___91__color">#D4E0E7</color>
+</resources>

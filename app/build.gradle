@@ -1,0 +1,543 @@
+apply plugin: 'com.android.application'
+
+android {
+
+    flavorDimensions "ftelematics"
+    /*flavorDimensions "ftelematics", "rottweiler","xdtracker","tracknow","gpspro","secureme","libi","queen","zeestar","scanmoto","rkdk","trackall","shreegroup","kss","fleetonix","pandher","jvs",
+        "fguard","attrack","cloud9","nps","tgi","avam","zelus","sampurn","lakshya","guruseva","trackvision","swastik","halcon","single","national","wavetech","kansara","kansara","technosoft","jktrackers",
+            "gktrackers","motocop","global","letslocate","bigdata","spak","vriddhi","avtracker","brandwatch","techdrive","tfstracker","ffever","goaxis"*/
+    compileSdkVersion 23
+    buildToolsVersion '26.0.2'
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 23
+        versionCode 3
+        versionName "1.2"
+    }
+
+
+    signingConfigs {
+       release {
+            storeFile file("/Users/shashanktiwari/Downloads/rottweiler-release-key.keystore")
+            storePassword "fst@123"
+            keyAlias "rottweiler"
+            keyPassword "fst@123"
+        }
+    }
+
+    productFlavors {
+        ftelematics{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.ftelematics"
+            resValue "string", "app_name", "VTS System"
+            versionCode 23
+            versionName "1.7"
+        }
+
+        rottweiler{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.rottweilertrackers"
+            resValue "string", "app_name", "Rottweiler Trackers"
+            versionCode 5
+            versionName "1.4"
+        }
+
+        xdtracker{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.xdtracker"
+            resValue "string", "app_name", "XD Tracker"
+            versionCode 5
+            versionName "1.4"
+        }
+
+        tracknow{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.tracknow"
+            resValue "string", "app_name", "TrackNow Pro"
+            versionCode 8
+            versionName "1.7"
+        }
+
+        gpspro{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.gpspro"
+            resValue "string", "app_name", "GPS Pro"
+            versionCode 5
+            versionName "1.4"
+        }
+
+        secureme{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.secureme"
+            resValue "string", "app_name", "Secure Me"
+            versionCode 3
+            versionName "1.2"
+        }
+
+        libi{
+           dimension "ftelematics"
+            applicationId "com.fst.apps.libi"
+            resValue "string", "app_name", "Libi Track Pro"
+            versionCode 6
+            versionName "1.5"
+        }
+
+        gwtrackers{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.gwtrackers"
+            resValue "string", "app_name", "GW Trackers Pro"
+            versionCode 3
+            versionName "1.2"
+        }
+
+        queen{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.queen"
+            resValue "string", "app_name", "Queen VTS Pro"
+            versionCode 4
+            versionName "1.3"
+        }
+
+        zeestar{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.zeestar"
+            resValue "string", "app_name", "Zee Star Track Pro"
+            versionCode 3
+            versionName "1.3"
+        }
+
+        scanmoto{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.scanmoto"
+            resValue "string", "app_name", "Scan Moto Track Pro"
+            versionCode 4
+            versionName "1.4"
+        }
+
+        rkdk{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.rkdk"
+            resValue "string", "app_name", "VTS Pro"
+            versionCode 6
+            versionName "1.5"
+        }
+
+        trackall{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.trackall"
+            resValue "string", "app_name", "Track All"
+            versionCode 3
+            versionName "1.2"
+        }
+
+        shreegroup{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.shreegroup"
+            resValue "string", "app_name", "Shree Group"
+            versionCode 2
+            versionName "1.1"
+        }
+
+        kss{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.kss"
+            resValue "string", "app_name","KSS Trackers"
+            versionCode 2
+            versionName "1.1"
+        }
+
+        fleetonix{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.fleetonix"
+            resValue "string", "app_name","Fleetonix Trackers"
+            versionCode 2
+            versionName "1.1"
+        }
+
+        pandher{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.pandher"
+            resValue "string", "app_name","Pandher Vehicle Trackers"
+            versionCode 2
+            versionName "1.1"
+        }
+
+        jvs{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.jvs"
+            resValue "string", "app_name","JVS Trackers"
+            versionCode 2
+            versionName "1.1"
+        }
+
+        fguard{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.fguard"
+            resValue "string", "app_name","Fleet Guard Pro"
+            versionCode 3
+            versionName "1.2"
+        }
+
+        attrack{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.attrack"
+            resValue "string", "app_name","At Track"
+            versionCode 3
+            versionName "1.2"
+        }
+
+        cloud9{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.cloud9tracker"
+            resValue "string", "app_name","Cloud9 true tracker"
+            versionCode 2
+            versionName "1.1"
+        }
+
+        nps{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.nps"
+            resValue "string", "app_name","NPS Tracking System"
+            versionCode 3
+            versionName "1.2"
+        }
+
+        tgi{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.tgi"
+            resValue "string", "app_name","TGI GPS"
+            versionCode 2
+            versionName "1.1"
+        }
+
+        avam{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.avam"
+            resValue "string", "app_name","Avam Tracker"
+            versionCode 5
+            versionName "1.4"
+        }
+
+        zelus{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.zelus"
+            resValue "string", "app_name","Zelus Trackers"
+            versionCode 2
+            versionName "1.1"
+        }
+
+        sampurn{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.sampurn"
+            resValue "string", "app_name","Sampurn Vehicle Tracking"
+            versionCode 3
+            versionName "1.1"
+        }
+
+        lakshya{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.lakshya"
+            resValue "string", "app_name","ILakshya Track"
+            versionCode 2
+            versionName "1.1"
+        }
+
+        guruseva{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.guruseva"
+            resValue "string", "app_name","Guruseva VTS SYSTEM"
+            versionCode 2
+            versionName "1.1"
+        }
+
+        trackvision{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.trackvision"
+            resValue "string", "app_name","Track Vision"
+            versionCode 2
+            versionName "1.1"
+        }
+
+        swastik{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.swastik"
+            resValue "string", "app_name","Swastik"
+            versionCode 3
+            versionName "1.2"
+        }
+
+        halcon{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.halcon"
+            resValue "string", "app_name","Halcon"
+            versionCode 4
+            versionName "1.3"
+        }
+
+        single{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.single"
+            resValue "string", "app_name","Finger Trackers"
+            versionCode 2
+            versionName "1.1"
+        }
+
+        national{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.national"
+            resValue "string", "app_name","National Trackers"
+            versionCode 3
+            versionName "1.2"
+        }
+
+        wavetech{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.wavetech"
+            resValue "string", "app_name","WaveTech Trackers"
+            versionCode 2
+            versionName "1.1"
+        }
+
+        kansara{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.kansara"
+            resValue "string", "app_name","Kansara Technosis"
+            versionCode 2
+            versionName "1.1"
+        }
+
+        technosoft{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.technosoft"
+            resValue "string", "app_name"," Technosoft Technology"
+            versionCode 2
+            versionName "1.1"
+        }
+
+        jktrackers{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.jktrackers"
+            resValue "string", "app_name"," JK Trackers"
+            versionCode 1
+            versionName "1.0"
+        }
+
+        gktrackers{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.gktrackers"
+            resValue "string", "app_name"," GK Trackers"
+            versionCode 1
+            versionName "1.0"
+        }
+
+        motocop{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.motocop"
+            resValue "string", "app_name"," Motocop GPS"
+            versionCode 4
+            versionName "1.3"
+        }
+
+        global{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.global"
+            resValue "string", "app_name"," Global Trackers"
+            versionCode 1
+            versionName "1.0"
+        }
+
+        letslocate{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.letslocate"
+            resValue "string", "app_name","Letslocate"
+            versionCode 1
+            versionName "1.0"
+        }
+
+        bigdata{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.bigdata"
+            resValue "string", "app_name","Big data Trackers"
+            versionCode 1
+            versionName "1.0"
+        }
+
+        spak{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.spak"
+            resValue "string", "app_name","Spak Trackers"
+            versionCode 1
+            versionName "1.0"
+        }
+
+        vriddhi{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.vriddhi"
+            resValue "string", "app_name","Vriddhi GPS Trackers"
+            versionCode 1
+            versionName "1.0"
+        }
+
+        avtracker{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.avtracker"
+            resValue "string", "app_name","AV Trackers"
+            versionCode 2
+            versionName "1.1"
+        }
+
+        brandwatch{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.brandwatch"
+            resValue "string", "app_name","Trackon GPS"
+            versionCode 4
+            versionName "1.3"
+        }
+
+        techdrive{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.techdrive"
+            resValue "string", "app_name","Tech Drive"
+            versionCode 2
+            versionName "1.1"
+        }
+
+        tfstracker{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.tfstracker"
+            resValue "string", "app_name","24x7 Tracker"
+            versionCode 1
+            versionName "1.0"
+        }
+
+        ffever{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.ffever"
+            resValue "string", "app_name","FFEVER Tracker"
+            versionCode 2
+            versionName "1.1"
+        }
+
+        goaxis{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.goaxis"
+            resValue "string", "app_name","GoAxis Tracker"
+            versionCode 1
+            versionName "1.0"
+        }
+
+        neellion{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.neellion"
+            resValue "string", "app_name","Neellion Tracke"
+            versionCode 1
+            versionName "1.0"
+        }
+
+        earth{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.earth"
+            resValue "string", "app_name","Earth Infotech"
+            versionCode 2
+            versionName "1.1"
+        }
+
+        trackkaro{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.trackkaro"
+            resValue "string", "app_name","Track Karo"
+            versionCode 1
+            versionName "1.0"
+        }
+
+        trackkaronew{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.trackkaroltd"
+            resValue "string", "app_name","Track Karo"
+            versionCode 1
+            versionName "1.0"
+        }
+
+        gosafe{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.gosafe"
+            resValue "string", "app_name","GoSafe Trackers"
+            versionCode 1
+            versionName "1.0"
+        }
+
+        skyroad{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.skyroad"
+            resValue "string", "app_name","Skyroad"
+            versionCode 1
+            versionName "1.0"
+        }
+
+        route{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.route"
+            resValue "string", "app_name","Route tracker"
+            versionCode 1
+            versionName "1.0"
+        }
+
+        vtracker{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.vtracker"
+            resValue "string", "app_name","V Tracker"
+            versionCode 1
+            versionName "1.0"
+        }
+
+        smarteye{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.smarteye"
+            resValue "string", "app_name","Smart Eye"
+            versionCode 1
+            versionName "1.0"
+        }
+
+    }
+
+    buildTypes {
+       /* release {
+            signingConfig signingConfigs.release
+
+            minifyEnabled false
+
+FFEVER Tracker
+
+24x7 Tracker
+
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }*/
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+}
+
+repositories {
+    maven { url "https://jitpack.io" }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:3.8.2'
+    compile ('com.android.support:appcompat-v7:23.1.1')
+            {
+                exclude module: 'support-v4'
+            }
+    compile 'com.android.support:design:23.1.1'
+    compile 'com.android.support:cardview-v7:23.1.1'
+    compile 'com.android.support:recyclerview-v7:23.1.1'
+    compile 'com.google.android.gms:play-services-gcm:8.4.0'
+    compile 'com.google.code.gson:gson:2.5'
+    compile 'com.google.android.gms:play-services-maps:8.4.0'
+    compile 'com.joanzapata.iconify:android-iconify-fontawesome:2.1.1'
+    compile 'com.github.PhilJay:MPAndroidChart:v2.2.4'
+}

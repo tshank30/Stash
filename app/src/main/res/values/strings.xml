@@ -1,0 +1,132 @@
+<resources>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="icon_title_dashboard">&#xf0e4;</string>
+    <string name="title_vehicles">Vehicles</string>
+    <string name="icon_title_vehicles">&#xf1b9;</string>
+    <string name="title_alerts">Alerts</string>
+    <string name="icon_title_alerts">&#xf0a1;</string>
+    <string name="title_settings">Settings</string>
+    <string name="icon_title_settings">&#xf013;</string>
+    <string name="title_logout">Logout</string>
+    <string name="icon_title_logout">&#xf08b;</string>
+    <string name="battery_full">&#xf240;</string>
+    <string name="signal">&#xf012;</string>
+    <string name="sectionIcon">Section Icon</string>
+    <string name="gcm_defaultSenderId">726667513847</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_example">Example action</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_map_view">Map View</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_main">Push Notifications</string>
+    <string name="error_config">Please set the %1$s constant and recompile the app.</string>
+    <string name="already_registered">Device is already registered on server.</string>
+    <string name="gcm_registered">From GCM: device successfully registered!</string>
+    <string name="gcm_unregistered">From GCM: device successfully unregistered!</string>
+    <string name="gcm_message">From GCM: you got message!</string>
+    <string name="gcm_error">From GCM: error (%1$s).</string>
+    <string name="gcm_recoverable_error">From GCM: recoverable error (%1$s).</string>
+    <string name="gcm_deleted">From GCM: server deleted %1$d pending messages!</string>
+    <string name="server_registering">Trying (attempt %1$d/%2$d) to register device on Demo Server.</string>
+    <string name="server_registered">From Demo Server: successfully added device!</string>
+    <string name="server_unregistered">From Demo Server: successfully removed device!</string>
+    <string name="server_register_error">Could not register device on Demo Server after %1$d attempts.</string>
+    <string name="server_unregister_error">Could not unregister device on Demo Server (%1$s).</string>
+    <string name="options_register">Register</string>
+    <string name="options_unregister">Unregister</string>
+    <string name="options_clear">Clear</string>
+    <string name="options_exit">Exit</string>
+    <string name="username">Username</string>
+    <string name="account_id">Account Id</string>
+    <string name="password">Password</string>
+    <string name="inline_preferences">Settings</string>
+    <string name="title_checkbox_preference">Checkbox</string>
+    <string name="summary_checkbox_preference">Summary</string>
+    <string name="dialog_based_preferences">Dialog</string>
+    <string name="ignitionToggleText">Toggle Ignition</string>
+    <string name="ignitionToggleButton">Toggle Button</string>
+    <string name="viewOnMap">View vehicle on map</string>
+    <string name="viewHistory">History Replay</string>
+    <string name="viewVehiclesList">View Vehciles List</string>
+    <string name="ignitionButtonOn">On</string>
+    <string name="ignitionButtonOff">Off</string>
+    <string name="alertsHeaderIgnition">Ignition</string>
+    <string name="alertsHeaderOverspeed">Overspeed</string>
+    <string name="alertsHeaderGeofence">Geofence</string>
+    <string name="dataNotFound">Data Not Found!</string>
+    <string name="chartNoData">Loading, please wait...</string>
+    <string name="deleteSuccess">Delete Successful</string>
+    <string name="alertsDeleteSuccessMsg">alerts have been deleted successfully!</string>
+    <string name="seekBarLabel">Auto Refresh</string>
+    <string name="seekBarValueStart">0</string>
+    <string name="seekBarValueMid">30</string>
+    <string name="seekBarValue10">10</string>
+    <string name="seekBarValueEnd">60</string>
+    <string name="notificationSettingLabel">Notifications</string>
+    <string name="notificationSettingText">Toggle Push Notifications</string>
+    <string name="speechNotificationSettingText">Toggle Notification Speaker</string>
+    <string name="refresh_dialog_title">Getting Fresh Data</string>
+    <string name="refresh_dialog_msg">Just a moment...</string>
+    <string name="last_timestamp">Last refreshed at:</string>
+    <string name="speed">Speed</string>
+    <string name="select_date">From Date</string>
+    <string name="select_time_from">Time</string>
+    <string name="select_date_to">To Date</string>
+    <string name="select_time_to">Time</string>
+    <string name="sat_map_type">Satellite View</string>
+    <string name="normal_map_type">Normal View</string>
+    <string name="welcome_text">Welcome!</string>
+    <string name="copyright">&#169; Full Sleeves Technologies 2016</string>
+    <string name="no_internet">Not Connected To Internet!</string>
+    <string name="sms_warning">Please do not send the command repeatedly till the vehicle is turned on/off. Arrival of this message on the device is totally dependent on network and other factors.</string>
+    <string name="total_distance">Distance Today</string>
+
+    <string-array name="vehicle_status">
+        <item>Moving</item>
+        <item>Stop</item>
+        <item>Dormant</item>
+        <item>Not Working</item>
+    </string-array>
+
+    <string-array name="nav_drawer_items">
+        <item>Dashboard</item>
+        <item>Vehicles</item>
+        <item>Alerts</item>
+        <item>Settings</item>
+        <item>Logout</item>
+    </string-array>
+    <string-array name="Language">
+        <item>English (US)</item>
+        <item>English (UK)</item>
+        <item>French (France)</item>
+        <item>Spanish (Spain)</item>
+        <item>Italian</item>
+    </string-array>
+    <string-array name="languageAlias">
+        <item>"en-US"</item>
+        <item>"en-GB"</item>
+        <item>"fr-FR"</item>
+        <item>"es-ES"</item>
+        <item>"it-IT"</item>
+    </string-array>
+
+    <string name="title_activity_alerts">Alerts</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_login">Sign in</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password (optional)</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+
+
+</resources>

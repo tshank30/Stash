@@ -1,0 +1,8 @@
+
+<!-- rounded_rectangle_3_copy from your PSD file. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+	android:shape="rectangle" >
+	<corners android:radius="1dp" />
+	<solid android:color="@color/rounded_rectangle_3_copy_color" />
+</shape>
+

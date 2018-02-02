@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:background="@color/white"
+    android:clickable="true"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:id="@+id/filter"
+        android:hint="Enter Filter Value.."
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/list"
+        android:layout_below="@+id/filter"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MainActivity" />
+
+    <RelativeLayout
+        android:id="@+id/no_internet"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:layout_width="match_parent"
+        android:visibility="gone"
+        android:layout_height="wrap_content">
+
+        <com.joanzapata.iconify.widget.IconTextView
+            android:id="@+id/icon"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="{fa-wifi}"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="20dp"
+            android:textSize="40sp"
+            android:padding="2dp"
+            android:textColor="@color/colorAccent" />
+
+        <TextView
+            android:layout_below="@+id/icon"
+            android:layout_width="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_height="wrap_content"
+            android:text="@string/no_internet"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>
