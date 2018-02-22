@@ -1,5 +1,6 @@
 package com.fst.apps.ftelematics.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -26,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fst.apps.ftelematics.BuildConfig;
+import com.fst.apps.ftelematics.MainActivity;
 import com.fst.apps.ftelematics.R;
 import com.fst.apps.ftelematics.RottweilerApplication;
 import com.fst.apps.ftelematics.entities.LastLocation;
@@ -35,6 +37,7 @@ import com.fst.apps.ftelematics.fragments.VehicleMapViewFrag;
 import com.fst.apps.ftelematics.fragments.VehicleMapViewFragment;
 import com.fst.apps.ftelematics.utils.AppUtils;
 import com.fst.apps.ftelematics.utils.ConnectionDetector;
+import com.fst.apps.ftelematics.utils.SharedPreferencesManager;
 import com.fst.apps.ftelematics.utils.TtsProviderFactory;
 
 import org.w3c.dom.Text;
@@ -44,14 +47,15 @@ import java.util.List;
 
 public class VehiclesListAdapter extends RecyclerView.Adapter<HomeViewHolder> implements Filterable {
 
-    List<LastLocation> lastLocationList;
-    List<LastLocation> filteredList;
+    private List<LastLocation> lastLocationList;
+    private List<LastLocation> filteredList;
     private int rowLayout;
     private Context context;
     boolean isDualSIM;
     private RottweilerApplication rottweilerApplication;
     private int buffKey;
-    TtsProviderFactory ttsProviderImpl;
+    private TtsProviderFactory ttsProviderImpl;
+    private SharedPreferencesManager sharedPrefs;
 
     public VehiclesListAdapter(List<LastLocation> lastLocationList, int rowLayout, Context context) {
         this.lastLocationList = lastLocationList;
@@ -61,6 +65,7 @@ public class VehiclesListAdapter extends RecyclerView.Adapter<HomeViewHolder> im
         isDualSIM = AppUtils.isDualSIM(context);
         rottweilerApplication = (RottweilerApplication) context.getApplicationContext();
         ttsProviderImpl = TtsProviderFactory.getInstance();
+        sharedPrefs=new SharedPreferencesManager(context);
     }
 
     @Override
@@ -107,6 +112,19 @@ public class VehiclesListAdapter extends RecyclerView.Adapter<HomeViewHolder> im
         } else {
             holder.distance.setVisibility(View.VISIBLE);
             holder.distance.setText("Odometer : " + lastLocation.getPrevKms());
+        }
+
+        if (lastLocation.getCalibrationValues() == null || lastLocation.getCalibrationValues().equalsIgnoreCase("NA"))
+            holder.fuel.setVisibility(View.INVISIBLE);
+        else {
+            holder.fuel.setVisibility(View.VISIBLE);
+            holder.fuel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    new Fuel(sharedPrefs.getAccountId(), lastLocation.getDeviceID(),lastLocation.getCalibrationValues(),lastLocation.getMaxTankCapicity()).execute();
+                }
+            });
+
         }
 
         if (lastLocation.getDriverNumber() == null || lastLocation.getDriverNumber().equalsIgnoreCase("NA")) {
@@ -356,9 +374,9 @@ public class VehiclesListAdapter extends RecyclerView.Adapter<HomeViewHolder> im
                 if (BuildConfig.FLAVOR.equalsIgnoreCase("ffever")) {
                     if (isDualSIM) {
 
-                        AppUtils.sendSMSDualSIM(lastLocation.getSimPhoneNumber(), "#* 1234 IGNO#", context);
+                        AppUtils.sendSMSDualSIM(lastLocation.getSimPhoneNumber(), "#* 1234 IGON#", context);
                     } else {
-                        AppUtils.sendSMS(lastLocation.getSimPhoneNumber(), "#* 1234 IGNO#", context);
+                        AppUtils.sendSMS(lastLocation.getSimPhoneNumber(), "#* 1234 IGON#", context);
                     }
                 } else {
                     if (isDualSIM) {
@@ -417,4 +435,30 @@ public class VehiclesListAdapter extends RecyclerView.Adapter<HomeViewHolder> im
             targetView.setText((String) o);
         }
     }
+
+
+    class Fuel extends AsyncTask<Void, Void, String> {
+
+        String accountID, deviceID, calibrationValue, maxTankCapacity;
+
+        public Fuel(String accountID, String deviceID, String calibrationValue, String maxTankCapacity) {
+            this.accountID = accountID;
+            this.deviceID = deviceID;
+            this.calibrationValue = calibrationValue;
+            this.maxTankCapacity = maxTankCapacity;
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            String result = ((MainActivity) context).getSoapServiceInstance().getFuel(accountID,deviceID,calibrationValue,maxTankCapacity);
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            Toast.makeText(context,result,Toast.LENGTH_SHORT).show();
+        }
+    }
+
 }

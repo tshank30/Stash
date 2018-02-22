@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Created by enigma-pc on 25/2/16.
  */
-public class LoaderTaskVehicleList extends AsyncTask<Void,Void,String> {
+public class LoaderTaskVehicleList extends AsyncTask<Void, Void, String> {
     private String url;
     private boolean showDialog;
     private NetworkUtility networkUtility;
@@ -29,27 +29,28 @@ public class LoaderTaskVehicleList extends AsyncTask<Void,Void,String> {
 
     /**
      * Default Constructor for getting data in bg thread from service and db
-     * @param context current context
-     * @param showDialog weather to show progress dialog or not
-     * @param url url params
+     *
+     * @param context              current context
+     * @param showDialog           weather to show progress dialog or not
+     * @param url                  url params
      * @param vehicleListInterface interface used to notify the fragment about latest list
-     * @param boolGetDataFromDB getting Data from DB if needed(false in case of autorefresh)
+     * @param boolGetDataFromDB    getting Data from DB if needed(false in case of autorefresh)
      */
-    public LoaderTaskVehicleList(Context context, boolean showDialog, String url, VehicleListInterface vehicleListInterface, Boolean boolGetDataFromDB){
+    public LoaderTaskVehicleList(Context context, boolean showDialog, String url, VehicleListInterface vehicleListInterface, Boolean boolGetDataFromDB) {
         this.context = context;
-        this.url=url;
-        this.networkUtility=new NetworkUtility();
+        this.url = url;
+        this.networkUtility = new NetworkUtility();
         this.vehicleListInterface = vehicleListInterface;
-        this.showDialog=showDialog;
+        this.showDialog = showDialog;
         this.boolGetDataFromDB = boolGetDataFromDB;
     }
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        if(progressDialog==null)
+        if (progressDialog == null)
             progressDialog = new ProgressDialog(context);
-        if(showDialog) {
+        if (showDialog) {
             progressDialog.setTitle("Contacting Server");
             progressDialog.setMessage("Just a moment..");
             progressDialog.setCancelable(false);
@@ -69,7 +70,6 @@ public class LoaderTaskVehicleList extends AsyncTask<Void,Void,String> {
         }
 
 
-
         return response;
     }
 
@@ -77,9 +77,13 @@ public class LoaderTaskVehicleList extends AsyncTask<Void,Void,String> {
     protected void onPostExecute(String json) {
         super.onPostExecute(json);
 
-        if(progressDialog!=null && progressDialog.isShowing()) {
-            progressDialog.dismiss();
-            progressDialog = null;
+        try {
+            if (progressDialog != null && progressDialog.isShowing()) {
+                progressDialog.dismiss();
+                progressDialog = null;
+            }
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
         }
 
 //        if(!isDataInDB && !isDataInServer){
@@ -88,16 +92,16 @@ public class LoaderTaskVehicleList extends AsyncTask<Void,Void,String> {
 //        }
 
 
+        if (json != null) {
 
-        if(json != null){
-
-            List<LastLocation> lastLocationList = new Gson().fromJson(json, new TypeToken<List<LastLocation>>() {}.getType());
-            if(lastLocationList != null && lastLocationList.size()>0) {
+            List<LastLocation> lastLocationList = new Gson().fromJson(json, new TypeToken<List<LastLocation>>() {
+            }.getType());
+            if (lastLocationList != null && lastLocationList.size() > 0) {
                 isDataInServer = true; //cool response from server
 
                 vehicleListInterface.onProcessComplete(lastLocationList);
 
-                Log.e("hello",""+lastLocationList.get(0).getDriverName());
+                Log.e("hello", "" + lastLocationList.get(0).getDriverName());
 
                 //for storing data in db
                 DatabaseHelper dbHelper = new DatabaseHelper(context);
@@ -110,11 +114,11 @@ public class LoaderTaskVehicleList extends AsyncTask<Void,Void,String> {
     /**
      * Gets data from database
      */
-    public void getDataFromDB(){
+    public void getDataFromDB() {
         DatabaseHelper dbHelper = new DatabaseHelper(context);
         List<LastLocation> lastLocationList = dbHelper.getVehicleListData();
-        Log.e("LTVL","getDataFromDB:lastLocationList:"+ lastLocationList.size());
-        if(lastLocationList != null && lastLocationList.size()>0) {
+        Log.e("LTVL", "getDataFromDB:lastLocationList:" + lastLocationList.size());
+        if (lastLocationList != null && lastLocationList.size() > 0) {
             isDataInDB = true; //cool data from db
             vehicleListInterface.onProcessComplete(lastLocationList);
         }
@@ -123,9 +127,10 @@ public class LoaderTaskVehicleList extends AsyncTask<Void,Void,String> {
     }
 
 
-    public interface VehicleListInterface{
+    public interface VehicleListInterface {
 
         void onProcessComplete(List<LastLocation> lastLocationList);
+
         void noConnectionNoDB();
     }
 }

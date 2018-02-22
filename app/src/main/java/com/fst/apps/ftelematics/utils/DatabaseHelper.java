@@ -29,7 +29,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String FOLDER_NAME = "Rottweiler";
     // Database Version
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
 
     // Database Name
     private static final String DATABASE_NAME = DATABASE_FILE_PATH + File.separator + FOLDER_NAME + File.separator + "rottweilertrackers";
@@ -78,6 +78,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String KEY_DRIVER_NAME = "driverName";
     private static final String KEY_DRIVER_NUMBER = "driverNumber";
     private static final String KEY_DISTANCE_TRAVELLED = "distance";
+    private static final String KEY_CALIBRATION_VALUES = "calibrationValues";
 
     private static final String TAG = "DatabaseHelper";
 
@@ -115,7 +116,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             KEY_CURRENT_TIME + " TEXT," +
             KEY_STATUS_SINCE + " TEXT," +
             KEY_DRIVER_NAME + " TEXT," +
-            KEY_DRIVER_NUMBER + " TEXT" +
+            KEY_DRIVER_NUMBER + " TEXT," +
+            KEY_DISTANCE_TRAVELLED + " TEXT," +
+            KEY_CALIBRATION_VALUES + " TEXT" +
             ")";
 
 
@@ -135,6 +138,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // creating required tables
         Log.e(TAG, "DH:onCreate:start");
         db.execSQL(CREATE_TABLE_ALERTS);
+
+        Log.e("vehicleList create",CREATE_TABLE_VEHICLE_LIST);
         db.execSQL(CREATE_TABLE_VEHICLE_LIST);
     }
 
@@ -157,6 +162,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
             case 3 :
                 db.execSQL("ALTER TABLE VehicleList ADD "+ KEY_DISTANCE_TRAVELLED +" TEXT");
+
+            case 4 :
+                db.execSQL("ALTER TABLE VehicleList ADD "+ KEY_CALIBRATION_VALUES +" TEXT");
 
 
         }
@@ -308,6 +316,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             values.put(KEY_DRIVER_NAME, lastLocation.getDriverName());
             values.put(KEY_DRIVER_NUMBER, lastLocation.getDriverNumber());
             values.put(KEY_DISTANCE_TRAVELLED, lastLocation.getPrevKms());
+            values.put(KEY_CALIBRATION_VALUES, lastLocation.getCalibrationValues());
 
             long id = db.insert(TABLE_VEHICLE_LIST, null, values);
             Log.e(TAG, "DH:storeVehicleListData:id:" + id);
@@ -356,6 +365,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 lastLocation.setDriverName(c.getString(c.getColumnIndex(KEY_DRIVER_NAME)));
                 lastLocation.setDriverNumber(c.getString(c.getColumnIndex(KEY_DRIVER_NUMBER)));
                 lastLocation.setPrevKms(c.getString(c.getColumnIndex(KEY_DISTANCE_TRAVELLED)));
+                lastLocation.setCalibrationValues(c.getString(c.getColumnIndex(KEY_CALIBRATION_VALUES)));
 
                 lastLocationList.add(lastLocation);
             } while (c.moveToNext());

@@ -2,6 +2,7 @@ package com.fst.apps.ftelematics.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -12,6 +13,7 @@ public class HomeViewHolder extends RecyclerView.ViewHolder {
 
     public TextView thumbText,firstLine,secondLine,speed,acStatus,statusSince,address,battery,signal,tts,driverName,distance;
     public RelativeLayout thumbnail;
+    public ImageView fuel;
     public RelativeLayout mapButton,historyButton,ignitionButton,callButton;
     public LinearLayout batterySignalLayout;
 
@@ -36,5 +38,6 @@ public class HomeViewHolder extends RecyclerView.ViewHolder {
         batterySignalLayout=(LinearLayout) itemView.findViewById(R.id.battery_signal_layout);
         driverName=(TextView) itemView.findViewById(R.id.driver_name);
         distance=(TextView) itemView.findViewById(R.id.distance);
+        fuel=(ImageView) itemView.findViewById(R.id.fuel);
     }
 }

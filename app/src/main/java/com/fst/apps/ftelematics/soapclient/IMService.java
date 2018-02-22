@@ -91,6 +91,18 @@ public class IMService extends Service implements IAppManager
 	}
 
 	@Override
+	public String getFuel(String accountID, String deviceID, String calibrationValue, String maxTankCapacity) {
+
+		param=new Hashtable<String, Object>();
+		param.put("accountId", accountID);
+		param.put("deviceId", deviceID);
+		param.put("calibrationValues", calibrationValue);
+		param.put("maxTankCapacity", maxTankCapacity);
+		String result = socketOperator.sendHttpRequest("GetFuel", param, "GetFuelResult");
+		return result;
+	}
+
+	@Override
 	public String getHistoryData(Hashtable<String, Object> param) {
 		String result = socketOperator.sendHttpRequest("GetHistoryData", param, "GetHistoryDataResult");
 		return result;

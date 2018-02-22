@@ -35,6 +35,16 @@ public class LastLocation implements Parcelable{
 	private String battery;
 	private String driverNumber;
 	private String driverName;
+	private String calibrationValues;
+
+	public void setCalibrationValues(String calibrationValues) {
+		this.calibrationValues = calibrationValues;
+	}
+
+	public String getCalibrationValues() {
+
+		return calibrationValues;
+	}
 
 	public String getPrevKms() {
 		return prevKms;
@@ -268,6 +278,7 @@ public class LastLocation implements Parcelable{
 	private LastLocation(Parcel in) {
         accountID = in.readString();
         deviceID = in.readString();
+		unixTime = in.readString();
         speedKPH = in.readString();
         statusCode = in.readString();
         latitude = in.readString();
@@ -280,11 +291,16 @@ public class LastLocation implements Parcelable{
 		signal=in.readString();
 		battery=in.readString();
     }
-	
+
+
+
+
+
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeString(accountID);
 		dest.writeString(deviceID);
+		dest.writeString(unixTime);
 		dest.writeString(speedKPH);
 		dest.writeString(statusCode);
 		dest.writeString(latitude);

@@ -415,8 +415,8 @@ android {
             dimension "ftelematics"
             applicationId "com.fst.apps.ffever"
             resValue "string", "app_name","FFEVER Tracker"
-            versionCode 2
-            versionName "1.1"
+            versionCode 3
+            versionName "1.2"
         }
 
         goaxis{
@@ -495,6 +495,22 @@ android {
             dimension "ftelematics"
             applicationId "com.fst.apps.smarteye"
             resValue "string", "app_name","Smart Eye"
+            versionCode 1
+            versionName "1.0"
+        }
+
+        meher{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.meher"
+            resValue "string", "app_name","Meher Trackers"
+            versionCode 1
+            versionName "1.0"
+        }
+
+        track9gold{
+            dimension "ftelematics"
+            applicationId "com.fst.apps.track9gold"
+            resValue "string", "app_name","Track9gold"
             versionCode 1
             versionName "1.0"
         }
