@@ -23,6 +23,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,6 +59,13 @@ public class VehiclesListAdapter extends RecyclerView.Adapter<HomeViewHolder> im
     private int buffKey;
     private TtsProviderFactory ttsProviderImpl;
     private SharedPreferencesManager sharedPrefs;
+    private AlertDialog.Builder dialogBuilder;
+    private AlertDialog fuelDialog;
+    private LinearLayout dialogClose;
+    private ImageView close;
+    private ProgressBar dialogProgress;
+    private TextView fuelValue, expectedLeftRun;
+
 
     public VehiclesListAdapter(List<LastLocation> lastLocationList, int rowLayout, Context context) {
         this.lastLocationList = lastLocationList;
@@ -65,7 +75,7 @@ public class VehiclesListAdapter extends RecyclerView.Adapter<HomeViewHolder> im
         isDualSIM = AppUtils.isDualSIM(context);
         rottweilerApplication = (RottweilerApplication) context.getApplicationContext();
         ttsProviderImpl = TtsProviderFactory.getInstance();
-        sharedPrefs=new SharedPreferencesManager(context);
+        sharedPrefs = new SharedPreferencesManager(context);
     }
 
     @Override
@@ -121,7 +131,8 @@ public class VehiclesListAdapter extends RecyclerView.Adapter<HomeViewHolder> im
             holder.fuel.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    new Fuel(sharedPrefs.getAccountId(), lastLocation.getDeviceID(),lastLocation.getCalibrationValues(),lastLocation.getMaxTankCapicity()).execute();
+                    createFuelDialog();
+                    new Fuel(sharedPrefs.getAccountId(), lastLocation.getDeviceID(), lastLocation.getCalibrationValues(), lastLocation.getMaxTankCapicity()).execute();
                 }
             });
 
@@ -436,6 +447,28 @@ public class VehiclesListAdapter extends RecyclerView.Adapter<HomeViewHolder> im
         }
     }
 
+    void createFuelDialog() {
+        dialogBuilder = new AlertDialog.Builder(context);
+
+        LayoutInflater inflater = ((Activity) context).getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.fuel_dialog, null);
+        dialogBuilder.setView(dialogView);
+
+        dialogBuilder.setCancelable(false);
+
+        dialogProgress = (ProgressBar) dialogView.findViewById(R.id.loading);
+        dialogClose = (LinearLayout) dialogView.findViewById(R.id.cross);
+        close = (ImageView) dialogView.findViewById(R.id.close);
+        dialogProgress.setVisibility(View.VISIBLE);
+        close.setVisibility(View.GONE);
+        fuelValue = (TextView) dialogView.findViewById(R.id.fuel_value);
+        expectedLeftRun = (TextView) dialogView.findViewById(R.id.expected_left_run);
+
+
+        fuelDialog = dialogBuilder.create();
+        fuelDialog.show();
+    }
+
 
     class Fuel extends AsyncTask<Void, Void, String> {
 
@@ -450,14 +483,37 @@ public class VehiclesListAdapter extends RecyclerView.Adapter<HomeViewHolder> im
 
         @Override
         protected String doInBackground(Void... params) {
-            String result = ((MainActivity) context).getSoapServiceInstance().getFuel(accountID,deviceID,calibrationValue,maxTankCapacity);
+            String result = ((MainActivity) context).getSoapServiceInstance().getFuel(accountID, deviceID, calibrationValue, maxTankCapacity);
             return result;
         }
 
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            Toast.makeText(context,result,Toast.LENGTH_SHORT).show();
+
+            dialogBuilder.setCancelable(true);
+            dialogProgress.setVisibility(View.GONE);
+            close.setVisibility(View.VISIBLE);
+
+            fuelValue.setText("Fuel : " + result + " Ltrs");
+
+            result=result.replace("\"","");
+
+            try {
+                int from = (int)(Float.parseFloat(result) * 3.5);
+                int to = (int)(Float.parseFloat(result) * 4.5);
+                expectedLeftRun.setText("Your Vehicle can run for " + from + " - " + to + " Kms more (*)");
+            } catch (NumberFormatException e) {
+                expectedLeftRun.setText("Vehicle can run for ##-## Kms more (*)");
+            }
+
+            dialogClose.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    fuelDialog.dismiss();
+                }
+            });
+
         }
     }
 
