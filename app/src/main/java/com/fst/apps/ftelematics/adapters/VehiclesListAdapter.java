@@ -65,6 +65,7 @@ public class VehiclesListAdapter extends RecyclerView.Adapter<HomeViewHolder> im
     private ImageView close;
     private ProgressBar dialogProgress;
     private TextView fuelValue, expectedLeftRun;
+    private boolean hideFuel= true;
 
 
     public VehiclesListAdapter(List<LastLocation> lastLocationList, int rowLayout, Context context) {
@@ -76,6 +77,11 @@ public class VehiclesListAdapter extends RecyclerView.Adapter<HomeViewHolder> im
         rottweilerApplication = (RottweilerApplication) context.getApplicationContext();
         ttsProviderImpl = TtsProviderFactory.getInstance();
         sharedPrefs = new SharedPreferencesManager(context);
+
+        if(BuildConfig.FLAVOR.equals("gosafe"))
+        {
+            hideFuel=false;
+        }
     }
 
     @Override
@@ -124,7 +130,7 @@ public class VehiclesListAdapter extends RecyclerView.Adapter<HomeViewHolder> im
             holder.distance.setText("Odometer : " + lastLocation.getPrevKms());
         }
 
-        if (lastLocation.getCalibrationValues() == null || lastLocation.getCalibrationValues().equalsIgnoreCase("NA"))
+        if (hideFuel || lastLocation.getCalibrationValues() == null || lastLocation.getCalibrationValues().equalsIgnoreCase("NA"))
             holder.fuel.setVisibility(View.INVISIBLE);
         else {
             holder.fuel.setVisibility(View.VISIBLE);

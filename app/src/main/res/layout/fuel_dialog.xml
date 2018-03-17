@@ -6,9 +6,6 @@
     android:layout_height="wrap_content"
     android:layout_margin="25dp"
     android:clipToPadding="true"
-    android:background="@android:color/transparent"
-    android:backgroundTint="@android:color/transparent"
-    app:cardBackgroundColor="@android:color/transparent"
     app:cardCornerRadius="2dp"
     card_view:cardPreventCornerOverlap="true">
 

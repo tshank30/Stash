@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module external.linked.project.id=":app" external.linked.project.path="$MODULE_DIR$" external.root.project.path="$MODULE_DIR$/.." external.system.id="GRADLE" external.system.module.group="trunk" external.system.module.version="unspecified" type="JAVA_MODULE" version="4">
+<module external.linked.project.id=":app" external.linked.project.path="$MODULE_DIR$" external.root.project.path="$MODULE_DIR$/.." external.system.id="GRADLE" type="JAVA_MODULE" version="4">
   <component name="FacetManager">
     <facet type="android-gradle" name="Android-Gradle">
       <configuration>
@@ -8,82 +8,82 @@
     </facet>
     <facet type="android" name="Android">
       <configuration>
-        <option name="SELECTED_BUILD_VARIANT" value="kssDebug" />
-        <option name="ASSEMBLE_TASK_NAME" value="assembleKssDebug" />
-        <option name="COMPILE_JAVA_TASK_NAME" value="compileKssDebugSources" />
+        <option name="SELECTED_BUILD_VARIANT" value="attrackDebug" />
+        <option name="ASSEMBLE_TASK_NAME" value="assembleAttrackDebug" />
+        <option name="COMPILE_JAVA_TASK_NAME" value="compileAttrackDebugSources" />
         <afterSyncTasks>
-          <task>generateKssDebugSources</task>
+          <task>generateAttrackDebugSources</task>
         </afterSyncTasks>
         <option name="ALLOW_USER_CONFIGURATION" value="false" />
         <option name="MANIFEST_FILE_RELATIVE_PATH" value="/src/main/AndroidManifest.xml" />
         <option name="RES_FOLDER_RELATIVE_PATH" value="/src/main/res" />
-        <option name="RES_FOLDERS_RELATIVE_PATH" value="file://$MODULE_DIR$/src/main/res;file://$MODULE_DIR$/src/kss/res" />
+        <option name="RES_FOLDERS_RELATIVE_PATH" value="file://$MODULE_DIR$/src/main/res;file://$MODULE_DIR$/src/attrack/res" />
         <option name="ASSETS_FOLDER_RELATIVE_PATH" value="/src/main/assets" />
       </configuration>
     </facet>
   </component>
   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_7">
-    <output url="file://$MODULE_DIR$/build/intermediates/classes/kss/debug" />
-    <output-test url="file://$MODULE_DIR$/build/intermediates/classes/test/kss/debug" />
+    <output url="file://$MODULE_DIR$/build/intermediates/classes/attrack/debug" />
+    <output-test url="file://$MODULE_DIR$/build/intermediates/classes/test/attrack/debug" />
     <exclude-output />
     <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/apt/kss/debug" isTestSource="false" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/r/kss/debug" isTestSource="false" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/aidl/kss/debug" isTestSource="false" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/buildConfig/kss/debug" isTestSource="false" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/rs/kss/debug" isTestSource="false" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/res/rs/kss/debug" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/res/resValues/kss/debug" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/kssDebug/res" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/kssDebug/resources" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/kssDebug/assets" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/kssDebug/aidl" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/kssDebug/java" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/kssDebug/rs" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/kssDebug/shaders" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/apt/androidTest/kss/debug" isTestSource="true" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/r/androidTest/kss/debug" isTestSource="true" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/aidl/androidTest/kss/debug" isTestSource="true" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/buildConfig/androidTest/kss/debug" isTestSource="true" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/rs/androidTest/kss/debug" isTestSource="true" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/res/rs/androidTest/kss/debug" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/res/resValues/androidTest/kss/debug" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestKssDebug/res" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestKssDebug/resources" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestKssDebug/assets" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestKssDebug/aidl" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestKssDebug/java" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestKssDebug/rs" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestKssDebug/shaders" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/apt/test/kss/debug" isTestSource="true" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/testKssDebug/res" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/testKssDebug/resources" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/testKssDebug/assets" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/testKssDebug/aidl" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/testKssDebug/java" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/testKssDebug/rs" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/testKssDebug/shaders" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/kss/res" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/kss/resources" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/kss/assets" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/kss/aidl" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/kss/java" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/kss/rs" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/kss/shaders" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestKss/res" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestKss/resources" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestKss/assets" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestKss/aidl" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestKss/java" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestKss/rs" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestKss/shaders" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/testKss/res" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/testKss/resources" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/testKss/assets" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/testKss/aidl" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/testKss/java" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/testKss/rs" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/testKss/shaders" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/apt/attrack/debug" isTestSource="false" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/r/attrack/debug" isTestSource="false" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/aidl/attrack/debug" isTestSource="false" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/buildConfig/attrack/debug" isTestSource="false" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/rs/attrack/debug" isTestSource="false" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/res/rs/attrack/debug" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/res/resValues/attrack/debug" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/attrackDebug/res" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/attrackDebug/resources" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/attrackDebug/assets" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/attrackDebug/aidl" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/attrackDebug/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/attrackDebug/rs" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/attrackDebug/shaders" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/apt/androidTest/attrack/debug" isTestSource="true" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/r/androidTest/attrack/debug" isTestSource="true" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/aidl/androidTest/attrack/debug" isTestSource="true" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/buildConfig/androidTest/attrack/debug" isTestSource="true" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/rs/androidTest/attrack/debug" isTestSource="true" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/res/rs/androidTest/attrack/debug" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/res/resValues/androidTest/attrack/debug" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestAttrackDebug/res" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestAttrackDebug/resources" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestAttrackDebug/assets" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestAttrackDebug/aidl" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestAttrackDebug/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestAttrackDebug/rs" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestAttrackDebug/shaders" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/apt/test/attrack/debug" isTestSource="true" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/testAttrackDebug/res" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/testAttrackDebug/resources" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/testAttrackDebug/assets" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/testAttrackDebug/aidl" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/testAttrackDebug/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/testAttrackDebug/rs" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/testAttrackDebug/shaders" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/attrack/res" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/attrack/resources" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/attrack/assets" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/attrack/aidl" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/attrack/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/attrack/rs" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/attrack/shaders" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestAttrack/res" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestAttrack/resources" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestAttrack/assets" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestAttrack/aidl" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestAttrack/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestAttrack/rs" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestAttrack/shaders" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/testAttrack/res" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/testAttrack/resources" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/testAttrack/assets" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/testAttrack/aidl" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/testAttrack/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/testAttrack/rs" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/testAttrack/shaders" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/debug/res" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/debug/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/debug/assets" type="java-resource" />
