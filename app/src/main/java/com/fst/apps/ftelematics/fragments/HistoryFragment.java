@@ -19,7 +19,7 @@ import com.fst.apps.ftelematics.utils.MapInfoWindow;
 import com.fst.apps.ftelematics.utils.SharedPreferencesManager;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -38,7 +38,7 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
+import android.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -56,389 +56,440 @@ import android.widget.Toast;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
-public class HistoryFragment extends Fragment{
+public class HistoryFragment extends Fragment {
 
-	private DatePickerDialog datePickerDialog;
-	private TimePickerDialog timeFromDialog,timeToDialog;
-	private Calendar calender;
-	private LinearLayout dateLayout,timeFromLayout,timeToLayout;
-	private TextView dateTextView,timeFromTextView,timeToTextView,historySpeed;
-	private SimpleDateFormat dateFormatter;
-	private GoogleMap googleMap;
-	private MainActivity mActivity;
-	private RelativeLayout playButton,pauseButton;
-	private SeekBar speedSeekBar;
-	private LastLocation lastLocation;
-	private SharedPreferencesManager sharedPrefs;
-	private String date,timeFrom,timeTo;
-	private Handler handler = new Handler();
-	private Runnable runnable;
-	private int historyDelay=1600;
-	private ProgressDialog progressDialog;
-	private Resources res;
-	private RadioGroup radioGroup;
-	private static final int MAP_TYPE_NORMAL=1;
-	private static final int MAP_TYPE_SATELLITE=2;
-	private int mapType;
-	private NetworkUtility networkUtility;
+    private DatePickerDialog datePickerDialog;
+    private TimePickerDialog timeFromDialog, timeToDialog;
+    private Calendar calender;
+    private LinearLayout dateLayout, timeFromLayout, timeToLayout;
+    private TextView dateTextView, timeFromTextView, timeToTextView, historySpeed;
+    private SimpleDateFormat dateFormatter;
+    private GoogleMap googleMap;
+    private MainActivity mActivity;
+    private RelativeLayout playButton, pauseButton;
+    private SeekBar speedSeekBar;
+    private LastLocation lastLocation;
+    private SharedPreferencesManager sharedPrefs;
+    private String date, timeFrom, timeTo;
+    private Handler handler = new Handler();
+    private Runnable runnable;
+    private int historyDelay = 1600;
+    private ProgressDialog progressDialog;
+    private Resources res;
+    private RadioGroup radioGroup;
+    private static final int MAP_TYPE_NORMAL = 1;
+    private static final int MAP_TYPE_SATELLITE = 2;
+    private int mapType;
+    private NetworkUtility networkUtility;
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		Bundle bundle=getArguments();
-		calender=Calendar.getInstance();
-		dateFormatter = new SimpleDateFormat("dd-MMM-yyyy");
-		lastLocation=bundle.getParcelable("lastLocation");
-		sharedPrefs=new SharedPreferencesManager(getActivity());
-		res=getActivity().getResources();
-		networkUtility=new NetworkUtility();
-	}
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Bundle bundle = getArguments();
+        calender = Calendar.getInstance();
+        dateFormatter = new SimpleDateFormat("dd-MMM-yyyy");
+        lastLocation = bundle.getParcelable("lastLocation");
+        sharedPrefs = new SharedPreferencesManager(getActivity());
+        res = getActivity().getResources();
+        networkUtility = new NetworkUtility();
+    }
 
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-		mActivity=(MainActivity)activity;
-	}
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mActivity = (MainActivity) activity;
+    }
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		View v=inflater.inflate(R.layout.fragment_history, container,false);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.fragment_history, container, false);
 
-		dateLayout=(LinearLayout) v.findViewById(R.id.date_layout);
-		timeFromLayout=(LinearLayout) v.findViewById(R.id.timefrom_layout);
-		timeToLayout=(LinearLayout) v.findViewById(R.id.timeto_layout);
-		dateTextView=(TextView) v.findViewById(R.id.date_from_value);
-		timeFromTextView=(TextView) v.findViewById(R.id.timefrom_value);
-		timeToTextView=(TextView) v.findViewById(R.id.timeto_value);
-		playButton=(RelativeLayout) v.findViewById(R.id.play_button);
-		pauseButton=(RelativeLayout) v.findViewById(R.id.pause_button);
-		speedSeekBar=(SeekBar) v.findViewById(R.id.speed);
-		radioGroup=(RadioGroup) v.findViewById(R.id.map_types);
-		//historySpeed=(TextView) v.findViewById(R.id.historySpeed);
+        dateLayout = (LinearLayout) v.findViewById(R.id.date_layout);
+        timeFromLayout = (LinearLayout) v.findViewById(R.id.timefrom_layout);
+        timeToLayout = (LinearLayout) v.findViewById(R.id.timeto_layout);
+        dateTextView = (TextView) v.findViewById(R.id.date_from_value);
+        timeFromTextView = (TextView) v.findViewById(R.id.timefrom_value);
+        timeToTextView = (TextView) v.findViewById(R.id.timeto_value);
+        playButton = (RelativeLayout) v.findViewById(R.id.play_button);
+        pauseButton = (RelativeLayout) v.findViewById(R.id.pause_button);
+        speedSeekBar = (SeekBar) v.findViewById(R.id.speed);
+        radioGroup = (RadioGroup) v.findViewById(R.id.map_types);
+        //historySpeed=(TextView) v.findViewById(R.id.historySpeed);
 
-		playButton.setBackgroundResource(R.drawable.ic_play);
-		pauseButton.setBackgroundResource(R.drawable.ic_pause);
-		progressDialog=new ProgressDialog(getActivity());
-		
-		initilizeMap();
+        playButton.setBackgroundResource(R.drawable.ic_play);
+        pauseButton.setBackgroundResource(R.drawable.ic_pause);
+        progressDialog = new ProgressDialog(getActivity());
 
-		playButton.setOnClickListener(new OnClickListener() {
+        initilizeMap();
 
-			@Override
-			public void onClick(View v) {
-				handlePlayPauseButton(0);
+        playButton.setOnClickListener(new OnClickListener() {
 
-				if(runnable!=null){
-					handler.postDelayed(runnable, 100);
-				}else{
-					getHistoryData();
-				}
-			}
-		});
+            @Override
+            public void onClick(View v) {
+                handlePlayPauseButton(0);
 
-		pauseButton.setOnClickListener(new OnClickListener() {
+                if (runnable != null) {
+                    handler.postDelayed(runnable, 100);
+                } else {
+                    getHistoryData();
+                }
+            }
+        });
 
-			@Override
-			public void onClick(View v) {
-				handlePlayPauseButton(1);
-				if(handler!=null && runnable!=null){
-					handler.removeCallbacks(runnable);
-				}
-			}
-		});
+        pauseButton.setOnClickListener(new OnClickListener() {
 
-		dateLayout.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				datePickerDialog.show();
-			}
-		});
+            @Override
+            public void onClick(View v) {
+                handlePlayPauseButton(1);
+                if (handler != null && runnable != null) {
+                    handler.removeCallbacks(runnable);
+                }
+            }
+        });
 
-		timeFromLayout.setOnClickListener(new OnClickListener() {
+        dateLayout.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                datePickerDialog.show();
+            }
+        });
 
-			@Override
-			public void onClick(View v) {
-				timeFromDialog.show();
-			}
-		});
+        timeFromLayout.setOnClickListener(new OnClickListener() {
 
-		timeToLayout.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                timeFromDialog.show();
+            }
+        });
 
-			@Override
-			public void onClick(View v) {
-				timeToDialog.show();
-			}
-		});
+        timeToLayout.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                timeToDialog.show();
+            }
+        });
 
 
-		datePickerDialog = new DatePickerDialog(getActivity(), new OnDateSetListener() {
+        datePickerDialog = new DatePickerDialog(getActivity(), new OnDateSetListener() {
 
-			public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
 
-				Calendar newDate = Calendar.getInstance();
-				newDate.set(year, monthOfYear, dayOfMonth);
-				dateTextView.setText(dateFormatter.format(newDate.getTime()));
-				date=dateFormatter.format(newDate.getTime());
-				handler.removeCallbacks(runnable);
-				runnable=null;
-				handlePlayPauseButton(1);
-			}
+                Calendar newDate = Calendar.getInstance();
+                newDate.set(year, monthOfYear, dayOfMonth);
+                dateTextView.setText(dateFormatter.format(newDate.getTime()));
+                date = dateFormatter.format(newDate.getTime());
+                handler.removeCallbacks(runnable);
+                runnable = null;
+                handlePlayPauseButton(1);
+            }
 
-		},calender.get(Calendar.YEAR), calender.get(Calendar.MONTH), calender.get(Calendar.DAY_OF_MONTH));
+        }, calender.get(Calendar.YEAR), calender.get(Calendar.MONTH), calender.get(Calendar.DAY_OF_MONTH));
 
-		timeFromDialog=new TimePickerDialog(getActivity(), new OnTimeSetListener() {
+        timeFromDialog = new TimePickerDialog(getActivity(), new OnTimeSetListener() {
 
-			@Override
-			public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-				timeFromTextView.setText(getDisplayTime(hourOfDay,minute));
-				timeFrom=getDisplayTime(hourOfDay,minute);
-				handler.removeCallbacks(runnable);
-				runnable=null;
-				handlePlayPauseButton(1);
-			}
-		}, calender.get(Calendar.HOUR_OF_DAY), calender.get(Calendar.MINUTE), true);
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                timeFromTextView.setText(getDisplayTime(hourOfDay, minute));
+                timeFrom = getDisplayTime(hourOfDay, minute);
+                handler.removeCallbacks(runnable);
+                runnable = null;
+                handlePlayPauseButton(1);
+            }
+        }, calender.get(Calendar.HOUR_OF_DAY), calender.get(Calendar.MINUTE), true);
 
-		timeToDialog=new TimePickerDialog(getActivity(), new OnTimeSetListener() {
+        timeToDialog = new TimePickerDialog(getActivity(), new OnTimeSetListener() {
 
-			@Override
-			public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-				timeToTextView.setText(getDisplayTime(hourOfDay,minute));
-				timeTo=getDisplayTime(hourOfDay,minute);
-				handler.removeCallbacks(runnable);
-				runnable=null;
-				handlePlayPauseButton(1);
-			}
-		}, calender.get(Calendar.HOUR_OF_DAY), calender.get(Calendar.MINUTE), true);
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                timeToTextView.setText(getDisplayTime(hourOfDay, minute));
+                timeTo = getDisplayTime(hourOfDay, minute);
+                handler.removeCallbacks(runnable);
+                runnable = null;
+                handlePlayPauseButton(1);
+            }
+        }, calender.get(Calendar.HOUR_OF_DAY), calender.get(Calendar.MINUTE), true);
 
-		speedSeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+        speedSeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
-			@Override
-			public void onStopTrackingTouch(SeekBar seekBar) {
-				historyDelay=getHistoryDelay(seekBar.getProgress());
-				Log.v("Progress", historyDelay+"");
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                historyDelay = getHistoryDelay(seekBar.getProgress());
+                Log.v("Progress", historyDelay + "");
 				/*if(runnable!=null){
 					handler.removeCallbacks(runnable);
 					handler.postDelayed(runnable, historyDelay);
 				}*/
-			}
+            }
 
-			@Override
-			public void onStartTrackingTouch(SeekBar seekBar) {
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
 
-			}
+            }
 
-			@Override
-			public void onProgressChanged(SeekBar seekBar, int progress,
-					boolean fromUser) {
-				//historySpeed.setText(progress);
-			}
-		});
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress,
+                                          boolean fromUser) {
+                //historySpeed.setText(progress);
+            }
+        });
 
-		radioGroup.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+        radioGroup.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
-			@Override
-			public void onCheckedChanged(RadioGroup group, int checkedId) {
-				if(checkedId==R.id.satellite_type){
-					mapType=GoogleMap.MAP_TYPE_SATELLITE;
-				}else{
-					mapType=GoogleMap.MAP_TYPE_NORMAL;
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (checkedId == R.id.satellite_type) {
+                    mapType = GoogleMap.MAP_TYPE_SATELLITE;
+                } else {
+                    mapType = GoogleMap.MAP_TYPE_NORMAL;
 
-				}
-				if(googleMap!=null){
-					googleMap.setMapType(mapType);
-				}else{
-					initilizeMap();
-				}
-			}
-		});
-
-		
-		return v;
-	}
-
-	private void initilizeMap() {
-		if (googleMap == null) {
-			googleMap = ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map)).getMap();
-		}
-
-		if (googleMap == null) {
-			Toast.makeText(mActivity, "Sorry! unable to create maps", Toast.LENGTH_SHORT).show();
-		}else{
-			//setUpMap(googleMap);
-		}
-	}
-
-	public void setUpMap(final GoogleMap map,final ArrayList<LastLocation> historyList){
-		map.getUiSettings().setZoomControlsEnabled(true);
-		map.setMapType(mapType);
-		final PolylineOptions options = new PolylineOptions().width(5).color(Color.BLUE);
-		runnable=new Runnable() {
-			int i=0;
-			@Override
-			public void run() {
-				i++;
-				if(i<historyList.size()){
-					LastLocation lastHistoryLocation=historyList.get(i);
-					double latitude=Double.valueOf(lastHistoryLocation.getLatitude());
-					double longitude=Double.valueOf(lastHistoryLocation.getLongitude());
-					String status=lastHistoryLocation.getStatusCode();
-					String address=AppUtils.reverseGeocode(mActivity, latitude, longitude);
-					LatLng point = new LatLng(latitude, longitude);
-					options.add(point);
-					MarkerOptions marker=new MarkerOptions().position(point).title(AppUtils.getStatusOfVehicle(status)).snippet(lastHistoryLocation.getStringTimestamp()+"\n"+address);
-					if(!TextUtils.isEmpty(status)){
-						if(status.equalsIgnoreCase("0")){
-							marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_nw));
-						}else if(status.equalsIgnoreCase("61714")){
-							marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_moving));
-						}else if(status.equalsIgnoreCase("61715")){
-							marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_stop));
-						}else if(status.equalsIgnoreCase("61716")){
-							marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_dormant));
-						}
-					}else{
-						marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_dormant));
-					}
-					
-					map.setInfoWindowAdapter(new MapInfoWindow(mActivity,"HISTORY"));
-					map.addMarker(marker);
-					map.animateCamera(CameraUpdateFactory.newLatLngZoom(point, 15.0f));
-					map.addPolyline(options);
-					handler.postDelayed(this, historyDelay);
-				}
-			}
-			//Polyline line = map.addPolyline(options);
-		};
-
-		handler.postDelayed(runnable, historyDelay);
-
-	}
+                }
+                if (googleMap != null) {
+                    googleMap.setMapType(mapType);
+                } else {
+                    initilizeMap();
+                }
+            }
+        });
 
 
-	public String getDisplayTime(int hours,int minutes){
-		StringBuilder sb=new StringBuilder();
-		if(hours<10){
-			sb.append("0"+String.valueOf(hours));
-		}else{
-			sb.append(String.valueOf(hours));
-		}
+        return v;
+    }
 
-		sb.append(":");
+    private void initilizeMap() {
+        if (googleMap == null) {
 
-		if(minutes<10){
-			sb.append("0"+String.valueOf(minutes));
-		}else{
-			sb.append(String.valueOf(minutes));
-		}
+            ((com.google.android.gms.maps.MapFragment) getChildFragmentManager().findFragmentById(R.id.map)).getMapAsync(new OnMapReadyCallback() {
+                @Override
+                public void onMapReady(GoogleMap googleMap) {
+                    HistoryFragment.this.googleMap = googleMap;
+                }
+            });
+        }
 
-		sb.append(":00");
-		return sb.toString();
-	}
+        if (googleMap == null) {
+            Toast.makeText(mActivity, "Sorry! unable to create maps", Toast.LENGTH_SHORT).show();
+        } else {
+            //setUpMap(googleMap);
+        }
+    }
 
-	public void getHistoryData(){
-		progressDialog.setTitle(res.getString(R.string.refresh_dialog_title));
-		progressDialog.setMessage(res.getString(R.string.refresh_dialog_msg));
-		progressDialog.setCancelable(true);
-		progressDialog.show();
-		final String requestParams=getRequestJSONParams();
-		if(!TextUtils.isEmpty(requestParams)){
-			new AsyncTask<Void,Void,String>(){
+    public void setUpMap(final GoogleMap map, final ArrayList<LastLocation> historyList) {
+        map.getUiSettings().setZoomControlsEnabled(true);
+        map.setMapType(mapType);
+        final PolylineOptions options = new PolylineOptions().width(5).color(Color.BLUE);
+        runnable = new Runnable() {
+            int i = 0;
 
-				@Override
-				protected String doInBackground(Void... params) {
-					String response=networkUtility.sendPost("/fetchHistory",requestParams);
-					return response;
-				}
+            @Override
+            public void run() {
+                i++;
+                if (i < historyList.size()) {
+                    LastLocation lastHistoryLocation = historyList.get(i);
+                    double latitude = Double.valueOf(lastHistoryLocation.getLatitude());
+                    double longitude = Double.valueOf(lastHistoryLocation.getLongitude());
+                    String status = lastHistoryLocation.getStatusCode();
+                    String vehicleType = lastHistoryLocation.getVehicleType();
+                    String address = AppUtils.reverseGeocode(mActivity, latitude, longitude);
+                    LatLng point = new LatLng(latitude, longitude);
+                    options.add(point);
+                    MarkerOptions marker = new MarkerOptions().position(point).title(AppUtils.getStatusOfVehicle(status)).snippet(lastHistoryLocation.getStringTimestamp() + "\n" + address);
+                    if (!TextUtils.isEmpty(status)) {
+                        if (status.equalsIgnoreCase("0")) {
+                            if (vehicleType.equalsIgnoreCase("Car"))
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_nw));
+                            else if (vehicleType.equalsIgnoreCase("Bus"))
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bus_nw));
+                            else if (vehicleType.equalsIgnoreCase("truck"))
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_truck_nw));
+                            else if (vehicleType.equalsIgnoreCase("bike"))
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bike_nw));
+                            else if (vehicleType.equalsIgnoreCase("jcb"))
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_jcb_nw));
+                            else
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_nw));
+                        } else if (status.equalsIgnoreCase("61714")) {
+                            if (vehicleType.equalsIgnoreCase("car"))
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_moving));
+                            else if (vehicleType.equalsIgnoreCase("bus"))
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bus_moving));
+                            else if (vehicleType.equalsIgnoreCase("truck"))
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_truck_moving));
+                            else if (vehicleType.equalsIgnoreCase("bike"))
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bike_moving));
+                            else if (vehicleType.equalsIgnoreCase("jcb"))
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_jcb_moving));
+                            else
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_moving));
+                        } else if (status.equalsIgnoreCase("61715")) {
+                            if (vehicleType.equalsIgnoreCase("Car"))
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_stop));
+                            else if (vehicleType.equalsIgnoreCase("Bus"))
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bus_stop));
+                            else if (vehicleType.equalsIgnoreCase("truck"))
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_truck_stop));
+                            else if (vehicleType.equalsIgnoreCase("bike"))
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bike_stop));
+                            else if (vehicleType.equalsIgnoreCase("jcb"))
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_jcb_stop));
+                            else
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_stop));
+                        } else if (status.equalsIgnoreCase("61716")) {
+                            if (vehicleType.equalsIgnoreCase("Car"))
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_dormant));
+                            else if (vehicleType.equalsIgnoreCase("Bus"))
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bus_dormant));
+                            else if (vehicleType.equalsIgnoreCase("truck"))
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_truck_dormant));
+                            else if (vehicleType.equalsIgnoreCase("bike"))
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bike_dormant));
+                            else if (vehicleType.equalsIgnoreCase("jcb"))
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_jcb_dormant));
+                            else
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_dormant));
+                        }
+                    } else {
+                        marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_dormant));
+                    }
 
-				@Override
-				protected void onPostExecute(String response) {
-					super.onPostExecute(response);
-					if(response!=null && !response.isEmpty()){
-						try{
-							progressDialog.dismiss();
-							ArrayList<LastLocation> historyList = new Gson().fromJson(response, new TypeToken<List<LastLocation>>(){}.getType());
-							googleMap.clear();
-							setUpMap(googleMap, historyList);
-							Log.v("Response", response);
-						}catch(Exception e){
-							e.printStackTrace();
-						}
-					}else{
-						Toast.makeText(mActivity, "No data for selected range!", Toast.LENGTH_SHORT).show();
-						handlePlayPauseButton(1);
-						progressDialog.dismiss();
-					}
-				}
-			}.execute();
-		}else{
-			progressDialog.dismiss();
-			handlePlayPauseButton(1);
-			Toast.makeText(mActivity, "Please select date,time from and time to!", Toast.LENGTH_SHORT).show();
-		}
-	}
+                    map.setInfoWindowAdapter(new MapInfoWindow(mActivity, "HISTORY"));
+                    map.addMarker(marker);
+                    map.animateCamera(CameraUpdateFactory.newLatLngZoom(point, 15.0f));
+                    map.addPolyline(options);
+                    handler.postDelayed(this, historyDelay);
+                }
+            }
+            //Polyline line = map.addPolyline(options);
+        };
 
-	public String getRequestJSONParams(){
-		if(lastLocation==null){
-			return null;
-		}
-		if(TextUtils.isEmpty(date)||TextUtils.isEmpty(timeFrom)||TextUtils.isEmpty(timeTo)){
-			return null;
-		}
-		
-		String fromTime=date+" "+timeFrom;
-		String toTime=date+" "+timeTo;
-		SimpleDateFormat sf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		try {
-			//sf.format()
-			Date date1=sf.parse(fromTime);
-			Date date2=sf.parse(toTime);
-			Date currentDateTime=new Date();
-			if(date1.compareTo(currentDateTime)>0){
-				Toast.makeText(mActivity, "Time from cannot be greater than current time!", Toast.LENGTH_SHORT).show();
-				timeFromTextView.setText("00:00:00");
-				return null;
-			}
-			else if(date1.compareTo(date2)>0){
-				Toast.makeText(mActivity, "Time from cannot be greater than time to!", Toast.LENGTH_SHORT).show();
-				return null;
-			}
-		} catch (ParseException e1) {
-			e1.printStackTrace();
-		}
-		
-		JSONObject jsonParams=new JSONObject();
-		try {
-			jsonParams.put("AccountId", sharedPrefs.getAccountId());
-			jsonParams.put("DeviceId", lastLocation.getDeviceID());
-			jsonParams.put("FromTime", fromTime);
-			jsonParams.put("ToTime", toTime);
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
+        handler.postDelayed(runnable, historyDelay);
 
-		return jsonParams.toString();
-	}
+    }
 
 
+    public String getDisplayTime(int hours, int minutes) {
+        StringBuilder sb = new StringBuilder();
+        if (hours < 10) {
+            sb.append("0" + String.valueOf(hours));
+        } else {
+            sb.append(String.valueOf(hours));
+        }
 
-	public int getHistoryDelay(int progress){
-		Log.v("Seek Bar Progress", progress+"");
-		int newtime=1600-100*progress;
-		return newtime;
-	}
+        sb.append(":");
 
-	public void handlePlayPauseButton(int flag){
-		if(flag==0){
-			if(playButton.getVisibility()==View.VISIBLE){
-				playButton.setVisibility(View.GONE);
-				pauseButton.setVisibility(View.VISIBLE);
-			}
-		}else{
-			if(pauseButton.getVisibility()==View.VISIBLE){
-				pauseButton.setVisibility(View.GONE);
-				playButton.setVisibility(View.VISIBLE);
-			}
-		}
-	}
+        if (minutes < 10) {
+            sb.append("0" + String.valueOf(minutes));
+        } else {
+            sb.append(String.valueOf(minutes));
+        }
+
+        sb.append(":00");
+        return sb.toString();
+    }
+
+    public void getHistoryData() {
+        progressDialog.setTitle(res.getString(R.string.refresh_dialog_title));
+        progressDialog.setMessage(res.getString(R.string.refresh_dialog_msg));
+        progressDialog.setCancelable(true);
+        progressDialog.show();
+        final String requestParams = getRequestJSONParams();
+        if (!TextUtils.isEmpty(requestParams)) {
+            new AsyncTask<Void, Void, String>() {
+
+                @Override
+                protected String doInBackground(Void... params) {
+                    String response = networkUtility.sendPost("/fetchHistory", requestParams);
+                    return response;
+                }
+
+                @Override
+                protected void onPostExecute(String response) {
+                    super.onPostExecute(response);
+                    if (response != null && !response.isEmpty()) {
+                        try {
+                            progressDialog.dismiss();
+                            ArrayList<LastLocation> historyList = new Gson().fromJson(response, new TypeToken<List<LastLocation>>() {
+                            }.getType());
+                            googleMap.clear();
+                            setUpMap(googleMap, historyList);
+                            Log.v("Response", response);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        Toast.makeText(mActivity, "No data for selected range!", Toast.LENGTH_SHORT).show();
+                        handlePlayPauseButton(1);
+                        progressDialog.dismiss();
+                    }
+                }
+            }.execute();
+        } else {
+            progressDialog.dismiss();
+            handlePlayPauseButton(1);
+            Toast.makeText(mActivity, "Please select date,time from and time to!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public String getRequestJSONParams() {
+        if (lastLocation == null) {
+            return null;
+        }
+        if (TextUtils.isEmpty(date) || TextUtils.isEmpty(timeFrom) || TextUtils.isEmpty(timeTo)) {
+            return null;
+        }
+
+        String fromTime = date + " " + timeFrom;
+        String toTime = date + " " + timeTo;
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            //sf.format()
+            Date date1 = sf.parse(fromTime);
+            Date date2 = sf.parse(toTime);
+            Date currentDateTime = new Date();
+            if (date1.compareTo(currentDateTime) > 0) {
+                Toast.makeText(mActivity, "Time from cannot be greater than current time!", Toast.LENGTH_SHORT).show();
+                timeFromTextView.setText("00:00:00");
+                return null;
+            } else if (date1.compareTo(date2) > 0) {
+                Toast.makeText(mActivity, "Time from cannot be greater than time to!", Toast.LENGTH_SHORT).show();
+                return null;
+            }
+        } catch (ParseException e1) {
+            e1.printStackTrace();
+        }
+
+        JSONObject jsonParams = new JSONObject();
+        try {
+            jsonParams.put("AccountId", sharedPrefs.getAccountId());
+            jsonParams.put("DeviceId", lastLocation.getDeviceID());
+            jsonParams.put("FromTime", fromTime);
+            jsonParams.put("ToTime", toTime);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return jsonParams.toString();
+    }
+
+
+    public int getHistoryDelay(int progress) {
+        Log.v("Seek Bar Progress", progress + "");
+        int newtime = 1600 - 100 * progress;
+        return newtime;
+    }
+
+    public void handlePlayPauseButton(int flag) {
+        if (flag == 0) {
+            if (playButton.getVisibility() == View.VISIBLE) {
+                playButton.setVisibility(View.GONE);
+                pauseButton.setVisibility(View.VISIBLE);
+            }
+        } else {
+            if (pauseButton.getVisibility() == View.VISIBLE) {
+                pauseButton.setVisibility(View.GONE);
+                playButton.setVisibility(View.VISIBLE);
+            }
+        }
+    }
 }

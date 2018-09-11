@@ -49,6 +49,7 @@
     <string name="viewOnMap">View vehicle on map</string>
     <string name="viewHistory">History Replay</string>
     <string name="viewVehiclesList">View Vehciles List</string>
+    <string name="nearestVehicle">Nearest Vehicle</string>
     <string name="ignitionButtonOn">On</string>
     <string name="ignitionButtonOff">Off</string>
     <string name="alertsHeaderIgnition">Ignition</string>
@@ -127,6 +128,9 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+
+
+    <string name="share_using">Track you vehicle with :</string>
 
 
 </resources>

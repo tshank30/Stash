@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class LoginActivity extends Activity{
+public class LoginActivity extends Activity {
 
     private UserLoginTask mAuthTask = null;
 
@@ -47,13 +47,13 @@ public class LoginActivity extends Activity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        usernameEditText=(EditText) findViewById(R.id.username);
-        accountIdEditText=(EditText) findViewById(R.id.account_id);
-        passwordEditText=(EditText) findViewById(R.id.password);
-        loginButton=(Button) findViewById(R.id.btn_login);
-        sharedPref=new SharedPreferencesManager(this);
-        progressDialog=new ProgressDialog(this);
-        cd=new ConnectionDetector();
+        usernameEditText = (EditText) findViewById(R.id.username);
+        accountIdEditText = (EditText) findViewById(R.id.account_id);
+        passwordEditText = (EditText) findViewById(R.id.password);
+        loginButton = (Button) findViewById(R.id.btn_login);
+        sharedPref = new SharedPreferencesManager(this);
+        progressDialog = new ProgressDialog(this);
+        cd = new ConnectionDetector();
         loginButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -66,32 +66,29 @@ public class LoginActivity extends Activity{
         });
     }
 
-    private void attemptLogin(String accountId,String userName,String password) {
+    private void attemptLogin(String accountId, String userName, String password) {
         if (mAuthTask != null) {
             return;
         }
 
-        if(TextUtils.isEmpty(userName) || TextUtils.isEmpty(accountId) || TextUtils.isEmpty(password)){
-            Toast.makeText(getApplicationContext(),"All the fields are mandatory!", Toast.LENGTH_SHORT);
+        if (TextUtils.isEmpty(userName) || TextUtils.isEmpty(accountId) || TextUtils.isEmpty(password)) {
+            Toast.makeText(getApplicationContext(), "All the fields are mandatory!", Toast.LENGTH_SHORT);
             return;
         }
 
         boolean cancel = false;
-        if(!cd.isConnectingToInternet(this)){
-            cancel=true;
+        if (!cd.isConnectingToInternet(this)) {
+            cancel = true;
         }
-
-
 
 
         if (cancel) {
             usernameEditText.requestFocus();
         } else {
-            mAuthTask = new UserLoginTask(userName,accountId,password);
+            mAuthTask = new UserLoginTask(userName, accountId, password);
             mAuthTask.execute((Void) null);
         }
     }
-
 
 
     public class UserLoginTask extends AsyncTask<Void, Void, String> {
@@ -99,9 +96,9 @@ public class LoginActivity extends Activity{
 
         private String url;
 
-        UserLoginTask(String username, String accountId,String password) {
-            networkUtility=new NetworkUtility();
-            url="/"+username+"/"+accountId+"/"+password;
+        UserLoginTask(String username, String accountId, String password) {
+            networkUtility = new NetworkUtility();
+            url = "/" + username + "/" + accountId + "/" + password;
         }
 
         @Override
@@ -117,7 +114,7 @@ public class LoginActivity extends Activity{
         protected String doInBackground(Void... params) {
             String response = null;
             try {
-                response=networkUtility.sendGet(url);
+                response = networkUtility.sendGet(url);
                 Log.d("Result", response);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -130,17 +127,18 @@ public class LoginActivity extends Activity{
         protected void onPostExecute(final String response) {
             mAuthTask = null;
             progressDialog.dismiss();
-            List<User> userList=new ArrayList<User>() ;
-            if(response!=null){
-                try{
-                    try{
-                        userList=new Gson().fromJson(response, new TypeToken<List<User>>(){}.getType());
-                    }catch(Exception e){
+            List<User> userList = new ArrayList<User>();
+            if (response != null) {
+                try {
+                    try {
+                        userList = new Gson().fromJson(response, new TypeToken<List<User>>() {
+                        }.getType());
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    if(userList!=null && userList.size()>0){
-                        User user=userList.get(0);
-                        if(user.getIsMobAppUser().equalsIgnoreCase(AppConstants.APP_ACTIVATION_CODE)){
+                    if (userList != null && userList.size() > 0) {
+                        User user = userList.get(0);
+                        if (user.getIsMobAppUser().equalsIgnoreCase(AppConstants.APP_ACTIVATION_CODE)) {
                             sharedPref.setAccountId(user.getAccountID());
                             sharedPref.setUserId(user.getUserID());
                             sharedPref.setIsMobAppUser(user.getIsMobAppUser());
@@ -148,23 +146,27 @@ public class LoginActivity extends Activity{
                             sharedPref.setRole(user.getRoleID());
                             sharedPref.setDealerName(user.getDealer());
                             sharedPref.setIsLoggedIn(true);
-                            Intent i=new Intent(getApplicationContext(),MainActivity.class);
-                            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
+                            if (user.getIsSchool()==0)
+                                sharedPref.setSchoolAccount(false);
+                            else
+                                sharedPref.setSchoolAccount(true);
+                            Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                             startActivity(i);
                             LoginActivity.this.finish();
-                        }else{
+                        } else {
                             alert.showAlertDialog(LoginActivity.this,
                                     "Invalid Activation",
                                     "Your mobile application account has not been activated.Please contact administrator!", false);
                         }
                     }
-                }catch(Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 
 
-            }else{
-                Toast.makeText(getApplicationContext(),"User not found, try with different credentials!", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getApplicationContext(), "User not found, try with different credentials!", Toast.LENGTH_SHORT).show();
             }
 
         }

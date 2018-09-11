@@ -36,7 +36,7 @@
         android:layout_weight="3.2"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        class="com.google.android.gms.maps.SupportMapFragment" />
+        class="com.google.android.gms.maps.MapFragment" />
 
     <LinearLayout
         android:id="@+id/info_panel"

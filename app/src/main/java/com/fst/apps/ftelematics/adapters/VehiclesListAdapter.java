@@ -11,9 +11,9 @@ import android.graphics.drawable.ShapeDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -35,15 +35,12 @@ import com.fst.apps.ftelematics.R;
 import com.fst.apps.ftelematics.RottweilerApplication;
 import com.fst.apps.ftelematics.entities.LastLocation;
 import com.fst.apps.ftelematics.fragments.AnimatingMarkersFragment;
-import com.fst.apps.ftelematics.fragments.MapFragment;
 import com.fst.apps.ftelematics.fragments.VehicleMapViewFrag;
-import com.fst.apps.ftelematics.fragments.VehicleMapViewFragment;
 import com.fst.apps.ftelematics.utils.AppUtils;
 import com.fst.apps.ftelematics.utils.ConnectionDetector;
+import com.fst.apps.ftelematics.utils.DatabaseHelper;
 import com.fst.apps.ftelematics.utils.SharedPreferencesManager;
 import com.fst.apps.ftelematics.utils.TtsProviderFactory;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,8 +62,8 @@ public class VehiclesListAdapter extends RecyclerView.Adapter<HomeViewHolder> im
     private ImageView close;
     private ProgressBar dialogProgress;
     private TextView fuelValue, expectedLeftRun;
-    private boolean hideFuel= true;
-
+    private boolean hideFuel = true, showAC = false, school = false;
+    private DatabaseHelper dbHelper;
 
     public VehiclesListAdapter(List<LastLocation> lastLocationList, int rowLayout, Context context) {
         this.lastLocationList = lastLocationList;
@@ -77,11 +74,14 @@ public class VehiclesListAdapter extends RecyclerView.Adapter<HomeViewHolder> im
         rottweilerApplication = (RottweilerApplication) context.getApplicationContext();
         ttsProviderImpl = TtsProviderFactory.getInstance();
         sharedPrefs = new SharedPreferencesManager(context);
+        dbHelper = new DatabaseHelper(context);
+        if ("enabled".equalsIgnoreCase(context.getString(R.string.fuel)))
+            hideFuel = false;
 
-        if(BuildConfig.FLAVOR.equals("gosafe"))
-        {
-            hideFuel=false;
-        }
+        if ("enabled".equalsIgnoreCase(context.getString(R.string.ac)))
+            showAC = true;
+
+        school = sharedPrefs.getSchoolAccount();
     }
 
     @Override
@@ -91,7 +91,7 @@ public class VehiclesListAdapter extends RecyclerView.Adapter<HomeViewHolder> im
     }
 
     @Override
-    public void onBindViewHolder(HomeViewHolder holder, int position) {
+    public void onBindViewHolder(final HomeViewHolder holder, final int position) {
         final LastLocation lastLocation = filteredList.get(position);
         String address = lastLocation.getAddress();
         if (TextUtils.isEmpty(address) || address.equalsIgnoreCase("NF") || address.equalsIgnoreCase("timeout")) {
@@ -104,7 +104,10 @@ public class VehiclesListAdapter extends RecyclerView.Adapter<HomeViewHolder> im
         holder.speed.setText("Speed: " + lastLocation.getSpeedKPH() + " KPH");
         holder.address.setSelected(true);
         String statusSince = AppUtils.getDatesDifference(lastLocation.getStatusSince(), lastLocation.getCurrentTime(), "STRING");
-        holder.acStatus.setVisibility(View.GONE);
+        if (showAC)
+            holder.acStatus.setVisibility(View.VISIBLE);
+        else
+            holder.acStatus.setVisibility(View.GONE);
 
         if (!TextUtils.isEmpty(lastLocation.getInputMask())) {
             if (lastLocation.getInputMask().equalsIgnoreCase("1")) {
@@ -131,7 +134,7 @@ public class VehiclesListAdapter extends RecyclerView.Adapter<HomeViewHolder> im
         }
 
         if (hideFuel || lastLocation.getCalibrationValues() == null || lastLocation.getCalibrationValues().equalsIgnoreCase("NA"))
-            holder.fuel.setVisibility(View.INVISIBLE);
+            holder.fuel.setVisibility(View.GONE);
         else {
             holder.fuel.setVisibility(View.VISIBLE);
             holder.fuel.setOnClickListener(new View.OnClickListener() {
@@ -144,20 +147,30 @@ public class VehiclesListAdapter extends RecyclerView.Adapter<HomeViewHolder> im
 
         }
 
-        if (lastLocation.getDriverNumber() == null || lastLocation.getDriverNumber().equalsIgnoreCase("NA")) {
-            holder.callButton.setAlpha(0.2f);
-            holder.callButton.setOnClickListener(null);
-        } else {
-            holder.callButton.setAlpha(1.0f);
-            holder.callButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(Intent.ACTION_DIAL);
-                    intent.setData(Uri.parse("tel:" + lastLocation.getDriverNumber()));
-                    context.startActivity(intent);
-                }
-            });
+        holder.parking.setVisibility(View.GONE);
+        if (lastLocation.getParkingStatus() == 0) {
+            holder.parking.setImageResource(R.drawable.disable_parking);
+        } else if (lastLocation.getParkingStatus() == -1) {
+            holder.parking.setImageResource(R.drawable.parking_progress);
+        } else if (lastLocation.getParkingStatus() == 1) {
+            holder.parking.setImageResource(R.mipmap.parking_sign);
         }
+
+        holder.parking.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (lastLocation.getParkingStatus() == 0) {
+                    new SetParkingAlert(sharedPrefs.getAccountId(), lastLocation.getDeviceID(), lastLocation.getStatusCode(), lastLocation.getLatitude(), lastLocation.getLongitude(), lastLocation.getDisplayName(), position).execute();
+                    lastLocation.setParkingStatus(-1);
+                    holder.parking.setImageResource(R.drawable.parking_progress);
+                } else if (lastLocation.getParkingStatus() == 1) {
+                    new DisableParkingAlert(sharedPrefs.getAccountId(), lastLocation.getDeviceID(), position).execute();
+                    lastLocation.setParkingStatus(-1);
+                    holder.parking.setImageResource(R.drawable.parking_progress);
+                }
+            }
+        });
+
 
         if (lastLocation.getStatusCode().equalsIgnoreCase("61714")) {
             holder.thumbText.setText("M");
@@ -165,10 +178,7 @@ public class VehiclesListAdapter extends RecyclerView.Adapter<HomeViewHolder> im
             if (holder.statusSince.getVisibility() == View.VISIBLE) {
                 holder.statusSince.setVisibility(View.GONE);
             }
-            /*if(!TextUtils.isEmpty(statusSince)){
-                holder.statusSince.setVisibility(View.VISIBLE);
-                holder.statusSince.setText("Moving Since: "+statusSince);
-            }*/
+
         } else if (lastLocation.getStatusCode().equalsIgnoreCase("61715")) {
             holder.thumbText.setText("S");
             setShapeBackground(holder.thumbnail.getBackground(), Color.RED);
@@ -211,12 +221,33 @@ public class VehiclesListAdapter extends RecyclerView.Adapter<HomeViewHolder> im
             holder.batterySignalLayout.setVisibility(View.GONE);
         }
         setShapeBackground(holder.mapButton.getBackground(), context.getResources().getColor(R.color.parrot));
-        setShapeBackground(holder.historyButton.getBackground(), context.getResources().getColor(R.color.purpler));
-        setShapeBackground(holder.ignitionButton.getBackground(), context.getResources().getColor(R.color.brown));
 
+        if (school) {
+            holder.historyButton.setVisibility(View.GONE);
+            holder.ignitionButton.setVisibility(View.GONE);
+            holder.callButton.setVisibility(View.GONE);
+        } else {
+            setShapeBackground(holder.historyButton.getBackground(), context.getResources().getColor(R.color.purpler));
+            setShapeBackground(holder.ignitionButton.getBackground(), context.getResources().getColor(R.color.brown));
+
+            if (lastLocation.getDriverNumber() == null || lastLocation.getDriverNumber().equalsIgnoreCase("NA")) {
+                holder.callButton.setAlpha(0.2f);
+                holder.callButton.setOnClickListener(null);
+            } else {
+                holder.callButton.setAlpha(1.0f);
+                holder.callButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(Intent.ACTION_DIAL);
+                        intent.setData(Uri.parse("tel:" + lastLocation.getDriverNumber()));
+                        context.startActivity(intent);
+                    }
+                });
+            }
+            holder.historyButton.setOnClickListener(new ClickListener(2, lastLocation));
+            holder.ignitionButton.setOnClickListener(new ClickListener(3, lastLocation));
+        }
         holder.mapButton.setOnClickListener(new ClickListener(1, lastLocation));
-        holder.historyButton.setOnClickListener(new ClickListener(2, lastLocation));
-        holder.ignitionButton.setOnClickListener(new ClickListener(3, lastLocation));
         holder.tts.setOnClickListener(new ClickListener(4, lastLocation));
     }
 
@@ -315,12 +346,12 @@ public class VehiclesListAdapter extends RecyclerView.Adapter<HomeViewHolder> im
                         Bundle bundle = new Bundle();
                         bundle.putParcelable("lastLocation", lastLocation);
                         fragment.setArguments(bundle);
-                        FragmentManager fragmentManager = activity.getSupportFragmentManager();
+                        FragmentManager fragmentManager = activity.getFragmentManager();
                         FragmentTransaction ft = fragmentManager.beginTransaction();
-                        ft.setCustomAnimations(R.anim.fragment_slide_left_enter, R.anim.fragment_slide_left_exit);
+                        //ft.setCustomAnimations(R.anim.fragment_slide_left_enter, R.anim.fragment_slide_left_exit);
                         ft.replace(R.id.content_frame, fragment);
                         ft.addToBackStack(null);
-                        ft.commit();
+                        ft.commitAllowingStateLoss();
                     } else {
                         Toast.makeText(context, "Data not found for this vehicle!", Toast.LENGTH_SHORT).show();
                     }
@@ -332,12 +363,12 @@ public class VehiclesListAdapter extends RecyclerView.Adapter<HomeViewHolder> im
                         Bundle bundle = new Bundle();
                         bundle.putParcelable("lastLocation", lastLocation);
                         fragment.setArguments(bundle);
-                        FragmentManager fragmentManager = activity.getSupportFragmentManager();
+                        FragmentManager fragmentManager = activity.getFragmentManager();
                         FragmentTransaction ft = fragmentManager.beginTransaction();
-                        ft.setCustomAnimations(R.anim.fragment_slide_left_enter, R.anim.fragment_slide_left_exit);
+                        //ft.setCustomAnimations(R.anim.fragment_slide_left_enter, R.anim.fragment_slide_left_exit);
                         ft.replace(R.id.content_frame, fragment);
                         ft.addToBackStack(null);
-                        ft.commit();
+                        ft.commitAllowingStateLoss();
                     } else {
                         Toast.makeText(context, "Data not found for this vehicle!", Toast.LENGTH_SHORT).show();
                     }
@@ -503,11 +534,11 @@ public class VehiclesListAdapter extends RecyclerView.Adapter<HomeViewHolder> im
 
             fuelValue.setText("Fuel : " + result + " Ltrs");
 
-            result=result.replace("\"","");
+            result = result.replace("\"", "");
 
             try {
-                int from = (int)(Float.parseFloat(result) * 3.5);
-                int to = (int)(Float.parseFloat(result) * 4.5);
+                int from = (int) (Float.parseFloat(result) * 3.5);
+                int to = (int) (Float.parseFloat(result) * 4.5);
                 expectedLeftRun.setText("Your Vehicle can run for " + from + " - " + to + " Kms more (*)");
             } catch (NumberFormatException e) {
                 expectedLeftRun.setText("Vehicle can run for ##-## Kms more (*)");
@@ -523,4 +554,74 @@ public class VehiclesListAdapter extends RecyclerView.Adapter<HomeViewHolder> im
         }
     }
 
+    private class SetParkingAlert extends AsyncTask<Void, Void, String> {
+
+        private String accountID;
+        private String deviceID;
+        private String lat, statusCode;
+        private String longitude;
+        private String vehNo;
+        private int position;
+
+        public SetParkingAlert(String accountID, String deviceID, String statusCode, String lat, String longitude, String vehNo, int position) {
+            this.accountID = accountID;
+            this.deviceID = deviceID;
+            this.lat = lat;
+            this.longitude = longitude;
+            this.vehNo = vehNo;
+            this.statusCode = statusCode;
+            this.position = position;
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            String result = ((MainActivity) context).getSoapServiceInstance().setParking(accountID, deviceID, statusCode, lat, longitude, "NA", vehNo);
+            if ("success".equalsIgnoreCase(result))
+                dbHelper.alterParking(deviceID);
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            if ("success".equalsIgnoreCase(result))
+                lastLocationList.get(position).setParkingStatus(1);
+            else
+                lastLocationList.get(position).setParkingStatus(0);
+            notifyItemChanged(position);
+        }
+    }
+
+
+    private class DisableParkingAlert extends AsyncTask<Void, Void, String> {
+
+        private String accountID;
+        private String deviceID;
+        private int position;
+
+        public DisableParkingAlert(String accountID, String deviceID, int position) {
+            this.accountID = accountID;
+            this.deviceID = deviceID;
+            this.position = position;
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            String result = ((MainActivity) context).getSoapServiceInstance().disableParking(accountID, deviceID);
+            if ("success".equalsIgnoreCase(result))
+                dbHelper.deleteParking(deviceID);
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            if ("success".equalsIgnoreCase(result))
+                lastLocationList.get(position).setParkingStatus(0);
+            else
+                lastLocationList.get(position).setParkingStatus(1);
+            notifyItemChanged(position);
+
+        }
+    }
 }

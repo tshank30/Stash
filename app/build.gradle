@@ -6,19 +6,19 @@ android {
     /*flavorDimensions "ftelematics", "rottweiler","xdtracker","tracknow","gpspro","secureme","libi","queen","zeestar","scanmoto","rkdk","trackall","shreegroup","kss","fleetonix","pandher","jvs",
         "fguard","attrack","cloud9","nps","tgi","avam","zelus","sampurn","lakshya","guruseva","trackvision","swastik","halcon","single","national","wavetech","kansara","kansara","technosoft","jktrackers",
             "gktrackers","motocop","global","letslocate","bigdata","spak","vriddhi","avtracker","brandwatch","techdrive","tfstracker","ffever","goaxis"*/
-    compileSdkVersion 23
-    buildToolsVersion '26.0.2'
+    compileSdkVersion 26
+    buildToolsVersion '27.0.3'
 
     defaultConfig {
-        minSdkVersion 16
-        targetSdkVersion 23
+        minSdkVersion 17
+        targetSdkVersion 26
         versionCode 3
         versionName "1.2"
     }
 
 
     signingConfigs {
-       release {
+        release {
             storeFile file("/Users/shashanktiwari/Downloads/rottweiler-release-key.keystore")
             storePassword "fst@123"
             keyAlias "rottweiler"
@@ -27,518 +27,802 @@ android {
     }
 
     productFlavors {
-        ftelematics{
+        ftelematics {
             dimension "ftelematics"
             applicationId "com.fst.apps.ftelematics"
             resValue "string", "app_name", "VTS System"
-            versionCode 23
-            versionName "1.7"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "enabled"
+            resValue "string", "fuel", "enabled"
+            versionCode 30
+            versionName "2.4"
         }
 
-        rottweiler{
+        rottweiler {
             dimension "ftelematics"
             applicationId "com.fst.apps.rottweilertrackers"
             resValue "string", "app_name", "Rottweiler Trackers"
-            versionCode 5
-            versionName "1.4"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 6
+            versionName "1.5"
         }
 
-        xdtracker{
+        xdtracker {
             dimension "ftelematics"
             applicationId "com.fst.apps.xdtracker"
             resValue "string", "app_name", "XD Tracker"
-            versionCode 5
-            versionName "1.4"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 6
+            versionName "1.5"
         }
 
-        tracknow{
+        tracknow {
             dimension "ftelematics"
             applicationId "com.fst.apps.tracknow"
             resValue "string", "app_name", "TrackNow Pro"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "enabled"
+            resValue "string", "fuel", "enabled"
+            versionCode 13
+            versionName "2.2"
+        }
+
+        gpspro {
+            dimension "ftelematics"
+            applicationId "com.fst.apps.gpspro"
+            resValue "string", "app_name", "GPS Pro"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 7
+            versionName "1.6"
+        }
+
+        secureme {
+            dimension "ftelematics"
+            applicationId "com.fst.apps.secureme"
+            resValue "string", "app_name", "Secure Me"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 6
+            versionName "1.5"
+        }
+
+        libi {
+            dimension "ftelematics"
+            applicationId "com.fst.apps.libi"
+            resValue "string", "app_name", "Libi Track Pro"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
             versionCode 8
             versionName "1.7"
         }
 
-        gpspro{
-            dimension "ftelematics"
-            applicationId "com.fst.apps.gpspro"
-            resValue "string", "app_name", "GPS Pro"
-            versionCode 5
-            versionName "1.4"
-        }
-
-        secureme{
-            dimension "ftelematics"
-            applicationId "com.fst.apps.secureme"
-            resValue "string", "app_name", "Secure Me"
-            versionCode 3
-            versionName "1.2"
-        }
-
-        libi{
-           dimension "ftelematics"
-            applicationId "com.fst.apps.libi"
-            resValue "string", "app_name", "Libi Track Pro"
-            versionCode 6
-            versionName "1.5"
-        }
-
-        gwtrackers{
+        gwtrackers {
             dimension "ftelematics"
             applicationId "com.fst.apps.gwtrackers"
             resValue "string", "app_name", "GW Trackers Pro"
-            versionCode 3
-            versionName "1.2"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 4
+            versionName "1.3"
         }
 
-        queen{
+        queen {
             dimension "ftelematics"
             applicationId "com.fst.apps.queen"
             resValue "string", "app_name", "Queen VTS Pro"
-            versionCode 4
-            versionName "1.3"
-        }
-
-        zeestar{
-            dimension "ftelematics"
-            applicationId "com.fst.apps.zeestar"
-            resValue "string", "app_name", "Zee Star Track Pro"
-            versionCode 3
-            versionName "1.3"
-        }
-
-        scanmoto{
-            dimension "ftelematics"
-            applicationId "com.fst.apps.scanmoto"
-            resValue "string", "app_name", "Scan Moto Track Pro"
-            versionCode 4
-            versionName "1.4"
-        }
-
-        rkdk{
-            dimension "ftelematics"
-            applicationId "com.fst.apps.rkdk"
-            resValue "string", "app_name", "VTS Pro"
-            versionCode 6
-            versionName "1.5"
-        }
-
-        trackall{
-            dimension "ftelematics"
-            applicationId "com.fst.apps.trackall"
-            resValue "string", "app_name", "Track All"
-            versionCode 3
-            versionName "1.2"
-        }
-
-        shreegroup{
-            dimension "ftelematics"
-            applicationId "com.fst.apps.shreegroup"
-            resValue "string", "app_name", "Shree Group"
-            versionCode 2
-            versionName "1.1"
-        }
-
-        kss{
-            dimension "ftelematics"
-            applicationId "com.fst.apps.kss"
-            resValue "string", "app_name","KSS Trackers"
-            versionCode 2
-            versionName "1.1"
-        }
-
-        fleetonix{
-            dimension "ftelematics"
-            applicationId "com.fst.apps.fleetonix"
-            resValue "string", "app_name","Fleetonix Trackers"
-            versionCode 2
-            versionName "1.1"
-        }
-
-        pandher{
-            dimension "ftelematics"
-            applicationId "com.fst.apps.pandher"
-            resValue "string", "app_name","Pandher Vehicle Trackers"
-            versionCode 2
-            versionName "1.1"
-        }
-
-        jvs{
-            dimension "ftelematics"
-            applicationId "com.fst.apps.jvs"
-            resValue "string", "app_name","JVS Trackers"
-            versionCode 2
-            versionName "1.1"
-        }
-
-        fguard{
-            dimension "ftelematics"
-            applicationId "com.fst.apps.fguard"
-            resValue "string", "app_name","Fleet Guard Pro"
-            versionCode 3
-            versionName "1.2"
-        }
-
-        attrack{
-            dimension "ftelematics"
-            applicationId "com.fst.apps.attrack"
-            resValue "string", "app_name","At Track"
-            versionCode 3
-            versionName "1.2"
-        }
-
-        cloud9{
-            dimension "ftelematics"
-            applicationId "com.fst.apps.cloud9tracker"
-            resValue "string", "app_name","Cloud9 true tracker"
-            versionCode 2
-            versionName "1.1"
-        }
-
-        nps{
-            dimension "ftelematics"
-            applicationId "com.fst.apps.nps"
-            resValue "string", "app_name","NPS Tracking System"
-            versionCode 3
-            versionName "1.2"
-        }
-
-        tgi{
-            dimension "ftelematics"
-            applicationId "com.fst.apps.tgi"
-            resValue "string", "app_name","TGI GPS"
-            versionCode 2
-            versionName "1.1"
-        }
-
-        avam{
-            dimension "ftelematics"
-            applicationId "com.fst.apps.avam"
-            resValue "string", "app_name","Avam Tracker"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
             versionCode 5
             versionName "1.4"
         }
 
-        zelus{
+        zeestar {
+            dimension "ftelematics"
+            applicationId "com.fst.apps.zeestar"
+            resValue "string", "app_name", "Zee Star Track Pro"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 4
+            versionName "1.4"
+        }
+
+        scanmoto {
+            dimension "ftelematics"
+            applicationId "com.fst.apps.scanmoto"
+            resValue "string", "app_name", "Scan Moto Track Pro"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 5
+            versionName "1.5"
+        }
+
+        rkdk {
+            dimension "ftelematics"
+            applicationId "com.fst.apps.rkdk"
+            resValue "string", "app_name", "VTS Pro"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 7
+            versionName "1.6"
+        }
+
+        trackall {
+            dimension "ftelematics"
+            applicationId "com.fst.apps.trackall"
+            resValue "string", "app_name", "Track All"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 4
+            versionName "1.3"
+        }
+
+        shreegroup {
+            dimension "ftelematics"
+            applicationId "com.fst.apps.shreegroup"
+            resValue "string", "app_name", "Shree Group"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 3
+            versionName "1.2"
+        }
+
+        kss {
+            dimension "ftelematics"
+            applicationId "com.fst.apps.kss"
+            resValue "string", "app_name", "KSS Trackers"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 4
+            versionName "1.3"
+        }
+
+        fleetonix {
+            dimension "ftelematics"
+            applicationId "com.fst.apps.fleetonix"
+            resValue "string", "app_name", "Fleetonix Trackers"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 4
+            versionName "1.3"
+        }
+
+        pandher {
+            dimension "ftelematics"
+            applicationId "com.fst.apps.pandher"
+            resValue "string", "app_name", "Pandher Vehicle Trackers"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 3
+            versionName "1.2"
+        }
+
+        jvs {
+            dimension "ftelematics"
+            applicationId "com.fst.apps.jvs"
+            resValue "string", "app_name", "JVS Trackers"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 3
+            versionName "1.2"
+        }
+
+        fguard {
+            dimension "ftelematics"
+            applicationId "com.fst.apps.fguard"
+            resValue "string", "app_name", "Fleet Guard Pro"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 4
+            versionName "1.3"
+        }
+
+        attrack {
+            dimension "ftelematics"
+            applicationId "com.fst.apps.attrack"
+            resValue "string", "app_name", "At Track"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 4
+            versionName "1.3"
+        }
+
+        cloud9 {
+            dimension "ftelematics"
+            applicationId "com.fst.apps.cloud9tracker"
+            resValue "string", "app_name", "Cloud9 true tracker"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 3
+            versionName "1.2"
+        }
+
+        nps {
+            dimension "ftelematics"
+            applicationId "com.fst.apps.nps"
+            resValue "string", "app_name", "NPS Tracking System"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 4
+            versionName "1.3"
+        }
+
+        tgi {
+            dimension "ftelematics"
+            applicationId "com.fst.apps.tgi"
+            resValue "string", "app_name", "TGI GPS"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 3
+            versionName "1.2"
+        }
+
+        avam {
+            dimension "ftelematics"
+            applicationId "com.fst.apps.avam"
+            resValue "string", "app_name", "Avam Tracker"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 7
+            versionName "1.6"
+        }
+
+        zelus {
             dimension "ftelematics"
             applicationId "com.fst.apps.zelus"
-            resValue "string", "app_name","Zelus Trackers"
-            versionCode 2
-            versionName "1.1"
+            resValue "string", "app_name", "Zelus Trackers"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 3
+            versionName "1.2"
         }
 
-        sampurn{
+        sampurn {
             dimension "ftelematics"
             applicationId "com.fst.apps.sampurn"
-            resValue "string", "app_name","Sampurn Vehicle Tracking"
-            versionCode 3
-            versionName "1.1"
+            resValue "string", "app_name", "Sampurn Vehicle Tracking"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 4
+            versionName "1.2"
         }
 
-        lakshya{
+        lakshya {
             dimension "ftelematics"
             applicationId "com.fst.apps.lakshya"
-            resValue "string", "app_name","ILakshya Track"
-            versionCode 2
-            versionName "1.1"
+            resValue "string", "app_name", "ILakshya Track"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 3
+            versionName "1.2"
         }
 
-        guruseva{
+        guruseva {
             dimension "ftelematics"
             applicationId "com.fst.apps.guruseva"
-            resValue "string", "app_name","Guruseva VTS SYSTEM"
-            versionCode 2
-            versionName "1.1"
+            resValue "string", "app_name", "Guruseva VTS SYSTEM"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 3
+            versionName "1.2"
         }
 
-        trackvision{
+        trackvision {
             dimension "ftelematics"
             applicationId "com.fst.apps.trackvision"
-            resValue "string", "app_name","Track Vision"
-            versionCode 2
-            versionName "1.1"
+            resValue "string", "app_name", "Track Vision"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "enabled"
+            resValue "string", "fuel", "enabled"
+            versionCode 5
+            versionName "1.4"
         }
 
-        swastik{
+        swastik {
             dimension "ftelematics"
             applicationId "com.fst.apps.swastik"
-            resValue "string", "app_name","Swastik"
-            versionCode 3
-            versionName "1.2"
+            resValue "string", "app_name", "Swastik"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 5
+            versionName "1.4"
         }
 
-        halcon{
+        halcon {
             dimension "ftelematics"
             applicationId "com.fst.apps.halcon"
-            resValue "string", "app_name","Halcon"
-            versionCode 4
-            versionName "1.3"
+            resValue "string", "app_name", "Halcon"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 5
+            versionName "1.4"
         }
 
-        single{
+        single {
             dimension "ftelematics"
             applicationId "com.fst.apps.single"
-            resValue "string", "app_name","Finger Trackers"
-            versionCode 2
-            versionName "1.1"
+            resValue "string", "app_name", "Finger Trackers"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 5
+            versionName "1.4"
         }
 
-        national{
+        national {
             dimension "ftelematics"
             applicationId "com.fst.apps.national"
-            resValue "string", "app_name","National Trackers"
-            versionCode 3
-            versionName "1.2"
+            resValue "string", "app_name", "National Trackers"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 4
+            versionName "1.3"
         }
 
-        wavetech{
+        wavetech {
             dimension "ftelematics"
             applicationId "com.fst.apps.wavetech"
-            resValue "string", "app_name","WaveTech Trackers"
-            versionCode 2
-            versionName "1.1"
+            resValue "string", "app_name", "WaveTech Trackers"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 4
+            versionName "1.3"
         }
 
-        kansara{
+        kansara {
             dimension "ftelematics"
             applicationId "com.fst.apps.kansara"
-            resValue "string", "app_name","Kansara Technosis"
-            versionCode 2
-            versionName "1.1"
+            resValue "string", "app_name", "Kansara Technosis"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 4
+            versionName "1.3"
         }
 
-        technosoft{
+        technosoft {
             dimension "ftelematics"
             applicationId "com.fst.apps.technosoft"
-            resValue "string", "app_name"," Technosoft Technology"
-            versionCode 2
-            versionName "1.1"
+            resValue "string", "app_name", " Technosoft Technology"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 4
+            versionName "1.3"
         }
 
-        jktrackers{
+        jktrackers {
             dimension "ftelematics"
             applicationId "com.fst.apps.jktrackers"
-            resValue "string", "app_name"," JK Trackers"
-            versionCode 1
-            versionName "1.0"
+            resValue "string", "app_name", " JK Trackers"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 2
+            versionName "1.1"
         }
 
-        gktrackers{
+        gktrackers {
             dimension "ftelematics"
             applicationId "com.fst.apps.gktrackers"
-            resValue "string", "app_name"," GK Trackers"
-            versionCode 1
-            versionName "1.0"
+            resValue "string", "app_name", " GK Trackers"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 2
+            versionName "1.1"
         }
 
-        motocop{
+        motocop {
             dimension "ftelematics"
             applicationId "com.fst.apps.motocop"
-            resValue "string", "app_name"," Motocop GPS"
-            versionCode 4
-            versionName "1.3"
+            resValue "string", "app_name", " Motocop GPS"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 6
+            versionName "1.5"
         }
 
-        global{
+        global {
             dimension "ftelematics"
             applicationId "com.fst.apps.global"
-            resValue "string", "app_name"," Global Trackers"
-            versionCode 1
-            versionName "1.0"
-        }
-
-        letslocate{
-            dimension "ftelematics"
-            applicationId "com.fst.apps.letslocate"
-            resValue "string", "app_name","Letslocate"
-            versionCode 1
-            versionName "1.0"
-        }
-
-        bigdata{
-            dimension "ftelematics"
-            applicationId "com.fst.apps.bigdata"
-            resValue "string", "app_name","Big data Trackers"
-            versionCode 1
-            versionName "1.0"
-        }
-
-        spak{
-            dimension "ftelematics"
-            applicationId "com.fst.apps.spak"
-            resValue "string", "app_name","Spak Trackers"
-            versionCode 1
-            versionName "1.0"
-        }
-
-        vriddhi{
-            dimension "ftelematics"
-            applicationId "com.fst.apps.vriddhi"
-            resValue "string", "app_name","Vriddhi GPS Trackers"
-            versionCode 1
-            versionName "1.0"
-        }
-
-        avtracker{
-            dimension "ftelematics"
-            applicationId "com.fst.apps.avtracker"
-            resValue "string", "app_name","AV Trackers"
-            versionCode 2
-            versionName "1.1"
-        }
-
-        brandwatch{
-            dimension "ftelematics"
-            applicationId "com.fst.apps.brandwatch"
-            resValue "string", "app_name","Trackon GPS"
+            resValue "string", "app_name", " Global Trackers"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
             versionCode 4
             versionName "1.3"
         }
 
-        techdrive{
+        letslocate {
             dimension "ftelematics"
-            applicationId "com.fst.apps.techdrive"
-            resValue "string", "app_name","Tech Drive"
-            versionCode 2
-            versionName "1.1"
-        }
-
-        tfstracker{
-            dimension "ftelematics"
-            applicationId "com.fst.apps.tfstracker"
-            resValue "string", "app_name","24x7 Tracker"
-            versionCode 1
-            versionName "1.0"
-        }
-
-        ffever{
-            dimension "ftelematics"
-            applicationId "com.fst.apps.ffever"
-            resValue "string", "app_name","FFEVER Tracker"
+            applicationId "com.fst.apps.letslocate"
+            resValue "string", "app_name", "Letslocate"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
             versionCode 3
             versionName "1.2"
         }
 
-        goaxis{
+        bigdata {
+            dimension "ftelematics"
+            applicationId "com.fst.apps.bigdata"
+            resValue "string", "app_name", "Big data Trackers"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 3
+            versionName "1.2"
+        }
+
+        spak {
+            dimension "ftelematics"
+            applicationId "com.fst.apps.spak"
+            resValue "string", "app_name", "Spak Trackers"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 2
+            versionName "1.1"
+        }
+
+        vriddhi {
+            dimension "ftelematics"
+            applicationId "com.fst.apps.vriddhi"
+            resValue "string", "app_name", "Vriddhi GPS Trackers"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 2
+            versionName "1.1"
+        }
+
+        avtracker {
+            dimension "ftelematics"
+            applicationId "com.fst.apps.avtracker"
+            resValue "string", "app_name", "AV Trackers"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 4
+            versionName "1.3"
+        }
+
+        brandwatch {
+            dimension "ftelematics"
+            applicationId "com.fst.apps.brandwatch"
+            resValue "string", "app_name", "Trackon GPS"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 6
+            versionName "1.5"
+            //done
+        }
+
+        techdrive {
+            dimension "ftelematics"
+            applicationId "com.fst.apps.techdrive"
+            resValue "string", "app_name", "Tech Drive"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 4
+            versionName "1.3"
+        }
+
+        tfstracker {
+            dimension "ftelematics"
+            applicationId "com.fst.apps.tfstracker"
+            resValue "string", "app_name", "24x7 Tracker"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 2
+            versionName "1.1"
+        }
+
+        ffever {
+            dimension "ftelematics"
+            applicationId "com.fst.apps.ffever"
+            resValue "string", "app_name", "FFEVER Tracker"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 5
+            versionName "1.4"
+        }
+
+        goaxis {
             dimension "ftelematics"
             applicationId "com.fst.apps.goaxis"
-            resValue "string", "app_name","GoAxis Tracker"
-            versionCode 1
-            versionName "1.0"
+            resValue "string", "app_name", "GoAxis Tracker"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 2
+            versionName "1.1"
         }
 
-        neellion{
+        neellion {
             dimension "ftelematics"
             applicationId "com.fst.apps.neellion"
-            resValue "string", "app_name","Neellion Tracke"
-            versionCode 1
-            versionName "1.0"
+            resValue "string", "app_name", "Neellion Tracke"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 3
+            versionName "1.2"
         }
 
-        earth{
+        earth {
             dimension "ftelematics"
             applicationId "com.fst.apps.earth"
-            resValue "string", "app_name","Earth Infotech"
-            versionCode 2
-            versionName "1.1"
+            resValue "string", "app_name", "Earth Infotech"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 3
+            versionName "1.2"
         }
 
-        trackkaro{
+        trackkaro {
             dimension "ftelematics"
             applicationId "com.fst.apps.trackkaro"
-            resValue "string", "app_name","Track Karo"
-            versionCode 1
-            versionName "1.0"
+            resValue "string", "app_name", "Track Karo"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 3
+            versionName "1.2"
         }
 
-        trackkaronew{
+        trackkaronew {
             dimension "ftelematics"
             applicationId "com.fst.apps.trackkaroltd"
-            resValue "string", "app_name","Track Karo"
-            versionCode 1
-            versionName "1.0"
+            resValue "string", "app_name", "Track Karo"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 5
+            versionName "1.4"
         }
 
-        gosafe{
+        gosafe {
             dimension "ftelematics"
             applicationId "com.fst.apps.gosafe"
-            resValue "string", "app_name","GoSafe Trackers"
+            resValue "string", "app_name", "GoSafe Trackers"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "enabled"
+            resValue "string", "fuel", "enabled"
+
+            versionCode 10
+            versionName "1.9"
+        }
+
+        triveda {
+            dimension "ftelematics"
+            applicationId "com.fst.apps.triveda"
+            resValue "string", "app_name", "Triveda"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
             versionCode 2
             versionName "1.1"
         }
 
-        skyroad{
+        skyroad {
             dimension "ftelematics"
             applicationId "com.fst.apps.skyroad"
-            resValue "string", "app_name","Skyroad"
-            versionCode 1
-            versionName "1.0"
-        }
-
-        route{
-            dimension "ftelematics"
-            applicationId "com.fst.apps.route"
-            resValue "string", "app_name","Route tracker"
-            versionCode 1
-            versionName "1.0"
-        }
-
-        vtracker{
-            dimension "ftelematics"
-            applicationId "com.fst.apps.vtracker"
-            resValue "string", "app_name","V Tracker"
-            versionCode 1
-            versionName "1.0"
-        }
-
-        smarteye{
-            dimension "ftelematics"
-            applicationId "com.fst.apps.smarteye"
-            resValue "string", "app_name","Smart Eye"
-            versionCode 1
-            versionName "1.0"
-        }
-
-        meher{
-            dimension "ftelematics"
-            applicationId "com.fst.apps.meher"
-            resValue "string", "app_name","Meher Trackers"
-            versionCode 1
-            versionName "1.0"
-        }
-
-        track9gold{
-            dimension "ftelematics"
-            applicationId "com.fst.apps.track9gold"
-            resValue "string", "app_name","Track9gold"
-            versionCode 1
-            versionName "1.0"
-        }
-
-        onex{
-            dimension "ftelematics"
-            applicationId "com.fst.apps.onex"
-            resValue "string", "app_name","Onex Tracker"
+            resValue "string", "app_name", "Skyroad"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
             versionCode 2
             versionName "1.1"
         }
 
+        route {
+            dimension "ftelematics"
+            applicationId "com.fst.apps.route"
+            resValue "string", "app_name", "Route tracker"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 3
+            versionName "1.2"
+        }
 
+        vtracker {
+            dimension "ftelematics"
+            applicationId "com.fst.apps.vtracker"
+            resValue "string", "app_name", "V Tracker"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 2
+            versionName "1.1"
+        }
 
+        smarteye {
+            dimension "ftelematics"
+            applicationId "com.fst.apps.smarteye"
+            resValue "string", "app_name", "Smart Eye"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 5
+            versionName "1.4"
+        }
+
+        meher {
+            dimension "ftelematics"
+            applicationId "com.fst.apps.meher"
+            resValue "string", "app_name", "Meher Trackers"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 3
+            versionName "1.2"
+        }
+
+        track9gold {
+            dimension "ftelematics"
+            applicationId "com.fst.apps.track9gold"
+            resValue "string", "app_name", "Track9gold"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 3
+            versionName "1.2"
+        }
+
+        onex {
+            dimension "ftelematics"
+            applicationId "com.fst.apps.onex"
+            resValue "string", "app_name", "Onex Tracker"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 4
+            versionName "1.3"
+        }
+
+        boss {
+            dimension "ftelematics"
+            applicationId "com.fst.apps.boss"
+            resValue "string", "app_name", "Boss Tracker"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 1
+            versionName "1.0"
+        }
+
+        k {
+            dimension "ftelematics"
+            applicationId "com.fst.apps.k"
+            resValue "string", "app_name", "K trackers"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "enabled"
+            versionCode 5
+            versionName "1.4"
+        }
+
+        top {
+            dimension "ftelematics"
+            applicationId "com.fst.apps.top"
+            resValue "string", "app_name", "top trackers"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 2
+            versionName "1.1"
+        }
+
+        virtual {
+            dimension "ftelematics"
+            applicationId "com.fst.apps.virtual"
+            resValue "string", "app_name", "Virtual India"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 1
+            versionName "1.0"
+        }
+
+        shakti {
+            dimension "ftelematics"
+            applicationId "com.fst.apps.shakti"
+            resValue "string", "app_name", "Shakti"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 1
+            versionName "1.0"
+        }
+
+        sbt {
+            dimension "ftelematics"
+            applicationId "com.fst.apps.sbt"
+            resValue "string", "app_name", "School bus Tracking"
+            versionCode 2
+            versionName "1.1"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+        }
+
+        globalvision {
+            dimension "ftelematics"
+            applicationId "com.fst.apps.globalvision"
+            resValue "string", "app_name", "Global Vision"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "disabled"
+            resValue "string", "fuel", "disabled"
+            versionCode 2
+            versionName "1.1"
+        }
+
+        milepro {
+            dimension "ftelematics"
+            applicationId "com.fst.apps.milepro"
+            resValue "string", "app_name", "Map Your Mile Pro"
+            resValue "string", "parking", "disabled"
+            resValue "string", "ac", "enabled"
+            resValue "string", "fuel", "enabled"
+            versionCode 4
+            versionName "1.3"
+        }
     }
 
     buildTypes {
-       /* release {
-            signingConfig signingConfigs.release
+        /* release {
+             signingConfig signingConfigs.release
 
-            minifyEnabled false
+             minifyEnabled false
 
-FFEVER Tracker
+ FFEVER Tracker
 
-24x7 Tracker
+ 24x7 Tracker
 
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }*/
+             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+         }*/
     }
 
     lintOptions {
@@ -552,18 +836,26 @@ repositories {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    testCompile 'junit:junit:3.8.2'
-    compile ('com.android.support:appcompat-v7:23.1.1')
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    testImplementation 'junit:junit:3.8.2'
+    implementation('com.android.support:appcompat-v7:26.0.2')
             {
                 exclude module: 'support-v4'
             }
-    compile 'com.android.support:design:23.1.1'
-    compile 'com.android.support:cardview-v7:23.1.1'
-    compile 'com.android.support:recyclerview-v7:23.1.1'
-    compile 'com.google.android.gms:play-services-gcm:8.4.0'
-    compile 'com.google.code.gson:gson:2.5'
-    compile 'com.google.android.gms:play-services-maps:8.4.0'
-    compile 'com.joanzapata.iconify:android-iconify-fontawesome:2.1.1'
-    compile 'com.github.PhilJay:MPAndroidChart:v2.2.4'
+    implementation 'com.android.support:support-v13:28.0.0-alpha3'
+    implementation 'com.android.support:design:26.0.2'
+    implementation 'com.android.support:cardview-v7:26.0.2'
+    implementation 'com.android.support:recyclerview-v7:26.0.2'
+    implementation 'com.google.android.gms:play-services-gcm:10.2.1'
+    implementation 'com.google.code.gson:gson:2.5'
+    implementation 'com.google.android.gms:play-services-maps:10.2.1'
+    implementation 'com.google.android.gms:play-services-places:10.2.1'
+    implementation 'com.joanzapata.iconify:android-iconify-fontawesome:2.1.1'
+    implementation 'com.github.PhilJay:MPAndroidChart:v2.2.4'
+}
+
+configurations.all {
+    resolutionStrategy {
+        force 'com.android.support:support-v4:26.0.2'
+    }
 }

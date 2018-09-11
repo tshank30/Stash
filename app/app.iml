@@ -126,8 +126,6 @@
       <sourceFolder url="file://$MODULE_DIR$/src/androidTest/java" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/androidTest/rs" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/androidTest/shaders" isTestSource="true" />
-      <excludeFolder url="file://$MODULE_DIR$/build/.DS_Store" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/.DS_Store" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/assets" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/blame" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/check-manifest" />
@@ -143,29 +141,39 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/shaders" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/splits-support" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/symbols" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/tmp" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/transforms" />
       <excludeFolder url="file://$MODULE_DIR$/build/outputs" />
       <excludeFolder url="file://$MODULE_DIR$/build/reports" />
       <excludeFolder url="file://$MODULE_DIR$/build/tmp" />
     </content>
-    <orderEntry type="jdk" jdkName="Android API 23 Platform (1)" jdkType="Android SDK" />
+    <orderEntry type="jdk" jdkName="Android API 26 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="com.android.support:support-v4-23.1.1" level="project" />
-    <orderEntry type="library" name="com.joanzapata.iconify:android-iconify-fontawesome-2.1.1" level="project" />
-    <orderEntry type="library" name="com.joanzapata.iconify:android-iconify-2.1.1" level="project" />
-    <orderEntry type="library" name="com.github.PhilJay:MPAndroidChart:v2.2.4@jar" level="project" />
-    <orderEntry type="library" name="com.google.android.gms:play-services-maps-8.4.0" level="project" />
-    <orderEntry type="library" name="com.google.android.gms:play-services-base-8.4.0" level="project" />
-    <orderEntry type="library" name="com.android.support:cardview-v7-23.1.1" level="project" />
-    <orderEntry type="library" name="com.android.support:appcompat-v7-23.1.1" level="project" />
-    <orderEntry type="library" name="com.google.android.gms:play-services-gcm-8.4.0" level="project" />
-    <orderEntry type="library" name="com.google.code.gson:gson:2.5@jar" level="project" />
-    <orderEntry type="library" name="com.android.support:design-23.1.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="junit:junit:3.8.2@jar" level="project" />
-    <orderEntry type="library" name="com.android.support:support-annotations:23.1.1@jar" level="project" />
-    <orderEntry type="library" name="com.google.android.gms:play-services-measurement-8.4.0" level="project" />
-    <orderEntry type="library" name="com.android.support:recyclerview-v7-23.1.1" level="project" />
-    <orderEntry type="library" name="com.google.android.gms:play-services-basement-8.4.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.android.gms:play-services-basement-10.2.1" level="project" />
+    <orderEntry type="library" name="Gradle: com.android.support:animated-vector-drawable-26.0.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.joanzapata.iconify:android-iconify-2.1.1" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.code.gson:gson:2.5@jar" level="project" />
+    <orderEntry type="library" name="Gradle: com.android.support:transition-26.0.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.android.gms:play-services-base-10.2.1" level="project" />
+    <orderEntry type="library" name="Gradle: com.android.support:support-fragment-26.0.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.android.gms:play-services-maps-10.2.1" level="project" />
+    <orderEntry type="library" name="Gradle: com.joanzapata.iconify:android-iconify-fontawesome-2.1.1" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.android.gms:play-services-places-10.2.1" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.PhilJay:MPAndroidChart:v2.2.4@jar" level="project" />
+    <orderEntry type="library" name="Gradle: com.android.support:support-media-compat-26.0.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.android.support:support-v4-26.0.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.android.support:support-compat-26.0.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.android.support:appcompat-v7-26.0.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.android.support:support-annotations:26.0.2@jar" level="project" />
+    <orderEntry type="library" name="Gradle: com.android.support:support-v13-28.0.0-alpha3" level="project" />
+    <orderEntry type="library" name="Gradle: com.android.support:recyclerview-v7-26.0.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.android.support:support-vector-drawable-26.0.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.android.support:support-core-ui-26.0.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.android.gms:play-services-gcm-10.2.1" level="project" />
+    <orderEntry type="library" name="Gradle: com.android.support:support-core-utils-26.0.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.android.gms:play-services-tasks-10.2.1" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.android.gms:play-services-iid-10.2.1" level="project" />
+    <orderEntry type="library" name="Gradle: com.android.support:cardview-v7-26.0.2" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: junit:junit:3.8.2@jar" level="project" />
+    <orderEntry type="library" name="Gradle: com.android.support:design-26.0.2" level="project" />
   </component>
 </module>

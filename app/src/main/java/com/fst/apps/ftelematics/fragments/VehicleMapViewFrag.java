@@ -3,34 +3,37 @@ package com.fst.apps.ftelematics.fragments;
 import android.animation.ObjectAnimator;
 import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
+import android.app.Fragment;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
+import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.fst.apps.ftelematics.MainActivity;
@@ -46,10 +49,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.Projection;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
@@ -59,13 +60,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -82,11 +78,14 @@ public class VehicleMapViewFrag extends Fragment implements LoaderTaskVehicleLis
     private Handler handler = new Handler();
     private GoogleMap googleMap;
     private RadioGroup radioGroup;
+    private FloatingActionButton shareLive;
     private TextView speedTextView, timestampText, totalDistanceTextView;
     private int mapType;
     private ArrayList MarkerPoints;
     //private TextView distance, duration, current_time, clear, arrival_status, vehicle_no;
     private String x, t;
+    private Calendar calendar = Calendar.getInstance();
+    private Calendar newDate;
     static int updateVariable = 0;
     private Marker marker;
     private int no_of_hits = 0;
@@ -96,7 +95,12 @@ public class VehicleMapViewFrag extends Fragment implements LoaderTaskVehicleLis
     private ImageView notification, logout;
     private AlertDialog dialog;
     private PolylineOptions options;
+    private int year, monthOfYear, dayOfMonth;
     private ValueAnimator markerAnimator;
+    private DatePickerDialog datePickerDialog_from;
+    private TimePickerDialog timeFromDialog;
+    private View rootView;
+    private int retry = 0;
 
 
     @Override
@@ -126,11 +130,12 @@ public class VehicleMapViewFrag extends Fragment implements LoaderTaskVehicleLis
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_vehicle_map_view, container, false);
-        radioGroup = (RadioGroup) rootView.findViewById(R.id.map_types);
-        speedTextView = (TextView) rootView.findViewById(R.id.speedText);
-        totalDistanceTextView = (TextView) rootView.findViewById(R.id.totalDistanceText);
-        timestampText = (TextView) rootView.findViewById(R.id.timestampText);
+        rootView = inflater.inflate(R.layout.fragment_vehicle_map_view, container, false);
+        radioGroup = rootView.findViewById(R.id.map_types);
+        speedTextView = rootView.findViewById(R.id.speedText);
+        totalDistanceTextView = rootView.findViewById(R.id.totalDistanceText);
+        timestampText = rootView.findViewById(R.id.timestampText);
+        shareLive = rootView.findViewById(R.id.share_live);
         context = getActivity();
         //DatabaseHelper databaseHelper = new DatabaseHelper(context);
 
@@ -144,7 +149,7 @@ public class VehicleMapViewFrag extends Fragment implements LoaderTaskVehicleLis
 
 
         if (googleMap == null) {
-            ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map)).getMapAsync(new OnMapReadyCallback() {
+            ((com.google.android.gms.maps.MapFragment) getChildFragmentManager().findFragmentById(R.id.map)).getMapAsync(new OnMapReadyCallback() {
                 @Override
                 public void onMapReady(GoogleMap googleMap) {
                     VehicleMapViewFrag.this.googleMap = googleMap;
@@ -207,6 +212,13 @@ public class VehicleMapViewFrag extends Fragment implements LoaderTaskVehicleLis
             }
         });
 
+        shareLive.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                datePickerDialog_from.show();
+            }
+        });
+
 
         if (autoRefreshInterval > 0) {
             handler.postDelayed(new Runnable() {
@@ -219,10 +231,83 @@ public class VehicleMapViewFrag extends Fragment implements LoaderTaskVehicleLis
                 }
             }, autoRefreshInterval);
         }
+
+        datePickerDialog_from = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
+
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+
+                newDate = Calendar.getInstance();
+                newDate.set(year, monthOfYear, dayOfMonth);
+
+                if (calendar.getTime().getTime() < newDate.getTime().getTime()) {
+                    VehicleMapViewFrag.this.year = year;
+                    VehicleMapViewFrag.this.monthOfYear = monthOfYear;
+                    VehicleMapViewFrag.this.dayOfMonth = dayOfMonth;
+                    timeFromDialog.show();
+                } else {
+                    Snackbar.make(rootView, "Date should be greater than current date", Snackbar.LENGTH_LONG).show();
+                }
+
+            }
+
+        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+
+
+        timeFromDialog = new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
+
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+
+                newDate.set(year, monthOfYear, dayOfMonth, hourOfDay, minute);
+
+                if (calendar.getTime().getTime() < newDate.getTime().getTime()) {
+                    //timeFromDialog.show();
+                    long currentTime=System.currentTimeMillis()/1000;
+                    new LiveUrlUpdate(lastLocation.getAccountID(), lastLocation.getDeviceID(), Long.toString(currentTime), Long.toString(newDate.getTime().getTime()/1000)).execute();
+                    String shareBody = "http://205.147.110.119:81/LiveLink.aspx?id=" + currentTime;
+
+                    //String shareBody = "Visit <a href=\<%shareBody%>\">Track Your Vehicle</a> for more info.";
+
+                    String shareLink = Html.fromHtml("<a href=\""+ shareBody + "\">" + "Track Your Vehicle" + "</a>").toString();
+
+
+                    Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                    sharingIntent.setType("text/html");
+                    sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Track you vehicle");
+                    sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+                    startActivity(Intent.createChooser(sharingIntent, getResources().getString(R.string.share_using)));
+
+                } else
+                    Snackbar.make(rootView, "Time should be greater than current Time", Snackbar.LENGTH_LONG).show();
+
+
+            }
+        }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true);
+
+
         return rootView;
 
     }
 
+
+    public String getDisplayTime(int hours, int minutes) {
+        StringBuilder sb = new StringBuilder();
+        if (hours < 10) {
+            sb.append("0" + String.valueOf(hours));
+        } else {
+            sb.append(String.valueOf(hours));
+        }
+
+        sb.append(":");
+
+        if (minutes < 10) {
+            sb.append("0" + String.valueOf(minutes));
+        } else {
+            sb.append(String.valueOf(minutes));
+        }
+
+        return sb.toString();
+    }
 
     /* "statusCode": 61715 for Stop
                      61714 for moving
@@ -231,7 +316,7 @@ public class VehicleMapViewFrag extends Fragment implements LoaderTaskVehicleLis
     private void initilizeMap(int mapType, List<LastLocation> lastLocationList) {
         if (googleMap == null) {
 
-            ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map)).getMapAsync(new OnMapReadyCallback() {
+            ((com.google.android.gms.maps.MapFragment) getChildFragmentManager().findFragmentById(R.id.map)).getMapAsync(new OnMapReadyCallback() {
                 @Override
                 public void onMapReady(GoogleMap googleMap) {
                     VehicleMapViewFrag.this.googleMap = googleMap;
@@ -260,15 +345,60 @@ public class VehicleMapViewFrag extends Fragment implements LoaderTaskVehicleLis
                         new DistanceTask(sharedPrefs.getAccountId(), freshLastLocation.getDeviceID()).execute();
 
                         String status = freshLastLocation.getStatusCode();
+                        String vehicleType = freshLastLocation.getVehicleType();
                         if (!TextUtils.isEmpty(status)) {
                             if (status.equalsIgnoreCase("0")) {
-                                marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_nw));
+                                if (vehicleType.equalsIgnoreCase("Car"))
+                                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_nw));
+                                else if (vehicleType.equalsIgnoreCase("Bus"))
+                                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bus_nw));
+                                else if (vehicleType.equalsIgnoreCase("truck"))
+                                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_truck_nw));
+                                else if (vehicleType.equalsIgnoreCase("bike"))
+                                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bike_nw));
+                                else if (vehicleType.equalsIgnoreCase("jcb"))
+                                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_jcb_nw));
+                                else
+                                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_nw));
                             } else if (status.equalsIgnoreCase("61714")) {
-                                marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_moving));
+                                if (vehicleType.equalsIgnoreCase("Car"))
+                                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_moving));
+                                else if (vehicleType.equalsIgnoreCase("Bus"))
+                                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bus_moving));
+                                else if (vehicleType.equalsIgnoreCase("truck"))
+                                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_truck_moving));
+                                else if (vehicleType.equalsIgnoreCase("bike"))
+                                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bike_moving));
+                                else if (vehicleType.equalsIgnoreCase("jcb"))
+                                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_jcb_moving));
+                                else
+                                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_moving));
                             } else if (status.equalsIgnoreCase("61715")) {
-                                marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_stop));
+                                if (vehicleType.equalsIgnoreCase("Car"))
+                                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_stop));
+                                else if (vehicleType.equalsIgnoreCase("Bus"))
+                                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bus_stop));
+                                else if (vehicleType.equalsIgnoreCase("truck"))
+                                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_truck_stop));
+                                else if (vehicleType.equalsIgnoreCase("bike"))
+                                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bike_stop));
+                                else if (vehicleType.equalsIgnoreCase("jcb"))
+                                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_jcb_stop));
+                                else
+                                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_stop));
                             } else if (status.equalsIgnoreCase("61716")) {
-                                marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_dormant));
+                                if (vehicleType.equalsIgnoreCase("Car"))
+                                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_dormant));
+                                else if (vehicleType.equalsIgnoreCase("Bus"))
+                                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bus_dormant));
+                                else if (vehicleType.equalsIgnoreCase("truck"))
+                                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_truck_dormant));
+                                else if (vehicleType.equalsIgnoreCase("bike"))
+                                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bike_dormant));
+                                else if (vehicleType.equalsIgnoreCase("jcb"))
+                                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_jcb_dormant));
+                                else
+                                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_dormant));
                             }
                         } else
                             marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.school_bus));
@@ -441,6 +571,7 @@ public class VehicleMapViewFrag extends Fragment implements LoaderTaskVehicleLis
         // Setting the position of the marker
         options.position(origin);
         String status = lastLocation.getStatusCode();
+        String vehicleType = lastLocation.getVehicleType();
 
         /**
          * For the start location, the color of marker is GREEN and
@@ -453,13 +584,57 @@ public class VehicleMapViewFrag extends Fragment implements LoaderTaskVehicleLis
 
             if (!TextUtils.isEmpty(status)) {
                 if (status.equalsIgnoreCase("0")) {
-                    options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_nw));
+                    if (vehicleType.equalsIgnoreCase("Car"))
+                        options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_nw));
+                    else if (vehicleType.equalsIgnoreCase("Bus"))
+                        options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bus_nw));
+                    else if (vehicleType.equalsIgnoreCase("truck"))
+                        options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_truck_nw));
+                    else if (vehicleType.equalsIgnoreCase("bike"))
+                        options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bike_nw));
+                    else if (vehicleType.equalsIgnoreCase("jcb"))
+                        options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_jcb_nw));
+                    else
+                        options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_nw));
                 } else if (status.equalsIgnoreCase("61714")) {
-                    options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_moving));
+                    if (vehicleType.equalsIgnoreCase("Car"))
+                        options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_moving));
+                    else if (vehicleType.equalsIgnoreCase("Bus"))
+                        options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bus_moving));
+                    else if (vehicleType.equalsIgnoreCase("truck"))
+                        options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_truck_moving));
+                    else if (vehicleType.equalsIgnoreCase("bike"))
+                        options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bike_moving));
+                    else if (vehicleType.equalsIgnoreCase("jcb"))
+                        options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_jcb_moving));
+                    else
+                        options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_moving));
                 } else if (status.equalsIgnoreCase("61715")) {
-                    options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_stop));
+                    if (vehicleType.equalsIgnoreCase("Car"))
+                        options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_stop));
+                    else if (vehicleType.equalsIgnoreCase("Bus"))
+                        options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bus_stop));
+                    else if (vehicleType.equalsIgnoreCase("truck"))
+                        options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_truck_stop));
+                    else if (vehicleType.equalsIgnoreCase("bike"))
+                        options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bike_stop));
+                    else if (vehicleType.equalsIgnoreCase("jcb"))
+                        options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_jcb_stop));
+                    else
+                        options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_stop));
                 } else if (status.equalsIgnoreCase("61716")) {
-                    options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_dormant));
+                    if (vehicleType.equalsIgnoreCase("Car"))
+                        options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_dormant));
+                    else if (vehicleType.equalsIgnoreCase("Bus"))
+                        options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bus_dormant));
+                    else if (vehicleType.equalsIgnoreCase("truck"))
+                        options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_truck_dormant));
+                    else if (vehicleType.equalsIgnoreCase("bike"))
+                        options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bike_dormant));
+                    else if (vehicleType.equalsIgnoreCase("jcb"))
+                        options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_jcb_dormant));
+                    else
+                        options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_dormant));
                 }
             } else
                 options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.school_bus));
@@ -615,9 +790,9 @@ public class VehicleMapViewFrag extends Fragment implements LoaderTaskVehicleLis
                     } else {
                         isMarkerRotating = false;
 
-                        float dist=distance(origin.latitude,origin.longitude,dest.latitude,dest.longitude);
-                        Log.e("distance",""+dist);
-                        if(dist>10) {
+                        float dist = distance(origin.latitude, origin.longitude, dest.latitude, dest.longitude);
+                        Log.e("distance", "" + dist);
+                        if (dist > 10) {
 
                             markerAnimator = ObjectAnimator.ofObject(marker, "position",
                                     new LatLngEvaluator(), origin, dest);
@@ -636,7 +811,7 @@ public class VehicleMapViewFrag extends Fragment implements LoaderTaskVehicleLis
 //                                {
                                     updateVariable++;
                                     if (updateVariable > 40) {
-                                        updateVariable=0;
+                                        updateVariable = 0;
                                         Log.e("loctn", "" + animation.getAnimatedFraction() + " " + animation.getAnimatedValue());
                                         Log.e("polyline", "added " + updateVariable);
                                         double latitude = ((LatLng) animation.getAnimatedValue()).latitude;
@@ -752,20 +927,47 @@ public class VehicleMapViewFrag extends Fragment implements LoaderTaskVehicleLis
         }
     }
 
-    private float distance (double lat_a, double lng_a, double lat_b, double lng_b )
-    {
+    private float distance(double lat_a, double lng_a, double lat_b, double lng_b) {
         double earthRadius = 3958.75;
-        double latDiff = Math.toRadians(lat_b-lat_a);
-        double lngDiff = Math.toRadians(lng_b-lng_a);
-        double a = Math.sin(latDiff /2) * Math.sin(latDiff /2) +
+        double latDiff = Math.toRadians(lat_b - lat_a);
+        double lngDiff = Math.toRadians(lng_b - lng_a);
+        double a = Math.sin(latDiff / 2) * Math.sin(latDiff / 2) +
                 Math.cos(Math.toRadians(lat_a)) * Math.cos(Math.toRadians(lat_b)) *
-                        Math.sin(lngDiff /2) * Math.sin(lngDiff /2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                        Math.sin(lngDiff / 2) * Math.sin(lngDiff / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         double distance = earthRadius * c;
 
         int meterConversion = 1609;
 
         return new Float(distance * meterConversion).floatValue();
+    }
+
+    class LiveUrlUpdate extends AsyncTask<Void, Void, String> {
+
+        String accountID, deviceID, currentTime, activationTime;
+
+        public LiveUrlUpdate(String accountID, String deviceID, String currentTime, String activationTime) {
+            this.accountID = accountID;
+            this.deviceID = deviceID;
+            this.currentTime = currentTime;
+            this.activationTime = activationTime;
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            String result = ((MainActivity) context).getSoapServiceInstance().setLiveUrlParams(accountID, deviceID, currentTime, activationTime);
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            if (!"success".equalsIgnoreCase(result) && retry <= 3) {
+                retry++;
+                new LiveUrlUpdate(lastLocation.getAccountID(), lastLocation.getDeviceID(), Long.toString(System.currentTimeMillis()), Long.toString(newDate.getTime().getTime())).execute();
+            }
+
+        }
     }
 
 }

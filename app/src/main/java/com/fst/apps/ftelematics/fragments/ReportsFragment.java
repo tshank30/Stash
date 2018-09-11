@@ -4,8 +4,8 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,7 +49,7 @@ public class ReportsFragment extends Fragment {
         myWebView.setWebViewClient(new MyWebViewClient());
        /* if(url.contains("FuelMonitoring")){
             Fragment fragment = new CominSoonFragment();
-            FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+            FragmentTransaction transaction = getActivity().getFragmentManager().beginTransaction();
             transaction.replace(R.id.content_frame, fragment);
             transaction.commit();
         }else {*/

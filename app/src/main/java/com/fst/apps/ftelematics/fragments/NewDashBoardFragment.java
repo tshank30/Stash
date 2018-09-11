@@ -1,5 +1,8 @@
 package com.fst.apps.ftelematics.fragments;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.res.Resources;
@@ -7,9 +10,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+
 import android.support.v7.widget.CardView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -161,7 +162,7 @@ public class NewDashBoardFragment extends Fragment implements LoaderTaskVehicleL
             case R.id.card_dashboard:
 
                 fragment = new VehiclesListFragment();
-                transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                transaction = getActivity().getFragmentManager().beginTransaction();
                 transaction.addToBackStack(fragment.getClass().toString());
                 transaction.replace(R.id.content_frame, fragment);
                 transaction.commit();
@@ -171,7 +172,7 @@ public class NewDashBoardFragment extends Fragment implements LoaderTaskVehicleL
             case R.id.card_map:
 
                 fragment = new VehicleMapViewFragment();
-                transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                transaction = getActivity().getFragmentManager().beginTransaction();
                 transaction.replace(R.id.content_frame, fragment);
                 transaction.addToBackStack(fragment.getClass().toString());
                 transaction.commit();
@@ -180,7 +181,7 @@ public class NewDashBoardFragment extends Fragment implements LoaderTaskVehicleL
             case R.id.card_report:
 
                 fragment = new NewReportFragment();
-                transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                transaction = getActivity().getFragmentManager().beginTransaction();
                 transaction.replace(R.id.content_frame, fragment);
                 transaction.addToBackStack(fragment.getClass().toString());
                 transaction.commit();
@@ -188,7 +189,7 @@ public class NewDashBoardFragment extends Fragment implements LoaderTaskVehicleL
 
             case R.id.card_notification:
                 fragment = new ParentViewPagerFragment();
-                transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                transaction = getActivity().getFragmentManager().beginTransaction();
                 transaction.replace(R.id.content_frame, fragment);
                 transaction.addToBackStack(fragment.getClass().toString());
                 transaction.commit();
@@ -197,7 +198,7 @@ public class NewDashBoardFragment extends Fragment implements LoaderTaskVehicleL
 
             case R.id.card_support:
                 fragment = new SupportFragment();
-                transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                transaction = getActivity().getFragmentManager().beginTransaction();
                 transaction.replace(R.id.content_frame, fragment);
                 transaction.addToBackStack(fragment.getClass().toString());
                 transaction.commit();
@@ -207,7 +208,7 @@ public class NewDashBoardFragment extends Fragment implements LoaderTaskVehicleL
 
             case R.id.card_setting:
                 fragment = new SettingsFragment();
-                transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                transaction = getActivity().getFragmentManager().beginTransaction();
                 transaction.replace(R.id.content_frame, fragment);
                 transaction.addToBackStack(fragment.getClass().toString());
                 transaction.commit();
@@ -218,7 +219,7 @@ public class NewDashBoardFragment extends Fragment implements LoaderTaskVehicleL
                 bundle = new Bundle();
                 bundle.putString(FILTER_TEXT, "move");
                 fragment.setArguments(bundle);
-                transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                transaction = getActivity().getFragmentManager().beginTransaction();
                 transaction.replace(R.id.content_frame, fragment);
                 transaction.addToBackStack(fragment.getClass().toString());
                 transaction.commit();
@@ -230,7 +231,7 @@ public class NewDashBoardFragment extends Fragment implements LoaderTaskVehicleL
                 bundle = new Bundle();
                 bundle.putString(FILTER_TEXT, "stop");
                 fragment.setArguments(bundle);
-                transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                transaction = getActivity().getFragmentManager().beginTransaction();
                 transaction.replace(R.id.content_frame, fragment);
                 transaction.addToBackStack(fragment.getClass().toString());
                 transaction.commit();
@@ -242,7 +243,7 @@ public class NewDashBoardFragment extends Fragment implements LoaderTaskVehicleL
                 bundle = new Bundle();
                 bundle.putString(FILTER_TEXT, "idle");
                 fragment.setArguments(bundle);
-                transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                transaction = getActivity().getFragmentManager().beginTransaction();
                 transaction.replace(R.id.content_frame, fragment);
                 transaction.addToBackStack(fragment.getClass().toString());
                 transaction.commit();
@@ -254,7 +255,7 @@ public class NewDashBoardFragment extends Fragment implements LoaderTaskVehicleL
                 bundle = new Bundle();
                 bundle.putString(FILTER_TEXT, "not working");
                 fragment.setArguments(bundle);
-                transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                transaction = getActivity().getFragmentManager().beginTransaction();
                 transaction.replace(R.id.content_frame, fragment);
                 transaction.addToBackStack(fragment.getClass().toString());
                 transaction.commit();
@@ -274,9 +275,9 @@ public class NewDashBoardFragment extends Fragment implements LoaderTaskVehicleL
 
             if (cd.isConnectingToInternet(getActivity())) {
                 Fragment fragment = new VehiclesListFragment();
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                FragmentManager fragmentManager = getActivity().getFragmentManager();
                 FragmentTransaction ft = fragmentManager.beginTransaction();
-                //ft.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
+                ////ft.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
                 ft.replace(R.id.content_frame, fragment);
                 ft.addToBackStack(NewDashBoardFragment.this.getClass().toString());
                 ft.commit();

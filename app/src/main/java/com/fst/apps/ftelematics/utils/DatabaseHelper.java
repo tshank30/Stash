@@ -5,11 +5,14 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
 import com.fst.apps.ftelematics.entities.Alerts;
 import com.fst.apps.ftelematics.entities.LastLocation;
+import com.fst.apps.ftelematics.entities.LatLong;
+import com.fst.apps.ftelematics.entities.Parking;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -29,14 +32,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String FOLDER_NAME = "Rottweiler";
     // Database Version
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 6;
 
     // Database Name
-    private static final String DATABASE_NAME = DATABASE_FILE_PATH + File.separator + FOLDER_NAME + File.separator + "rottweilertrackers";
+    //private static final String DATABASE_NAME = DATABASE_FILE_PATH + File.separator + FOLDER_NAME + File.separator + "rottweilertrackers";
+    private static final String DATABASE_NAME ="rottweilertrackers.sqlite";
 
     // Table Names
     private static final String TABLE_ALERTS = "alerts";
     private static final String TABLE_VEHICLE_LIST = "VehicleList";
+    private static final String TABLE_PARKING = "Parking";
 
     // Common column names
     private static final String KEY_ID = "id";
@@ -79,6 +84,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String KEY_DRIVER_NUMBER = "driverNumber";
     private static final String KEY_DISTANCE_TRAVELLED = "distance";
     private static final String KEY_CALIBRATION_VALUES = "calibrationValues";
+    private static final String KEY_PARKING_ID = "parkingId";
 
     private static final String TAG = "DatabaseHelper";
 
@@ -121,6 +127,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             KEY_CALIBRATION_VALUES + " TEXT" +
             ")";
 
+    private static final String CREATE_TABLE_PARKING = "CREATE TABLE " + TABLE_PARKING + "(" +
+            KEY_PARKING_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+            KEY_DEVICE_ID + " TEXT," +
+            KEY_LATITUDE + " TEXT," +
+            KEY_LONGITUDE + " TEXT" +
+            ")";
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -139,8 +151,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Log.e(TAG, "DH:onCreate:start");
         db.execSQL(CREATE_TABLE_ALERTS);
 
-        Log.e("vehicleList create",CREATE_TABLE_VEHICLE_LIST);
+        Log.e("vehicleList create", CREATE_TABLE_VEHICLE_LIST);
         db.execSQL(CREATE_TABLE_VEHICLE_LIST);
+
+        Log.e("ParkingTable create", CREATE_TABLE_PARKING);
+        db.execSQL(CREATE_TABLE_PARKING);
+
+
     }
 
     @Override
@@ -160,11 +177,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 db.execSQL("ALTER TABLE VehicleList ADD driverName TEXT");
                 db.execSQL("ALTER TABLE VehicleList ADD driverNumber TEXT");
 
-            case 3 :
-                db.execSQL("ALTER TABLE VehicleList ADD "+ KEY_DISTANCE_TRAVELLED +" TEXT");
+            case 3:
+                db.execSQL("ALTER TABLE VehicleList ADD " + KEY_DISTANCE_TRAVELLED + " TEXT");
 
-            case 4 :
-                db.execSQL("ALTER TABLE VehicleList ADD "+ KEY_CALIBRATION_VALUES +" TEXT");
+            case 4:
+                db.execSQL("ALTER TABLE VehicleList ADD " + KEY_CALIBRATION_VALUES + " TEXT");
+
+            case 5:
+                db.execSQL(CREATE_TABLE_PARKING);
 
 
         }
@@ -323,6 +343,92 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    synchronized public void alterParking(String deviceId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(KEY_DEVICE_ID, deviceId);
+        long id = db.insert(TABLE_PARKING, null, values);
+        Log.e(TAG, "Parking status" + id);
+    }
+
+    synchronized public void deleteParking(String deviceId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        long id = db.delete(TABLE_PARKING, KEY_DEVICE_ID + " = '" + deviceId+"'", null);
+        Log.e(TAG, "Parking status" + id);
+    }
+
+    synchronized public List<Parking> getParkingData() {
+        Log.e(TAG, "DH:getVehicleListData:start");
+        SQLiteDatabase db = this.getReadableDatabase();
+        List<Parking> lastLocationList = new ArrayList<Parking>() {
+        };
+
+        String selectQuery = "SELECT * FROM " + TABLE_PARKING;
+
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        if (c.moveToFirst()) {
+            do {
+                Parking lastLocation = new Parking();
+
+                lastLocation.setDeviceId(c.getString(c.getColumnIndex(KEY_DEVICE_ID)));
+                lastLocation.setLatitude(c.getString(c.getColumnIndex(KEY_LATITUDE)));
+                lastLocation.setLongitude(c.getString(c.getColumnIndex(KEY_LONGITUDE)));
+
+                lastLocationList.add(lastLocation);
+            } while (c.moveToNext());
+        }
+
+
+        return lastLocationList;
+    }
+
+    synchronized public HashMap<String, LatLong> getParkingMap() {
+        Log.e(TAG, "DH:getVehicleListData:start");
+        SQLiteDatabase db = this.getReadableDatabase();
+       HashMap<String,LatLong> parkingMap=new HashMap<>();
+
+        String selectQuery = "SELECT * FROM " + TABLE_PARKING;
+
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        if (c.moveToFirst()) {
+            do {
+                parkingMap.put(c.getString(c.getColumnIndex(KEY_DEVICE_ID)),new LatLong(c.getString(c.getColumnIndex(KEY_LATITUDE)),c.getString(c.getColumnIndex(KEY_LONGITUDE)),c.getInt(c.getColumnIndex(KEY_PARKING_ID))));
+            } while (c.moveToNext());
+        }
+
+
+        return parkingMap;
+    }
+
+
+    public boolean isParking(SQLiteDatabase db, String deviceId) {
+        String selectQuery = "SELECT deviceID FROM " + TABLE_PARKING + " WHERE " + KEY_DEVICE_ID + " = '" + deviceId+"'";
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        if (c != null && c.getCount() > 0)
+            return true;
+        else
+            return false;
+    }
+
+    public int isParking(String deviceId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String selectQuery = "SELECT deviceID FROM " + TABLE_PARKING + " WHERE " + KEY_DEVICE_ID + " = '" + deviceId+"'";
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        if (c != null && c.getCount() > 0) {
+            Log.e(TAG, "parking enabled");
+            return 1;
+        }
+        else
+        {
+            Log.e(TAG, "parking not enabled");
+            return 0;
+        }
+    }
+
     synchronized public List<LastLocation> getVehicleListData() {
         Log.e(TAG, "DH:getVehicleListData:start");
         SQLiteDatabase db = this.getReadableDatabase();
@@ -366,6 +472,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 lastLocation.setDriverNumber(c.getString(c.getColumnIndex(KEY_DRIVER_NUMBER)));
                 lastLocation.setPrevKms(c.getString(c.getColumnIndex(KEY_DISTANCE_TRAVELLED)));
                 lastLocation.setCalibrationValues(c.getString(c.getColumnIndex(KEY_CALIBRATION_VALUES)));
+                if (isParking(db, lastLocation.getDeviceID()))
+                    lastLocation.setParkingStatus(1);
+                else
+                    lastLocation.setParkingStatus(0);
 
                 lastLocationList.add(lastLocation);
             } while (c.moveToNext());

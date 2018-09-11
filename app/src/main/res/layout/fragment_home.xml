@@ -66,6 +66,16 @@
                     android:layout_toLeftOf="@id/tts"
                     android:layout_marginRight="10dp"/>
 
+                <ImageView
+                    android:id="@+id/parking"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@mipmap/parking_sign"
+                    android:padding="3dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_toLeftOf="@id/fuel"
+                    android:layout_marginRight="10dp"/>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -219,7 +229,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/divider"
             android:orientation="horizontal"
-            android:weightSum="4">
+            android:weightSum="4"
+            android:gravity="center">
 
 
             <RelativeLayout

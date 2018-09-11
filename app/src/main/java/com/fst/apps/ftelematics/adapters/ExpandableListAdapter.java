@@ -23,13 +23,13 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     // child data in format of header title, child title
     private HashMap<ExpandedMenuModel, List<String>> mListDataChild;
-    ExpandableListView expandList;
+    private boolean school;
 
-    public ExpandableListAdapter(Context context, List<ExpandedMenuModel> listDataHeader, HashMap<ExpandedMenuModel, List<String>> listChildData, ExpandableListView mView) {
+    public ExpandableListAdapter(Context context, List<ExpandedMenuModel> listDataHeader, HashMap<ExpandedMenuModel, List<String>> listChildData, ExpandableListView mView, boolean school) {
         this.mContext = context;
         this.mListDataHeader = listDataHeader;
         this.mListDataChild = listChildData;
-        this.expandList = mView;
+        this.school = school;
     }
 
     @Override
@@ -42,7 +42,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     @Override
     public int getChildrenCount(int groupPosition) {
         int childCount = 0;
-        if (groupPosition == 3) {
+        if (groupPosition == 3 && !school) {
             childCount = this.mListDataChild.get(this.mListDataHeader.get(groupPosition))
                     .size();
         }
@@ -87,11 +87,11 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         }
         TextView lblListHeader = (TextView) convertView
                 .findViewById(R.id.submenu);
-        ImageView indicator=(ImageView) convertView.findViewById(R.id.indicator);
+        ImageView indicator = (ImageView) convertView.findViewById(R.id.indicator);
         ImageView headerIcon = (ImageView) convertView.findViewById(R.id.iconimage);
         lblListHeader.setText(headerTitle.getIconName());
         headerIcon.setBackground(headerTitle.getIconImg());
-        if(groupPosition==3){
+        if (groupPosition == 3 && !school) {
             indicator.setVisibility(View.VISIBLE);
         }
         return convertView;

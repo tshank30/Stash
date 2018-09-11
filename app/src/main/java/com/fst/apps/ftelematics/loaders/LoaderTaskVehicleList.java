@@ -16,13 +16,14 @@ import java.util.List;
 /**
  * Created by enigma-pc on 25/2/16.
  */
-public class LoaderTaskVehicleList extends AsyncTask<Void, Void, String> {
+public class LoaderTaskVehicleList extends AsyncTask<Void, Void, List<LastLocation>> {
     private String url;
     private boolean showDialog;
     private NetworkUtility networkUtility;
     private ProgressDialog progressDialog;
     private Context context;
     private VehicleListInterface vehicleListInterface;
+    private DatabaseHelper dbHelper;
     private Boolean boolGetDataFromDB;
     private Boolean isDataInDB = false;
     private Boolean isDataInServer = false;
@@ -43,6 +44,7 @@ public class LoaderTaskVehicleList extends AsyncTask<Void, Void, String> {
         this.vehicleListInterface = vehicleListInterface;
         this.showDialog = showDialog;
         this.boolGetDataFromDB = boolGetDataFromDB;
+        this.dbHelper = new DatabaseHelper(context);
     }
 
     @Override
@@ -59,7 +61,7 @@ public class LoaderTaskVehicleList extends AsyncTask<Void, Void, String> {
     }
 
     @Override
-    protected String doInBackground(Void[] params) {
+    protected List<LastLocation> doInBackground(Void[] params) {
 
         String response = null;
         try {
@@ -69,13 +71,19 @@ public class LoaderTaskVehicleList extends AsyncTask<Void, Void, String> {
             e.printStackTrace();
         }
 
+        List<LastLocation> lastLocationList = new Gson().fromJson(response, new TypeToken<List<LastLocation>>() {
+        }.getType());
 
-        return response;
+        for (LastLocation lastLocation : lastLocationList) {
+            lastLocation.setParkingStatus(dbHelper.isParking(lastLocation.getDeviceID()));
+        }
+
+        return lastLocationList;
     }
 
     @Override
-    protected void onPostExecute(String json) {
-        super.onPostExecute(json);
+    protected void onPostExecute(List<LastLocation> lastLocationList) {
+        super.onPostExecute(lastLocationList);
 
         try {
             if (progressDialog != null && progressDialog.isShowing()) {
@@ -86,28 +94,18 @@ public class LoaderTaskVehicleList extends AsyncTask<Void, Void, String> {
             e.printStackTrace();
         }
 
-//        if(!isDataInDB && !isDataInServer){
-//            vehicleListInterface.noConnectionNoDB();
-//            return;
-//        }
+        if (lastLocationList != null && lastLocationList.size() > 0) {
+            isDataInServer = true; //cool response from server
 
+            vehicleListInterface.onProcessComplete(lastLocationList);
 
-        if (json != null) {
+            Log.e("hello", "" + lastLocationList.get(0).getDriverName());
 
-            List<LastLocation> lastLocationList = new Gson().fromJson(json, new TypeToken<List<LastLocation>>() {
-            }.getType());
-            if (lastLocationList != null && lastLocationList.size() > 0) {
-                isDataInServer = true; //cool response from server
-
-                vehicleListInterface.onProcessComplete(lastLocationList);
-
-                Log.e("hello", "" + lastLocationList.get(0).getDriverName());
-
-                //for storing data in db
-                DatabaseHelper dbHelper = new DatabaseHelper(context);
-                dbHelper.storeVehicleListData(lastLocationList);
-            }
+            //for storing data in db
+            DatabaseHelper dbHelper = new DatabaseHelper(context);
+            dbHelper.storeVehicleListData(lastLocationList);
         }
+
 
     }
 

@@ -1,12 +1,12 @@
 /**
  * Copyright 2015 Google Inc. All Rights Reserved.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,10 +17,12 @@
 package com.fst.apps.ftelematics.service;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
@@ -37,12 +39,14 @@ import com.fst.apps.ftelematics.utils.TtsProviderFactory;
 import com.google.android.gms.gcm.GcmListenerService;
 
 
-public class MyGcmListenerService extends GcmListenerService{
+public class MyGcmListenerService extends GcmListenerService {
 
     private static final String TAG = "MyGcmListenerService";
     private static int NOTIFICATION_ID = 0;
-    String message,type,time;
+    String message, type, time;
     TtsProviderFactory ttsProviderImpl = TtsProviderFactory.getInstance();
+    public static final String NOTIFICATION_CHANNEL_ID = "10002";
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -54,24 +58,30 @@ public class MyGcmListenerService extends GcmListenerService{
     public void onMessageReceived(String from, Bundle data) {
         Log.i(TAG, "Received message!!");
         message = data.getString("message");
-        type= data.getString("type");
-        time= data.getString("time");
-        SharedPreferencesManager sf=new SharedPreferencesManager(this);
+        type = data.getString("type");
+        time = data.getString("time");
+        SharedPreferencesManager sf = new SharedPreferencesManager(this);
 
-        if(sf!=null){
-            if(sf.getIsLoggedIn()){
-                if(sf.getAlertsMode()){
-                    generateNotification(this, message);
+        if (sf != null) {
+            if (sf.getIsLoggedIn()) {
+                if (sf.getAlertsMode()) {
+                    generateNotification(this, message, type);
                 }
-                saveAlertInDB(message,type,time,this,sf.getSpeechMode());
+                saveAlertInDB(message, type, time, this, sf.getSpeechMode());
             }
         }
 
     }
     // [END receive_message]
 
-    private static void generateNotification(Context context, String message) {
-        int icon = R.drawable.ic_notification;
+    private static void generateNotification(Context context, String message, String parking) {
+
+        int icon = 0;
+        if ("parking".equalsIgnoreCase(parking))
+            icon = R.mipmap.parking_sign;
+        else
+            icon = R.drawable.ic_notification;
+
         long when = System.currentTimeMillis();
         NotificationManager notificationManager = (NotificationManager)
                 context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -93,7 +103,6 @@ public class MyGcmListenerService extends GcmListenerService{
                                 .bigText(message));
 
 
-
         Notification notification = builder.build();
 
         notification.flags |= Notification.FLAG_AUTO_CANCEL;
@@ -107,35 +116,46 @@ public class MyGcmListenerService extends GcmListenerService{
             NOTIFICATION_ID = 0;
         }
 
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "NOTIFICATION_CHANNEL_NAME", importance);
+            notificationChannel.enableLights(true);
+            notificationChannel.setLightColor(Color.RED);
+            notificationChannel.enableVibration(true);
+            notificationChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+            assert notificationManager != null;
+            builder.setChannelId(NOTIFICATION_CHANNEL_ID);
+            notificationManager.createNotificationChannel(notificationChannel);
+        }
+
         notificationManager.notify(NOTIFICATION_ID++, notification);
 
     }
 
 
-
-    public void saveAlertInDB(String message,String type,String time,Context context,boolean isTtsEnabled){
-        DatabaseHelper db=new DatabaseHelper(context);
-        SharedPreferencesManager sf=new SharedPreferencesManager(context);
-        String userId=sf.getUserId();
-        String alertText=message;
+    public void saveAlertInDB(String message, String type, String time, Context context, boolean isTtsEnabled) {
+        DatabaseHelper db = new DatabaseHelper(context);
+        SharedPreferencesManager sf = new SharedPreferencesManager(context);
+        String userId = sf.getUserId();
+        String alertText = message;
         String alertType = null;
         String alertSubType = null;
-        StringBuilder alertSpeechText=new StringBuilder();
-        if(!TextUtils.isEmpty(type)){
-            if(type.contains("#")){
-                String parts[]=type.split("#");
-                alertType=parts[0];
-                alertSubType=parts[1];
-            }else{
-                alertType=type;
+        StringBuilder alertSpeechText = new StringBuilder();
+        if (!TextUtils.isEmpty(type)) {
+            if (type.contains("#")) {
+                String parts[] = type.split("#");
+                alertType = parts[0];
+                alertSubType = parts[1];
+            } else {
+                alertType = type;
             }
 
-            if(!TextUtils.isEmpty(alertType)){
+            if (!TextUtils.isEmpty(alertType)) {
                 alertSpeechText.append(alertType);
             }
 
-            if(!TextUtils.isEmpty(alertSubType)){
-                alertSpeechText.append(" "+alertSubType);
+            if (!TextUtils.isEmpty(alertSubType)) {
+                alertSpeechText.append(" " + alertSubType);
             }
 
             alertSpeechText.append(" alert received!");
@@ -146,30 +166,30 @@ public class MyGcmListenerService extends GcmListenerService{
             }
         }
 
-        Alerts alert=new Alerts();
+        Alerts alert = new Alerts();
         alert.setUserId(userId);
         alert.setAlertText(alertText);
         alert.setCreatedAt(time);
 
-        if(!TextUtils.isEmpty(alertType)){
-            if(alertType.equalsIgnoreCase("Ignition")){
+        if (!TextUtils.isEmpty(alertType)) {
+            if (alertType.equalsIgnoreCase("Ignition")) {
                 alert.setAlertType(AlertTypes.IGNITION);
-                if(!TextUtils.isEmpty(alertSubType)){
-                    if(alertSubType.equalsIgnoreCase(AppConstants.ALERT_SUB_TYPES.ON.name())){
+                if (!TextUtils.isEmpty(alertSubType)) {
+                    if (alertSubType.equalsIgnoreCase(AppConstants.ALERT_SUB_TYPES.ON.name())) {
                         alert.setAlertSubType(AppConstants.ALERT_SUB_TYPES.ON.name());
-                    }else{
+                    } else {
                         alert.setAlertSubType(AppConstants.ALERT_SUB_TYPES.OFF.name());
                     }
                 }
-            }else if(alertType.equalsIgnoreCase("Overspeed")){
+            } else if (alertType.equalsIgnoreCase("Overspeed")) {
                 alert.setAlertType(AlertTypes.OVERSPEED);
                 alert.setAlertSubType(AppConstants.ALERT_SUB_TYPES.OVERSPEED.name());
-            }else if(alertType.equalsIgnoreCase("Geofence")){
+            } else if (alertType.equalsIgnoreCase("Geofence")) {
                 alert.setAlertType(AlertTypes.GEOFENCE);
-                if(!TextUtils.isEmpty(alertSubType)){
-                    if(alertSubType.equalsIgnoreCase(AppConstants.ALERT_SUB_TYPES.IN.name())){
+                if (!TextUtils.isEmpty(alertSubType)) {
+                    if (alertSubType.equalsIgnoreCase(AppConstants.ALERT_SUB_TYPES.IN.name())) {
                         alert.setAlertSubType(AppConstants.ALERT_SUB_TYPES.IN.name());
-                    }else{
+                    } else {
                         alert.setAlertSubType(AppConstants.ALERT_SUB_TYPES.OUT.name());
                     }
                 }

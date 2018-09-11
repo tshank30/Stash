@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import android.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,7 +23,7 @@ import com.fst.apps.ftelematics.utils.MapInfoWindow;
 import com.fst.apps.ftelematics.utils.SharedPreferencesManager;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -31,14 +31,14 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.List;
 
-public class VehicleMapViewFragment extends Fragment implements LoaderTaskVehicleList.VehicleListInterface{
+public class VehicleMapViewFragment extends Fragment implements LoaderTaskVehicleList.VehicleListInterface {
 
     private MainActivity activity;
     private Context context;
     private LoaderTaskVehicleList dataTask;
     private long autoRefreshInterval;
     private SharedPreferencesManager sharedPrefs;
-    private String url ;
+    private String url;
     private AppUtils appUtils;
     private Handler handler = new Handler();
     private GoogleMap googleMap;
@@ -49,38 +49,38 @@ public class VehicleMapViewFragment extends Fragment implements LoaderTaskVehicl
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        sharedPrefs=new SharedPreferencesManager(getActivity());
-        autoRefreshInterval=sharedPrefs.getAutoRefresh();
-        appUtils=new AppUtils(context);
+        sharedPrefs = new SharedPreferencesManager(getActivity());
+        autoRefreshInterval = sharedPrefs.getAutoRefresh();
+        appUtils = new AppUtils(context);
         url = appUtils.getLastLocationUrl();
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v=inflater.inflate(R.layout.fragment_vehicle_map_view,container,false);
-        radioGroup=(RadioGroup) v.findViewById(R.id.map_types);
+        View v = inflater.inflate(R.layout.fragment_vehicle_map_view, container, false);
+        radioGroup = (RadioGroup) v.findViewById(R.id.map_types);
         //DatabaseHelper databaseHelper = new DatabaseHelper(context);
 
         dataTask = new LoaderTaskVehicleList(context, false, url, this, true);
-       // dataTask.getDataFromDB();
+        // dataTask.getDataFromDB();
         if (ConnectionDetector.getInstance().isConnectingToInternet(context)) {
             dataTask.execute();
-        }else{
-            Toast.makeText(context,"Please connect to working internet!",Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(context, "Please connect to working internet!", Toast.LENGTH_SHORT).show();
         }
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if(checkedId==R.id.satellite_type){
-                    mapType=GoogleMap.MAP_TYPE_SATELLITE;
-                }else{
-                    mapType=GoogleMap.MAP_TYPE_NORMAL;
+                if (checkedId == R.id.satellite_type) {
+                    mapType = GoogleMap.MAP_TYPE_SATELLITE;
+                } else {
+                    mapType = GoogleMap.MAP_TYPE_NORMAL;
 
                 }
-                if(googleMap!=null){
+                if (googleMap != null) {
                     googleMap.setMapType(mapType);
                 }
             }
@@ -101,29 +101,41 @@ public class VehicleMapViewFragment extends Fragment implements LoaderTaskVehicl
 
     }
 
-    private void initilizeMap(int mapType,List<LastLocation> lastLocationList) {
+    private void initilizeMap(final int mapType, final List<LastLocation> lastLocationList) {
         if (googleMap == null) {
-            googleMap = ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map)).getMap();
+            ((com.google.android.gms.maps.MapFragment) getChildFragmentManager().findFragmentById(R.id.map)).getMapAsync(new OnMapReadyCallback() {
+                @Override
+                public void onMapReady(GoogleMap googleMap) {
+                    VehicleMapViewFragment.this.googleMap = googleMap;
+                    VehicleMapViewFragment.this.googleMap.setInfoWindowAdapter(new MapInfoWindow(getActivity(), "HISTORY"));
+                    if (VehicleMapViewFragment.this.googleMap == null) {
+                        Toast.makeText(context, "Sorry! unable to create maps", Toast.LENGTH_SHORT).show();
+                    } else {
+                        setUpMap(googleMap, mapType, lastLocationList);
+                    }
+                }
+            });
         }
 
         if (googleMap == null) {
             Toast.makeText(context, "Sorry! unable to create maps", Toast.LENGTH_SHORT).show();
-        }else{
-            setUpMap(googleMap, mapType,lastLocationList);
+        } else {
+            setUpMap(googleMap, mapType, lastLocationList);
         }
     }
 
-    private void setUpMap(final GoogleMap mMap,int mapType,List<LastLocation> lastLocationList) {
+    private void setUpMap(final GoogleMap mMap, int mapType, List<LastLocation> lastLocationList) {
         mMap.clear();
         mMap.getUiSettings().setZoomControlsEnabled(true);
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
-        if(lastLocationList!=null && lastLocationList.size()>0) {
-            for(LastLocation location:lastLocationList) {
+        if (lastLocationList != null && lastLocationList.size() > 0) {
+            for (LastLocation location : lastLocationList) {
                 if (!TextUtils.isEmpty(location.getLatitude()) && !TextUtils.isEmpty(location.getLatitude())) {
                     double latitude = Double.valueOf(location.getLatitude());
                     double longitude = Double.valueOf(location.getLongitude());
                     String address = location.getAddress();
                     String status = location.getStatusCode();
+                    String vehicleType = location.getVehicleType();
                     MarkerOptions marker = new MarkerOptions().position(new LatLng(latitude, longitude)).title(location.getDisplayName()).snippet(address);
                     // For showing a move to my loction button
                     //mMap.setMyLocationEnabled(true);
@@ -136,16 +148,60 @@ public class VehicleMapViewFragment extends Fragment implements LoaderTaskVehicl
                     // For dropping a marker at a point on the Map
                     if (!TextUtils.isEmpty(status)) {
                         if (status.equalsIgnoreCase("0")) {
-                            marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_nw));
+                            if (vehicleType.equalsIgnoreCase("Car"))
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_nw));
+                            else if (vehicleType.equalsIgnoreCase("Bus"))
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bus_nw));
+                            else if (vehicleType.equalsIgnoreCase("truck"))
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_truck_nw));
+                            else if (vehicleType.equalsIgnoreCase("bike"))
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bike_nw));
+                            else if (vehicleType.equalsIgnoreCase("jcb"))
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_jcb_nw));
+                            else
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_nw));
                         } else if (status.equalsIgnoreCase("61714")) {
-                            marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_moving));
+                            if (vehicleType.equalsIgnoreCase("Car"))
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_moving));
+                            else if (vehicleType.equalsIgnoreCase("Bus"))
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bus_moving));
+                            else if (vehicleType.equalsIgnoreCase("truck"))
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_truck_moving));
+                            else if (vehicleType.equalsIgnoreCase("bike"))
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bike_moving));
+                            else if (vehicleType.equalsIgnoreCase("jcb"))
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_jcb_moving));
+                            else
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_moving));
                         } else if (status.equalsIgnoreCase("61715")) {
-                            marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_stop));
+                            if (vehicleType.equalsIgnoreCase("Car"))
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_stop));
+                            else if (vehicleType.equalsIgnoreCase("Bus"))
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bus_stop));
+                            else if (vehicleType.equalsIgnoreCase("truck"))
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_truck_stop));
+                            else if (vehicleType.equalsIgnoreCase("bike"))
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bike_stop));
+                            else if (vehicleType.equalsIgnoreCase("jcb"))
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_jcb_stop));
+                            else
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_stop));
                         } else if (status.equalsIgnoreCase("61716")) {
-                            marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_dormant));
+                            if (vehicleType.equalsIgnoreCase("Car"))
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_dormant));
+                            else if (vehicleType.equalsIgnoreCase("Bus"))
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bus_dormant));
+                            else if (vehicleType.equalsIgnoreCase("truck"))
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_truck_dormant));
+                            else if (vehicleType.equalsIgnoreCase("bike"))
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bike_dormant));
+                            else if (vehicleType.equalsIgnoreCase("jcb"))
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_jcb_dormant));
+                            else
+                                marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_dormant));
                         }
                     } else {
-                        marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_dormant));
+                        marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_dormant));
                     }
                     //mMap.clear();
                     builder.include(marker.getPosition());
@@ -165,7 +221,7 @@ public class VehicleMapViewFragment extends Fragment implements LoaderTaskVehicl
 
     @Override
     public void onProcessComplete(List<LastLocation> lastLocationList) {
-        initilizeMap(1,lastLocationList);
+        initilizeMap(1, lastLocationList);
     }
 
     @Override
@@ -183,7 +239,7 @@ public class VehicleMapViewFragment extends Fragment implements LoaderTaskVehicl
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if(context == null)
+        if (context == null)
             context = getActivity();
     }
 }

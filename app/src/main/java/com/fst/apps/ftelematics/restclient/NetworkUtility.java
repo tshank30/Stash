@@ -4,6 +4,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.fst.apps.ftelematics.AppConstants;
+import com.fst.apps.ftelematics.entities.DistanceModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,9 +26,9 @@ import java.util.Map;
  */
 public class NetworkUtility {
 
-    private HttpURLConnection connection=null;
+    private HttpURLConnection connection = null;
     private URL url;
-    private final String TAG=NetworkUtility.class.getSimpleName();
+    private final String TAG = NetworkUtility.class.getSimpleName();
     private final String USER_AGENT = "Mozilla/5.0";
 
     /*public NetworkUtility(String endpoint){
@@ -42,7 +43,7 @@ public class NetworkUtility {
 
     public String sendGet(String endpoint) throws Exception {
 
-        String url = AppConstants.BASE_SERVICE_URL+endpoint;
+        String url = AppConstants.BASE_SERVICE_URL_NEW + endpoint;
 
         URL obj = new URL(url);
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
@@ -57,23 +58,53 @@ public class NetworkUtility {
         System.out.println("\nSending 'GET' request to URL : " + url);
         System.out.println("Response Code : " + responseCode);
 
-        if(responseCode==HttpURLConnection.HTTP_OK){
-            String json=readStream(con.getInputStream());
-            if(con!=null){
+        if (responseCode == HttpURLConnection.HTTP_OK) {
+            String json = readStream(con.getInputStream());
+            if (con != null) {
                 con.disconnect();
             }
             return json;
         }
 
         //print result
-       return null;
+        return null;
 
     }
 
-    public String sendPost(String endpoint,String params){
+    public DistanceModel sendDistanceRequest(String endpoint) throws Exception {
+
+        String url = endpoint;
+
+        URL obj = new URL(url);
+        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+
+        // optional default is GET
+        con.setRequestMethod("GET");
+
+        //add request header
+        con.setRequestProperty("User-Agent", USER_AGENT);
+
+        int responseCode = con.getResponseCode();
+        System.out.println("\nSending 'GET' request to URL : " + url);
+        System.out.println("Response Code : " + responseCode);
+
+        if (responseCode == HttpURLConnection.HTTP_OK) {
+            DistanceModel json = readDistanceStream(con.getInputStream());
+            if (con != null) {
+                con.disconnect();
+            }
+            return json;
+        }
+
+        //print result
+        return null;
+
+    }
+
+    public String sendPost(String endpoint, String params) {
         try {
 
-            String url = AppConstants.BASE_SERVICE_URL+endpoint;
+            String url = AppConstants.BASE_SERVICE_URL_NEW + endpoint;
             URL obj = new URL(url);
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
             con.setDoOutput(true);
@@ -87,9 +118,9 @@ public class NetworkUtility {
             if (con.getResponseCode() != HttpURLConnection.HTTP_OK) {
                 throw new RuntimeException("Failed : HTTP error code : "
                         + con.getResponseCode());
-            }else {
-                String json=readStream(con.getInputStream());
-                if(con!=null){
+            } else {
+                String json = readStream(con.getInputStream());
+                if (con != null) {
                     con.disconnect();
                 }
                 return json;
@@ -111,8 +142,7 @@ public class NetworkUtility {
      * Issue a POST request to the server.
      *
      * @param endpoint POST address.
-     * @param params request parameters.
-     *
+     * @param params   request parameters.
      * @throws IOException propagated from POST.
      */
     public static int sendPost(String endpoint, Map<String, String> params)
@@ -191,19 +221,75 @@ public class NetworkUtility {
         }
 
 
-        if(!TextUtils.isEmpty(response.toString())){
-            String json=getJsonPart(response.toString());
+        if (!TextUtils.isEmpty(response.toString())) {
+            String json = getJsonPart(response.toString());
             return json;
         }
         return null;
     }
 
-    public String getJsonPart(String response){
+    private DistanceModel readDistanceStream(InputStream in) {
+        BufferedReader reader = null;
+        StringBuffer response = new StringBuffer();
+        try {
+            reader = new BufferedReader(new InputStreamReader(in));
+            String line = "";
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+
+        if (!TextUtils.isEmpty(response.toString())) {
+            DistanceModel json = getJsonPartDistance(response.toString());
+            return json;
+        }
+        return null;
+    }
+
+    public String getJsonPart(String response) {
         try {
             JSONObject mainObject = new JSONObject(response);
-            JSONArray jsonArray=mainObject.getJSONArray("json");
-            if(jsonArray.length()>0){
+            JSONArray jsonArray = mainObject.getJSONArray("json");
+            if (jsonArray.length() > 0) {
                 return jsonArray.toString();
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public DistanceModel getJsonPartDistance(String response) {
+        try {
+            JSONObject mainObject = new JSONObject(response);
+            JSONArray jsonArray = mainObject.getJSONArray("rows");
+            if (jsonArray.length() > 0) {
+                JSONObject obj = jsonArray.getJSONObject(0);
+                JSONArray jsonArray1 = obj.getJSONArray("elements");
+                JSONObject obj2 = jsonArray1.getJSONObject(0);
+                JSONObject obj3 = obj2.getJSONObject("distance");
+                String distance = obj3.get("text").toString();
+                String value = obj3.get("value").toString();
+                JSONObject obj4 = obj2.getJSONObject("duration");
+                String duration = obj4.get("text").toString();
+                Log.e("Distance", "" + distance + " & " + duration + " away");
+                DistanceModel distanceModel = new DistanceModel();
+                distanceModel.setDistance(Double.parseDouble(value));
+                distanceModel.setDistanceText(distance);
+                distanceModel.setDurationText(duration);
+                return distanceModel;
             }
         } catch (JSONException e) {
             e.printStackTrace();

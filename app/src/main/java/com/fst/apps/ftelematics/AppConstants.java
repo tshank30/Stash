@@ -2,7 +2,7 @@ package com.fst.apps.ftelematics;
 
 public class AppConstants {
     public static final String PUSH_SERVER_BASE_URL = "http://23.94.21.18:8080/gcm_server";
-    public static final String PUSH_SERVER_URL = "http://23.94.21.18:8080/gcm_server/register.php";
+    public static final String PUSH_SERVER_URL = "http://205.147.110.119:8083/gcm_server/register.php";
     //public static final String PUSH_SERVER_BASE_URL="http://192.168.1.4/gcm_server";
     //public static final String PUSH_SERVER_URL="http://192.168.1.4/gcm_server/register.php";
     public static final String GCM_SENDER_ID = "726667513847";
@@ -21,5 +21,5 @@ public class AppConstants {
     public static final String SCREEN_NAME_HOME = "HOME";
     public static final int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 11;
     public static final int REQUEST_CODE_ASK_PERMISSIONS = 10;
-    public static final String BASE_REPORTS_URL = "http://23.94.21.18:81/";
+    public static final String BASE_REPORTS_URL = "http://205.147.110.119:81/";
 }

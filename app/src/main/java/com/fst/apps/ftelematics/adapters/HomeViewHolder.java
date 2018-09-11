@@ -13,7 +13,7 @@ public class HomeViewHolder extends RecyclerView.ViewHolder {
 
     public TextView thumbText,firstLine,secondLine,speed,acStatus,statusSince,address,battery,signal,tts,driverName,distance;
     public RelativeLayout thumbnail;
-    public ImageView fuel;
+    public ImageView fuel,parking;
     public RelativeLayout mapButton,historyButton,ignitionButton,callButton;
     public LinearLayout batterySignalLayout;
 
@@ -39,5 +39,8 @@ public class HomeViewHolder extends RecyclerView.ViewHolder {
         driverName=(TextView) itemView.findViewById(R.id.driver_name);
         distance=(TextView) itemView.findViewById(R.id.distance);
         fuel=(ImageView) itemView.findViewById(R.id.fuel);
+        parking=itemView.findViewById(R.id.parking);
+
     }
+
 }

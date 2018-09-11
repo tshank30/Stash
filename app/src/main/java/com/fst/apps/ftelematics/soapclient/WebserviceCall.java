@@ -27,6 +27,7 @@ public class WebserviceCall implements ISocketOperator {
 
 	String namespace = "http://tempuri.org/";
 	private String url = "http://23.94.21.22:2122/vtsServices.asmx";
+	private String newServiceUrl ="http://205.147.110.119:2122/vtsServices.asmx";
 	String SOAP_ACTION;
 	
 	public WebserviceCall(IAppManager appManager) 
@@ -39,7 +40,7 @@ public class WebserviceCall implements ISocketOperator {
 		OutputStream out = null;
 		int respCode = -1;
 		Object result = null;
-		String wsdlURL=  url;
+		String wsdlURL=  newServiceUrl;
 		HttpURLConnection httpURLConnection = null;
 		URL	url;
 		try 

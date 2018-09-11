@@ -1,12 +1,12 @@
 package com.fst.apps.ftelematics.fragments;
 
+import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -38,7 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class VehiclesListFragment extends Fragment implements LoaderTaskVehicleList.VehicleListInterface{
+public class VehiclesListFragment extends Fragment implements LoaderTaskVehicleList.VehicleListInterface {
 
     private VehiclesListAdapter adapter;
     private AppUtils appUtils;
@@ -54,24 +54,24 @@ public class VehiclesListFragment extends Fragment implements LoaderTaskVehicleL
     private Handler handler = new Handler();
     private MainActivity activity;
     private Context context;
-    private String url ;
+    private String url;
     List<LastLocation> vehiclesList;
     private EditText filter;
-    private final String FILTER_TEXT="filterText";
+    private final String FILTER_TEXT = "filterText";
     private String filterText;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        appUtils=new AppUtils(getActivity());
-        sharedPrefs=new SharedPreferencesManager(getActivity());
-        autoRefreshInterval=sharedPrefs.getAutoRefresh();
-        progressDialog=new ProgressDialog(getActivity());
+        appUtils = new AppUtils(getActivity());
+        sharedPrefs = new SharedPreferencesManager(getActivity());
+        autoRefreshInterval = sharedPrefs.getAutoRefresh();
+        progressDialog = new ProgressDialog(getActivity());
         url = appUtils.getLastLocationUrl();
-        cd=new ConnectionDetector();
+        cd = new ConnectionDetector();
         Bundle bundle = getArguments();
-        if(bundle!=null) {
+        if (bundle != null) {
             filterText = bundle.getString(FILTER_TEXT);
         }
     }
@@ -79,13 +79,16 @@ public class VehiclesListFragment extends Fragment implements LoaderTaskVehicleL
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-         super.onCreateView(inflater, container, savedInstanceState);
-        View v=inflater.inflate(R.layout.recycler_view,container,false);
-        recyclerView=(RecyclerView) v.findViewById(R.id.list);
-        noInternet=(RelativeLayout) v.findViewById(R.id.no_internet);
-        filter=(EditText) v.findViewById(R.id.filter);
+        super.onCreateView(inflater, container, savedInstanceState);
+        View v = inflater.inflate(R.layout.recycler_view, container, false);
+        recyclerView = (RecyclerView) v.findViewById(R.id.list);
+        noInternet = (RelativeLayout) v.findViewById(R.id.no_internet);
+        filter = (EditText) v.findViewById(R.id.filter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+        vehiclesList = new ArrayList<>();
+        adapter = new VehiclesListAdapter(vehiclesList, R.layout.fragment_home, context);
+        recyclerView.setAdapter(adapter);
         filter.addTextChangedListener(new VehicleFilterTextWatcher());
         DatabaseHelper databaseHelper = new DatabaseHelper(context);
         dataTask = new LoaderTaskVehicleList(context, !databaseHelper.isVehicleListDataInDB(), url, this, true);
@@ -111,7 +114,7 @@ public class VehiclesListFragment extends Fragment implements LoaderTaskVehicleL
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(handler!=null){
+        if (handler != null) {
             handler.removeMessages(0);
         }
     }
@@ -120,7 +123,7 @@ public class VehiclesListFragment extends Fragment implements LoaderTaskVehicleL
     @Override
     public void onPause() {
         super.onPause();
-        if(handler!=null){
+        if (handler != null) {
             handler.removeMessages(0);
         }
     }
@@ -136,14 +139,14 @@ public class VehiclesListFragment extends Fragment implements LoaderTaskVehicleL
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if(context == null)
+        if (context == null)
             context = getActivity();
     }
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        MenuItem item=menu.findItem(R.id.action_refresh);
+        MenuItem item = menu.findItem(R.id.action_refresh);
         item.setVisible(true);
     }
 
@@ -153,12 +156,12 @@ public class VehiclesListFragment extends Fragment implements LoaderTaskVehicleL
 
         if (id == R.id.action_refresh) {
             if (ConnectionDetector.getInstance().isConnectingToInternet(context)) {
-                Toast.makeText(context,"Loading...",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Loading...", Toast.LENGTH_SHORT).show();
                 dataTask = new LoaderTaskVehicleList(context, false, url, VehiclesListFragment.this, false);
                 dataTask.execute();
                 return true;
-            }else{
-                Toast.makeText(context,"Not connected to internet!",Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(context, "Not connected to internet!", Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -167,34 +170,25 @@ public class VehiclesListFragment extends Fragment implements LoaderTaskVehicleL
 
     @Override
     public void onProcessComplete(List<LastLocation> lastLocationList) {
-        if(vehiclesList==null){
-            vehiclesList=new ArrayList<LastLocation>();
+        if (vehiclesList == null) {
+            vehiclesList = new ArrayList<LastLocation>();
         }
-        if(adapter==null) {
+        if (lastLocationList != null && lastLocationList.size() > 0) {
+            vehiclesList.clear();
             vehiclesList.addAll(lastLocationList);
-            adapter = new VehiclesListAdapter(vehiclesList, R.layout.fragment_home, context);
-            recyclerView.setAdapter(adapter);
-        }else{
-            if(vehiclesList!=null && vehiclesList.size()>0){
-                vehiclesList.clear();
-                for(LastLocation location:lastLocationList){
-                    vehiclesList.add(location);
-                }
-                adapter.notifyDataSetChanged();
-            }
-
+            adapter.notifyDataSetChanged();
         }
 
-        if(filterText!=null && !filterText.isEmpty()){
+        if (filterText != null && !filterText.isEmpty()) {
             filter.setText(filterText);
         }
     }
 
     @Override
     public void noConnectionNoDB() {
-            recyclerView.setVisibility(View.GONE);
-            noInternet.setVisibility(View.VISIBLE);
-            Toast.makeText(getActivity(),"No internet connection!",Toast.LENGTH_LONG).show();
+        recyclerView.setVisibility(View.GONE);
+        noInternet.setVisibility(View.VISIBLE);
+        Toast.makeText(getActivity(), "No internet connection!", Toast.LENGTH_LONG).show();
     }
 
     class VehicleFilterTextWatcher implements TextWatcher {

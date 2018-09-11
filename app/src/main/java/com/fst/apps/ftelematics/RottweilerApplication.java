@@ -41,6 +41,8 @@ public class RottweilerApplication extends Application {
         this.keyValueStore.put("1_ignition_stop", "stopelec123456");
         this.keyValueStore.put("2_ignition_start", "RELAY,0#");
         this.keyValueStore.put("2_ignition_stop", "RELAY,1#");
+        this.keyValueStore.put("16_ignition_start", "RELAY,0#");
+        this.keyValueStore.put("16_ignition_stop", "RELAY,1#");
         this.keyValueStore.put("27_ignition_start", "ARM<6906>");
         this.keyValueStore.put("27_ignition_stop", "DISARM<6906>");
     }

@@ -1,6 +1,8 @@
 package com.fst.apps.ftelematics;
 
 import android.Manifest;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -12,9 +14,8 @@ import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+
+import android.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -32,6 +33,7 @@ import android.widget.Toast;
 import com.fst.apps.ftelematics.adapters.ExpandableListAdapter;
 import com.fst.apps.ftelematics.entities.ExpandedMenuModel;
 import com.fst.apps.ftelematics.fragments.DashboardFragment;
+import com.fst.apps.ftelematics.fragments.NearestVehicleFragment;
 import com.fst.apps.ftelematics.fragments.NewDashBoardFragment;
 import com.fst.apps.ftelematics.fragments.ParentViewPagerFragment;
 import com.fst.apps.ftelematics.fragments.ReportsFragment;
@@ -62,7 +64,7 @@ import java.util.Locale;
 import java.util.Map;
 
 
-public class MainActivity extends BaseActivity implements TextToSpeech.OnInitListener{
+public class MainActivity extends BaseActivity implements TextToSpeech.OnInitListener {
 
     private BroadcastReceiver mRegistrationBroadcastReceiver;
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
@@ -79,6 +81,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
     private String reportQueryString;
     private TextToSpeech tts;
     private String welcomeText;
+    private boolean school;
 
     @Override
     protected void onStart() {
@@ -91,20 +94,24 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = this;
-        activity=this;
+        activity = this;
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         expandableList = (ExpandableListView) findViewById(R.id.navigationmenu);
         sharedPrefs = new SharedPreferencesManager(this);
-        reportQueryString="?user="+sharedPrefs.getUserId()+"&role="+sharedPrefs.getRole()+"&account="+sharedPrefs.getAccountId();
-        if(sharedPrefs.getSpeechMode()) {
+        reportQueryString = "?user=" + sharedPrefs.getUserId() + "&role=" + sharedPrefs.getRole() + "&account=" + sharedPrefs.getAccountId();
+        if (sharedPrefs.getSpeechMode()) {
             tts = new TextToSpeech(this, this);
         }
-        cd=new ConnectionDetector();
-        if(!sharedPrefs.getIsLoggedIn()){
-            Intent i=new Intent(getApplicationContext(),LoginActivity.class);
+        cd = new ConnectionDetector();
+
+        school = sharedPrefs.getSchoolAccount();
+        //school = true;
+
+        if (!sharedPrefs.getIsLoggedIn()) {
+            Intent i = new Intent(getApplicationContext(), LoginActivity.class);
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(i);
             finish();
@@ -140,14 +147,14 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
             accountId = (TextView) header.findViewById(R.id.account_id);
             if (!TextUtils.isEmpty(sharedPrefs.getContactName())) {
                 contactName.setText(sharedPrefs.getContactName());
-                welcomeText="Welcome "+sharedPrefs.getContactName();
-            }else {
+                welcomeText = "Welcome " + sharedPrefs.getContactName();
+            } else {
                 contactName.setText(sharedPrefs.getAccountId());
-                welcomeText="Welcome "+sharedPrefs.getAccountId();
+                welcomeText = "Welcome " + sharedPrefs.getAccountId();
             }
 
-            if(!TextUtils.isEmpty(sharedPrefs.getDealerName())){
-                welcomeText="Welcome "+sharedPrefs.getDealerName();
+            if (!TextUtils.isEmpty(sharedPrefs.getDealerName())) {
+                welcomeText = "Welcome " + sharedPrefs.getDealerName();
             }
 
             if (!TextUtils.isEmpty(sharedPrefs.getAccountId())) {
@@ -159,7 +166,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
             }
 
             setNavMenuIcons(navigationView);
-            mMenuAdapter = new ExpandableListAdapter(this, listDataHeader, listDataChild, expandableList);
+            mMenuAdapter = new ExpandableListAdapter(this, listDataHeader, listDataChild, expandableList,school);
 
             // setting list adapter
             expandableList.setAdapter(mMenuAdapter);
@@ -169,34 +176,42 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
                 public boolean onChildClick(ExpandableListView expandableListView, View view, int i, int i1, long l) {
                     Fragment fragment = null;
                     Bundle bundle = new Bundle();
-                    switch (i1){
-                        case 0: bundle.putString("url", AppConstants.BASE_REPORTS_URL + "DailyReport.aspx" + reportQueryString);
-                            Log.i("URL",AppConstants.BASE_REPORTS_URL+"DailyReport.aspx"+reportQueryString);
+                    switch (i1) {
+                        case 0:
+                            bundle.putString("url", AppConstants.BASE_REPORTS_URL + "DailyReport.aspx" + reportQueryString);
+                            Log.i("URL", AppConstants.BASE_REPORTS_URL + "DailyReport.aspx" + reportQueryString);
                             break;
-                        case 1: bundle.putString("url", AppConstants.BASE_REPORTS_URL + "StoppageReport.aspx" + reportQueryString);
-                            Log.i("URL",AppConstants.BASE_REPORTS_URL+"StoppageReport.aspx"+reportQueryString);
+                        case 1:
+                            bundle.putString("url", AppConstants.BASE_REPORTS_URL + "StoppageReport.aspx" + reportQueryString);
+                            Log.i("URL", AppConstants.BASE_REPORTS_URL + "StoppageReport.aspx" + reportQueryString);
                             break;
-                        case 2: bundle.putString("url", AppConstants.BASE_REPORTS_URL + "DailyTripReport.aspx" + reportQueryString);
-                            Log.i("URL",AppConstants.BASE_REPORTS_URL+"DailyTripReport.aspx"+reportQueryString);
+                        case 2:
+                            bundle.putString("url", AppConstants.BASE_REPORTS_URL + "DailyTripReport.aspx" + reportQueryString);
+                            Log.i("URL", AppConstants.BASE_REPORTS_URL + "DailyTripReport.aspx" + reportQueryString);
                             break;
-                        case 3: bundle.putString("url", AppConstants.BASE_REPORTS_URL + "IdlingReport.aspx" + reportQueryString);
-                            Log.i("URL",AppConstants.BASE_REPORTS_URL+"IdlingReport.aspx"+reportQueryString);
+                        case 3:
+                            bundle.putString("url", AppConstants.BASE_REPORTS_URL + "IdlingReport.aspx" + reportQueryString);
+                            Log.i("URL", AppConstants.BASE_REPORTS_URL + "IdlingReport.aspx" + reportQueryString);
                             break;
-                        case 4: bundle.putString("url", AppConstants.BASE_REPORTS_URL + "FuelMonitoring.aspx" + reportQueryString);
-                            Log.i("URL",AppConstants.BASE_REPORTS_URL+"FuelMonitoring.aspx"+reportQueryString);
+                        case 4:
+                            bundle.putString("url", AppConstants.BASE_REPORTS_URL + "FuelMonitoring.aspx" + reportQueryString);
+                            Log.i("URL", AppConstants.BASE_REPORTS_URL + "FuelMonitoring.aspx" + reportQueryString);
                             break;
-                        case 5: bundle.putString("url", AppConstants.BASE_REPORTS_URL + "DistanceReport.aspx" + reportQueryString);
+                        case 5:
+                            bundle.putString("url", AppConstants.BASE_REPORTS_URL + "DistanceReport.aspx" + reportQueryString);
                             break;
-                        case 6: bundle.putString("url", AppConstants.BASE_REPORTS_URL + "MonthlyReport.aspx" + reportQueryString);
-                        break;
-                        default:  bundle.putString("url", AppConstants.BASE_REPORTS_URL + "DailyTripReport.aspx" + reportQueryString);
-                            Log.i("URL",AppConstants.BASE_REPORTS_URL+"DailyTripReport.aspx"+reportQueryString);
+                        case 6:
+                            bundle.putString("url", AppConstants.BASE_REPORTS_URL + "MonthlyReport.aspx" + reportQueryString);
+                            break;
+                        default:
+                            bundle.putString("url", AppConstants.BASE_REPORTS_URL + "DailyTripReport.aspx" + reportQueryString);
+                            Log.i("URL", AppConstants.BASE_REPORTS_URL + "DailyTripReport.aspx" + reportQueryString);
                             break;
                     }
                     fragment = new ReportsFragment();
                     fragment.setArguments(bundle);
-                    FragmentManager fragmentManager = getSupportFragmentManager();
-                    fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+                    FragmentManager fragmentManager = getFragmentManager();
+                    fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack(fragment.getClass().toString()).commitAllowingStateLoss();
                     DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
                     drawer.closeDrawer(GravityCompat.START);
                     return true;
@@ -211,8 +226,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
 
                             if (BuildConfig.FLAVOR.equals("brandwatch") || BuildConfig.FLAVOR.equals("rkdk")) {
                                 fragment = new NewDashBoardFragment();
-                            }
-                            else {
+                            } else {
                                 fragment = new DashboardFragment();
                             }
                             break;
@@ -223,98 +237,155 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
                             fragment = new ParentViewPagerFragment();
                             break;
                         case 3:
-                            return false;
+                            if (school)
+                                fragment = new NearestVehicleFragment();
+                            else
+                                return false;
+                            break;
                         case 4:
-                            fragment = new SettingsFragment();
+                            if (school)
+                                fragment = new SettingsFragment();
+                            else
+                                fragment = new NearestVehicleFragment();
                             break;
+
                         case 5:
-                            fragment = new SupportFragment();
+                            if (school)
+                                fragment = new SupportFragment();
+                            else
+                                fragment = new SettingsFragment();
                             break;
+
                         case 6:
-                            fragment = new VersionFragment();
+                            if (school)
+                                fragment = new VersionFragment();
+                            else
+                                fragment = new SupportFragment();
                             break;
+
                         case 7:
-                            if (cd.isConnectingToInternet(activity)) {
-                                sharedPrefs.clearSharedPreferences();
-                                DatabaseHelper dh = new DatabaseHelper(activity);
-                                dh.clearVehicleList();
-                                AppUtils.unregisterFromPush(AppUtils.getDeviceIMEI(activity));
-                                activity.finish();
-                                startActivity(new Intent(activity, LoginActivity.class));
-                            } else {
-                                Toast.makeText(activity, "Please connect to working internet connection!", Toast.LENGTH_SHORT).show();
-                            }
+                            if (school) {
+                                if (cd.isConnectingToInternet(activity)) {
+                                    sharedPrefs.clearSharedPreferences();
+                                    DatabaseHelper dh = new DatabaseHelper(activity);
+                                    dh.clearVehicleList();
+                                    AppUtils.unregisterFromPush(AppUtils.getDeviceIMEI(activity));
+                                    activity.finish();
+                                    startActivity(new Intent(activity, LoginActivity.class));
+                                } else {
+                                    Toast.makeText(activity, "Please connect to working internet connection!", Toast.LENGTH_SHORT).show();
+                                }
+                            } else
+                                fragment = new VersionFragment();
                             break;
+
+                        case 8:
+                            if (!school) {
+                                if (cd.isConnectingToInternet(activity)) {
+                                    sharedPrefs.clearSharedPreferences();
+                                    DatabaseHelper dh = new DatabaseHelper(activity);
+                                    dh.clearVehicleList();
+                                    AppUtils.unregisterFromPush(AppUtils.getDeviceIMEI(activity));
+                                    activity.finish();
+                                    startActivity(new Intent(activity, LoginActivity.class));
+                                } else {
+                                    Toast.makeText(activity, "Please connect to working internet connection!", Toast.LENGTH_SHORT).show();
+                                }
+                                break;
+                            }
+
                         default:
                             fragment = new VehiclesListFragment();
                             break;
                     }
 
-                    if (fragment != null) {
-                        FragmentManager fragmentManager = getSupportFragmentManager();
-                        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+                    if (fragment != null /*&& (fragment instanceof DashboardFragment || fragment instanceof NewDashBoardFragment)*/) {
+                        Fragment currentFrag = getFragmentManager().findFragmentById(R.id.content_frame);
+                        if (!currentFrag.getClass().getName().equals(fragment.getClass())) {
+                            FragmentManager fragmentManager = getFragmentManager();
+                            FragmentTransaction ft = fragmentManager.beginTransaction();
+                            if ((currentFrag instanceof DashboardFragment || currentFrag instanceof NewDashBoardFragment) && getFragmentManager().getBackStackEntryCount() == 0)
+                                ft.addToBackStack(fragment.getClass().toString());
+                            ft.replace(R.id.content_frame, fragment).commitAllowingStateLoss();
+                        }
                     }
 
                     DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
                     drawer.closeDrawer(GravityCompat.START);
+
                     return true;
                 }
             });
 
-            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+
+            {
                 List<String> permissions = new ArrayList<String>();
                 if (!AppUtils.checkForPermission(this, Manifest.permission.SEND_SMS)) {
                     permissions.add(Manifest.permission.SEND_SMS);
                 }
-                if(!AppUtils.checkForPermission(this,Manifest.permission.READ_PHONE_STATE)){
+                if (!AppUtils.checkForPermission(this, Manifest.permission.READ_PHONE_STATE)) {
                     permissions.add(android.Manifest.permission.READ_PHONE_STATE);
                 }
-                if(!AppUtils.checkForPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE)){
+                if (!AppUtils.checkForPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                     permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
                 }
-                if(!AppUtils.checkForPermission(this,Manifest.permission.GET_ACCOUNTS)){
+                if (!AppUtils.checkForPermission(this, Manifest.permission.GET_ACCOUNTS)) {
                     permissions.add(Manifest.permission.GET_ACCOUNTS);
                 }
                 if (permissions != null) {
                     if (permissions.size() > 0) {
                         AppUtils.askForMultiplePermissions(MainActivity.this, permissions);
 //                    Fragment fragment = new VehiclesListFragment();
-//                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+//                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
 //                    transaction.replace(R.id.content_frame, fragment);
 //                    transaction.commit();
-                    }else{
+                    } else {
                         //permission already granted..replacing fragment
 
                         if (BuildConfig.FLAVOR.equals("brandwatch") || BuildConfig.FLAVOR.equals("rkdk")) {
                             Fragment fragment = new NewDashBoardFragment();
-                            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                            FragmentTransaction transaction = getFragmentManager().beginTransaction();
                             transaction.replace(R.id.content_frame, fragment);
-                            transaction.commit();
-                        }
-                        else
-                        {
+                            transaction.commitAllowingStateLoss();
+                        } else {
                             Fragment fragment = new DashboardFragment();
-                            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                            FragmentTransaction transaction = getFragmentManager().beginTransaction();
                             transaction.replace(R.id.content_frame, fragment);
-                            transaction.commit();
+                            transaction.commitAllowingStateLoss();
+                        }
+
+                        if (getIntent().getExtras() != null && getIntent().getExtras().getBoolean("ListFragment")) {
+                            Fragment fragment = new VehiclesListFragment();
+                            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                            transaction.replace(R.id.content_frame, fragment);
+                            transaction.commitAllowingStateLoss();
                         }
 
                     }
                 }
 
-            } else {
+            } else
+
+            {
+
                 if (BuildConfig.FLAVOR.equals("brandwatch") || BuildConfig.FLAVOR.equals("rkdk")) {
                     Fragment fragment = new NewDashBoardFragment();
-                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
                     transaction.replace(R.id.content_frame, fragment);
-                    transaction.commit();
-                }
-                else
-                {
+                    transaction.commitAllowingStateLoss();
+                } else {
                     Fragment fragment = new DashboardFragment();
-                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
                     transaction.replace(R.id.content_frame, fragment);
-                    transaction.commit();
+                    transaction.commitAllowingStateLoss();
+                }
+
+                if (getIntent().getExtras() != null && getIntent().getExtras().getBoolean("ListFragment")) {
+                    Fragment fragment = new VehiclesListFragment();
+                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                    transaction.replace(R.id.content_frame, fragment);
+                    transaction.commitAllowingStateLoss();
                 }
             }
         }
@@ -322,7 +393,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
     }
 
 
-    public void setNavMenuIcons(NavigationView navigationView){
+    public void setNavMenuIcons(NavigationView navigationView) {
         navigationView.setItemIconTintList(null);
         navigationView.setItemTextAppearance(R.style.MenuText);
         listDataHeader = new ArrayList<ExpandedMenuModel>();
@@ -349,22 +420,32 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
                 .actionBarSize());
         listDataHeader.add(menuItem3);
 
-        ExpandedMenuModel menuItem4 = new ExpandedMenuModel();
-        menuItem4.setIconName("Reports");
-        menuItem4.setIconImg(new IconDrawable(this, FontAwesomeIcons.fa_book)
-                .colorRes(R.color.brown)
-                .actionBarSize());
-        listDataHeader.add(menuItem4);
+        if (!school) {
+            ExpandedMenuModel menuItem4 = new ExpandedMenuModel();
+            menuItem4.setIconName("Reports");
+            menuItem4.setIconImg(new IconDrawable(this, FontAwesomeIcons.fa_book)
+                    .colorRes(R.color.brown)
+                    .actionBarSize());
+            listDataHeader.add(menuItem4);
 
-        List<String> reportChilds = new ArrayList<String>();
-        reportChilds.add("Daily Report");
-        reportChilds.add("Stoppage Report");
-        reportChilds.add("Trip Report");
-        reportChilds.add("Idling Report");
-        reportChilds.add("Fuel Report");
-        reportChilds.add("Distance Report");
-        reportChilds.add("Monthly Report");
-        listDataChild.put(listDataHeader.get(3), reportChilds);
+            List<String> reportChilds = new ArrayList<String>();
+            reportChilds.add("Daily Report");
+            reportChilds.add("Stoppage Report");
+            reportChilds.add("Trip Report");
+            reportChilds.add("Idling Report");
+            reportChilds.add("Fuel Report");
+            reportChilds.add("Distance Report");
+            reportChilds.add("Monthly Report");
+            listDataChild.put(listDataHeader.get(3), reportChilds);
+        }
+
+        ExpandedMenuModel menuItem9 = new ExpandedMenuModel();
+        menuItem9.setIconName("Nearest Vehicle");
+        menuItem9.setIconImg(new IconDrawable(this, FontAwesomeIcons.fa_location_arrow)
+                .colorRes(R.color.blue)
+                .actionBarSize());
+        listDataHeader.add(menuItem9);
+
 
         ExpandedMenuModel menuItem5 = new ExpandedMenuModel();
         menuItem5.setIconName("Settings");
@@ -399,19 +480,20 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
 
     @Override
     public void onBackPressed() {
-
+        Fragment fragment = getFragmentManager().findFragmentById(R.id.content_frame);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
+        } else if (getFragmentManager().getBackStackEntryCount() == 0 && ((fragment instanceof DashboardFragment) || (fragment instanceof NewDashBoardFragment))) {
+            finish();
         } else {
-            super.onBackPressed();
-            Fragment f = getSupportFragmentManager().findFragmentById(R.id.content_frame);
-            if(f instanceof VehiclesListFragment){
-                Fragment fragment = new VehiclesListFragment();
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.content_frame, fragment);
-                transaction.commit();
+            // Fragment fragment = getFragmentManager().findFragmentById(R.id.content_frame);
+            if (fragment != null && (!(fragment instanceof DashboardFragment) || !(fragment instanceof NewDashBoardFragment))) {
+                Log.d("MainActivity", "onBackPressed: " + fragment.getTag());
+                getFragmentManager().beginTransaction().remove(fragment).commitAllowingStateLoss();
+
             }
+            super.onBackPressed();
         }
     }
 
@@ -433,15 +515,15 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             Fragment fragment = new SettingsFragment();
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+            FragmentManager fragmentManager = getFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commitAllowingStateLoss();
             return true;
         }
 
         if (id == R.id.action_map_view) {
             Fragment fragment = new VehicleMapViewFragment();
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+            FragmentManager fragmentManager = getFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commitAllowingStateLoss();
             return true;
         }
 
@@ -477,7 +559,8 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
         switch (requestCode) {
             case AppConstants.REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS: {
 
@@ -493,22 +576,27 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
                         perms.get(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED &&
                         perms.get(Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED) {
 
+                    if (checkPlayServices() && !sharedPrefs.getRegisteredForPush()) {
+                        // Start IntentService to register this application with GCM.
+                        Intent intent = new Intent(this, RegistrationIntentService.class);
+                        startService(intent);
+                    }
 
                 } else {
                     Toast.makeText(MainActivity.this, "User has not granted permission for this operation!", Toast.LENGTH_SHORT)
                             .show();
                 }
 
-                Log.e("MA:", "PackageManager.PERMISSION_GRANTED:"+PackageManager.PERMISSION_GRANTED);
-                Log.e("MA:", "PackageManager.PERMISSION_DENIED:"+PackageManager.PERMISSION_DENIED);
-                Log.e("MA:", "onRequestPermissionsResult:WRITE_EXTERNAL_STORAGE:"+perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE));
-                if(perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
+                Log.e("MA:", "PackageManager.PERMISSION_GRANTED:" + PackageManager.PERMISSION_GRANTED);
+                Log.e("MA:", "PackageManager.PERMISSION_DENIED:" + PackageManager.PERMISSION_DENIED);
+                Log.e("MA:", "onRequestPermissionsResult:WRITE_EXTERNAL_STORAGE:" + perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE));
+                if (perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
 
                     Fragment fragment = new VehiclesListFragment();
-                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
                     transaction.replace(R.id.content_frame, fragment);
                     transaction.commitAllowingStateLoss();
-                }else{
+                } else {
                     Toast.makeText(this, "User has not granted permission for this operation!", Toast.LENGTH_SHORT).show();
                     finish();
                 }
@@ -559,11 +647,12 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
 
     @Override
     public void onInit(int status) {
-        if(tts!=null && status== TextToSpeech.SUCCESS){
-            Locale loc=new Locale("en","IN");
+        if (tts != null && status == TextToSpeech.SUCCESS) {
+            Locale loc = new Locale("en", "IN");
             tts.setSpeechRate(0.7f);
             tts.setLanguage(loc);
-            tts.speak(welcomeText,TextToSpeech.QUEUE_FLUSH,null);
+            if (welcomeText != null)
+                tts.speak(welcomeText, TextToSpeech.QUEUE_FLUSH, null);
         }
     }
 }

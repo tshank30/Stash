@@ -35,6 +35,15 @@ public class SharedPreferencesManager {
 		editor.commit();
 	}
 
+	public void setSchoolAccount(boolean schoolAccount) {
+		editor.putBoolean("schoolAccount", schoolAccount);
+		editor.commit();
+	}
+
+	public boolean getSchoolAccount() {
+		return settings.getBoolean("schoolAccount", false);
+	}
+
 	public String getRole() {
 		return settings.getString("role", null);
 	}
