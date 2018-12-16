@@ -45,6 +45,7 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,8 +65,7 @@ public class DashboardFragment extends Fragment implements LoaderTaskVehicleList
     private TextView totalVehiclesTextView;
     ProgressDialog progressDialog;
     private LoaderTaskVehicleList dataTask;
-    private MainActivity activity;
-    private Context context;
+
     private String url;
     private AppUtils appUtils;
     private final String FILTER_TEXT = "filterText";
@@ -73,14 +73,10 @@ public class DashboardFragment extends Fragment implements LoaderTaskVehicleList
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        activity = (MainActivity) getActivity();
-        appUtils = new AppUtils(context);
-        sharedPrefs = new SharedPreferencesManager(getActivity());
-        rottweilerApplication = (RottweilerApplication) activity.getApplicationContext();
         cd = ConnectionDetector.getInstance();
         res = getResources();
         setHasOptionsMenu(true);
-        url = appUtils.getLastLocationUrl();
+
         //bus.register(getActivity());
     }
 
@@ -98,6 +94,11 @@ public class DashboardFragment extends Fragment implements LoaderTaskVehicleList
         progressDialog.setMessage(res.getString(R.string.refresh_dialog_msg));
         progressDialog.setCancelable(false);
         vehicleStatus = res.getStringArray(R.array.vehicle_status);
+
+        appUtils = new AppUtils(getActivity());
+        sharedPrefs = new SharedPreferencesManager(getActivity());
+        rottweilerApplication = (RottweilerApplication) getActivity().getApplicationContext();
+        url = appUtils.getLastLocationUrl();
 		/*nearestVehicle=v.findViewById(R.id.nearest_vehicle);
 		nearestVehicle.setOnClickListener(new OnClickListener() {
 			@Override
@@ -112,12 +113,12 @@ public class DashboardFragment extends Fragment implements LoaderTaskVehicleList
 			}
 		});*/
         vehicleStatusColors = res.getIntArray(R.array.vehicle_status_color);
-        DatabaseHelper databaseHelper = new DatabaseHelper(context);
-        dataTask = new LoaderTaskVehicleList(context, !databaseHelper.isVehicleListDataInDB(), url, this, true);
+        DatabaseHelper databaseHelper = new DatabaseHelper(getActivity());
+        dataTask = new LoaderTaskVehicleList(getActivity().getApplicationContext(), !databaseHelper.isVehicleListDataInDB(), url, new WeakReference<LoaderTaskVehicleList.VehicleListInterface>(this), true);
         dataTask.getDataFromDB();
 
 
-        if (ConnectionDetector.getInstance().isConnectingToInternet(context))
+        if (ConnectionDetector.getInstance().isConnectingToInternet(getActivity()))
             dataTask.execute();
         return v;
     }
@@ -227,7 +228,7 @@ public class DashboardFragment extends Fragment implements LoaderTaskVehicleList
                     bundle.putString(FILTER_TEXT, "not working");
                 }
                 fragment.setArguments(bundle);
-                FragmentManager fragmentManager = activity.getFragmentManager();
+                FragmentManager fragmentManager = getActivity().getFragmentManager();
                 FragmentTransaction ft = fragmentManager.beginTransaction();
                 ////ft.setCustomAnimations(R.anim.fragment_slide_left_enter, R.anim.fragment_slide_left_exit);
                 ft.replace(R.id.content_frame, fragment);
@@ -270,7 +271,7 @@ public class DashboardFragment extends Fragment implements LoaderTaskVehicleList
                 ft.addToBackStack(fragment.getClass().toString());
                 ft.commitAllowingStateLoss();
             } else {
-                Toast.makeText(activity, "Not connected to internet!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Not connected to internet!", Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -298,14 +299,11 @@ public class DashboardFragment extends Fragment implements LoaderTaskVehicleList
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        activity = (MainActivity) context;
-        this.context = context;
+
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (context == null)
-            context = getActivity();
     }
 }

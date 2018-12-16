@@ -21,6 +21,7 @@ import com.fst.apps.ftelematics.utils.ConnectionDetector;
 import com.fst.apps.ftelematics.utils.LocationComparator;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.lang.ref.WeakReference;
 import java.util.Collections;
 import java.util.List;
 
@@ -53,9 +54,10 @@ public class NearestVehicleList extends Fragment implements LoaderTaskSortedVehi
         fromLat = latLng.latitude;
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        dataTask = new LoaderTaskSortedVehicleList(context, true, url, this, fromLat, fromLong);
-        if (ConnectionDetector.getInstance().isConnectingToInternet(context))
+        if (ConnectionDetector.getInstance().isConnectingToInternet(context)) {
+            dataTask = new LoaderTaskSortedVehicleList(context, true, url, new WeakReference<LoaderTaskSortedVehicleList.VehicleListInterface>(this), fromLat, fromLong);
             dataTask.execute();
+        }
 
         return rootView;
     }
@@ -63,7 +65,7 @@ public class NearestVehicleList extends Fragment implements LoaderTaskSortedVehi
     @Override
     public void onProcessComplete(List<LastLocation> lastLocationList) {
         locationList = lastLocationList;
-        NearestVehicleAdapter adapter = new NearestVehicleAdapter(locationList, context,latLng);
+        NearestVehicleAdapter adapter = new NearestVehicleAdapter(locationList, context, latLng);
         recyclerView.setAdapter(adapter);
 
     }

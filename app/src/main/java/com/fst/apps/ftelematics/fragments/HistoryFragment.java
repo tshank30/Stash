@@ -65,7 +65,7 @@ public class HistoryFragment extends Fragment {
     private TextView dateTextView, timeFromTextView, timeToTextView, historySpeed;
     private SimpleDateFormat dateFormatter;
     private GoogleMap googleMap;
-    private MainActivity mActivity;
+    //private MainActivity getActivity();
     private RelativeLayout playButton, pauseButton;
     private SeekBar speedSeekBar;
     private LastLocation lastLocation;
@@ -97,7 +97,7 @@ public class HistoryFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        mActivity = (MainActivity) activity;
+
     }
 
     @Override
@@ -259,17 +259,18 @@ public class HistoryFragment extends Fragment {
 
     private void initilizeMap() {
         if (googleMap == null) {
-
-            ((com.google.android.gms.maps.MapFragment) getChildFragmentManager().findFragmentById(R.id.map)).getMapAsync(new OnMapReadyCallback() {
-                @Override
-                public void onMapReady(GoogleMap googleMap) {
-                    HistoryFragment.this.googleMap = googleMap;
-                }
-            });
+            com.google.android.gms.maps.MapFragment fragment = (com.google.android.gms.maps.MapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+            if (fragment != null)
+                fragment.getMapAsync(new OnMapReadyCallback() {
+                    @Override
+                    public void onMapReady(GoogleMap googleMap) {
+                        HistoryFragment.this.googleMap = googleMap;
+                    }
+                });
         }
 
         if (googleMap == null) {
-            Toast.makeText(mActivity, "Sorry! unable to create maps", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Sorry! unable to create maps", Toast.LENGTH_SHORT).show();
         } else {
             //setUpMap(googleMap);
         }
@@ -291,7 +292,7 @@ public class HistoryFragment extends Fragment {
                     double longitude = Double.valueOf(lastHistoryLocation.getLongitude());
                     String status = lastHistoryLocation.getStatusCode();
                     String vehicleType = lastHistoryLocation.getVehicleType();
-                    String address = AppUtils.reverseGeocode(mActivity, latitude, longitude);
+                    String address = AppUtils.reverseGeocode(getActivity(), latitude, longitude);
                     LatLng point = new LatLng(latitude, longitude);
                     options.add(point);
                     MarkerOptions marker = new MarkerOptions().position(point).title(AppUtils.getStatusOfVehicle(status)).snippet(lastHistoryLocation.getStringTimestamp() + "\n" + address);
@@ -353,7 +354,7 @@ public class HistoryFragment extends Fragment {
                         marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_dormant));
                     }
 
-                    map.setInfoWindowAdapter(new MapInfoWindow(mActivity, "HISTORY"));
+                    map.setInfoWindowAdapter(new MapInfoWindow(getActivity(), "HISTORY"));
                     map.addMarker(marker);
                     map.animateCamera(CameraUpdateFactory.newLatLngZoom(point, 15.0f));
                     map.addPolyline(options);
@@ -418,7 +419,7 @@ public class HistoryFragment extends Fragment {
                             e.printStackTrace();
                         }
                     } else {
-                        Toast.makeText(mActivity, "No data for selected range!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "No data for selected range!", Toast.LENGTH_SHORT).show();
                         handlePlayPauseButton(1);
                         progressDialog.dismiss();
                     }
@@ -427,7 +428,7 @@ public class HistoryFragment extends Fragment {
         } else {
             progressDialog.dismiss();
             handlePlayPauseButton(1);
-            Toast.makeText(mActivity, "Please select date,time from and time to!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Please select date,time from and time to!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -448,11 +449,11 @@ public class HistoryFragment extends Fragment {
             Date date2 = sf.parse(toTime);
             Date currentDateTime = new Date();
             if (date1.compareTo(currentDateTime) > 0) {
-                Toast.makeText(mActivity, "Time from cannot be greater than current time!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Time from cannot be greater than current time!", Toast.LENGTH_SHORT).show();
                 timeFromTextView.setText("00:00:00");
                 return null;
             } else if (date1.compareTo(date2) > 0) {
-                Toast.makeText(mActivity, "Time from cannot be greater than time to!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Time from cannot be greater than time to!", Toast.LENGTH_SHORT).show();
                 return null;
             }
         } catch (ParseException e1) {

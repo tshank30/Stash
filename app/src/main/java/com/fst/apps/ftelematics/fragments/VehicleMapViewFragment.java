@@ -29,12 +29,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 public class VehicleMapViewFragment extends Fragment implements LoaderTaskVehicleList.VehicleListInterface {
 
-    private MainActivity activity;
-    private Context context;
+
     private LoaderTaskVehicleList dataTask;
     private long autoRefreshInterval;
     private SharedPreferencesManager sharedPrefs;
@@ -44,30 +44,33 @@ public class VehicleMapViewFragment extends Fragment implements LoaderTaskVehicl
     private GoogleMap googleMap;
     private RadioGroup radioGroup;
     private int mapType;
+    private boolean refresh;
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        sharedPrefs = new SharedPreferencesManager(getActivity());
-        autoRefreshInterval = sharedPrefs.getAutoRefresh();
-        appUtils = new AppUtils(context);
-        url = appUtils.getLastLocationUrl();
+
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_vehicle_map_view, container, false);
+        View v = inflater.inflate(R.layout.all_vehicle_map, container, false);
         radioGroup = (RadioGroup) v.findViewById(R.id.map_types);
         //DatabaseHelper databaseHelper = new DatabaseHelper(context);
 
-        dataTask = new LoaderTaskVehicleList(context, false, url, this, true);
+        sharedPrefs = new SharedPreferencesManager(getActivity());
+        autoRefreshInterval = sharedPrefs.getAutoRefresh();
+        appUtils = new AppUtils(getActivity());
+        url = appUtils.getLastLocationUrl();
+        refresh = true;
+        dataTask = new LoaderTaskVehicleList(getActivity().getApplicationContext(), false, url, new WeakReference<LoaderTaskVehicleList.VehicleListInterface>(this), true);
         // dataTask.getDataFromDB();
-        if (ConnectionDetector.getInstance().isConnectingToInternet(context)) {
+        if (ConnectionDetector.getInstance().isConnectingToInternet(getActivity().getApplicationContext())) {
             dataTask.execute();
         } else {
-            Toast.makeText(context, "Please connect to working internet!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Please connect to working internet!", Toast.LENGTH_SHORT).show();
         }
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -90,10 +93,12 @@ public class VehicleMapViewFragment extends Fragment implements LoaderTaskVehicl
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    Log.v("Auto Refresh", "Refreshing data after " + autoRefreshInterval + " seconds");
-                    dataTask = new LoaderTaskVehicleList(context, false, url, VehicleMapViewFragment.this, false);
-                    dataTask.execute();
-                    handler.postDelayed(this, autoRefreshInterval);
+                    if (refresh) {
+                        Log.v("Auto Refresh", "Refreshing data after " + autoRefreshInterval + " seconds");
+                        dataTask = new LoaderTaskVehicleList(getActivity().getApplicationContext(), false, url, new WeakReference<LoaderTaskVehicleList.VehicleListInterface>(VehicleMapViewFragment.this), false);
+                        dataTask.execute();
+                        handler.postDelayed(this, autoRefreshInterval);
+                    }
                 }
             }, autoRefreshInterval);
         }
@@ -103,22 +108,24 @@ public class VehicleMapViewFragment extends Fragment implements LoaderTaskVehicl
 
     private void initilizeMap(final int mapType, final List<LastLocation> lastLocationList) {
         if (googleMap == null) {
-            ((com.google.android.gms.maps.MapFragment) getChildFragmentManager().findFragmentById(R.id.map)).getMapAsync(new OnMapReadyCallback() {
-                @Override
-                public void onMapReady(GoogleMap googleMap) {
-                    VehicleMapViewFragment.this.googleMap = googleMap;
-                    VehicleMapViewFragment.this.googleMap.setInfoWindowAdapter(new MapInfoWindow(getActivity(), "HISTORY"));
-                    if (VehicleMapViewFragment.this.googleMap == null) {
-                        Toast.makeText(context, "Sorry! unable to create maps", Toast.LENGTH_SHORT).show();
-                    } else {
-                        setUpMap(googleMap, mapType, lastLocationList);
+            com.google.android.gms.maps.MapFragment fragment = (com.google.android.gms.maps.MapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+            if (fragment != null)
+                fragment.getMapAsync(new OnMapReadyCallback() {
+                    @Override
+                    public void onMapReady(GoogleMap googleMap) {
+                        VehicleMapViewFragment.this.googleMap = googleMap;
+                        VehicleMapViewFragment.this.googleMap.setInfoWindowAdapter(new MapInfoWindow(getActivity(), "HISTORY"));
+                        if (VehicleMapViewFragment.this.googleMap == null) {
+                            Toast.makeText(getActivity(), "Sorry! unable to create maps", Toast.LENGTH_SHORT).show();
+                        } else {
+                            setUpMap(googleMap, mapType, lastLocationList);
+                        }
                     }
-                }
-            });
+                });
         }
 
         if (googleMap == null) {
-            Toast.makeText(context, "Sorry! unable to create maps", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Sorry! unable to create maps", Toast.LENGTH_SHORT).show();
         } else {
             setUpMap(googleMap, mapType, lastLocationList);
         }
@@ -206,7 +213,7 @@ public class VehicleMapViewFragment extends Fragment implements LoaderTaskVehicl
                     //mMap.clear();
                     builder.include(marker.getPosition());
                     mMap.addMarker(marker);
-                    mMap.setInfoWindowAdapter(new MapInfoWindow(context, "MAP"));
+                    mMap.setInfoWindowAdapter(new MapInfoWindow(getActivity(), "MAP"));
                 }
                 final LatLngBounds bounds = builder.build();
                 mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
@@ -226,20 +233,21 @@ public class VehicleMapViewFragment extends Fragment implements LoaderTaskVehicl
 
     @Override
     public void noConnectionNoDB() {
-
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        activity = (MainActivity) context;
-        this.context = context;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (context == null)
-            context = getActivity();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        refresh = false;
     }
 }

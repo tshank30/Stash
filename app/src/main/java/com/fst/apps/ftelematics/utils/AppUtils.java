@@ -259,7 +259,12 @@ public class AppUtils {
         i.putExtra("address", phoneNumber);
         i.putExtra("sms_body", text);
         i.setType("vnd.android-dir/mms-sms");
-        context.startActivity(i);
+        if (i.resolveActivity(context.getPackageManager()) != null) {
+            context.startActivity(i);
+        } else {
+            Toast.makeText(context, "SMS app not present", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     public String getLastLocationUrl() {
@@ -352,7 +357,7 @@ public class AppUtils {
     public static String getDatesDifference(String startDate, String endDate, String action) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:sss");
         long duration = 0;
-        String difference = null;
+        StringBuilder difference = new StringBuilder();
         if (!TextUtils.isEmpty(startDate) && !TextUtils.isEmpty(endDate)) {
             try {
                 Date date1 = sdf.parse(startDate);
@@ -369,7 +374,12 @@ public class AppUtils {
                     long hours = diffInSec % 24;
                     diffInSec /= 24;
                     long days = diffInSec;
-                    difference = hours + " hrs " + minutes + " mins " + seconds + " sec";
+
+                    difference = new StringBuilder();
+                    if (days != 0)
+                        difference.append(days + " days,");
+
+                    difference.append(+hours + " hrs " + minutes + " mins " + seconds + " sec");
 
                 }
             } catch (ParseException e) {
@@ -378,12 +388,12 @@ public class AppUtils {
         }
         if (!TextUtils.isEmpty(action)) {
             if ("STRING".equalsIgnoreCase(action)) {
-                return difference;
+                return difference.toString();
             } else if ("DIFF".equalsIgnoreCase(action)) {
                 return duration + "";
             }
         }
-        return difference;
+        return difference.toString();
     }
 
 
@@ -425,8 +435,8 @@ public class AppUtils {
         dist = rad2deg(dist);
         //distance in Kms
         dist = dist * 60 * 1.1515 * 1.6;
-        dist=Double.parseDouble(String.format("%.2f", dist));
-        Log.e("Distance",""+dist);
+        dist = Double.parseDouble(String.format("%.2f", dist));
+        Log.e("Distance", "" + dist);
         return (dist);
     }
 

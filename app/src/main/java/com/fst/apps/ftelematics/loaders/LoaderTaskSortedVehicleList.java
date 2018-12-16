@@ -16,6 +16,7 @@ import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONObject;
 
+import java.lang.ref.WeakReference;
 import java.util.Collections;
 import java.util.List;
 
@@ -31,7 +32,7 @@ public class LoaderTaskSortedVehicleList extends AsyncTask<Void, Void, List<Last
     private NetworkUtility networkUtility;
     private ProgressDialog progressDialog;
     private Context context;
-    private VehicleListInterface vehicleListInterface;
+    private WeakReference<VehicleListInterface> vehicleListInterface;
     private DatabaseHelper dbHelper;
     private Double fromLat, fromLong;
     private AppUtils appUtils;
@@ -45,7 +46,7 @@ public class LoaderTaskSortedVehicleList extends AsyncTask<Void, Void, List<Last
      * @param url                  url params
      * @param vehicleListInterface interface used to notify the fragment about latest list
      */
-    public LoaderTaskSortedVehicleList(Context context, boolean showDialog, String url, VehicleListInterface vehicleListInterface, Double fromLat, Double fromLong) {
+    public LoaderTaskSortedVehicleList(Context context, boolean showDialog, String url, WeakReference<VehicleListInterface> vehicleListInterface, Double fromLat, Double fromLong) {
         this.context = context;
         this.url = url;
         this.networkUtility = new NetworkUtility();
@@ -92,15 +93,15 @@ public class LoaderTaskSortedVehicleList extends AsyncTask<Void, Void, List<Last
 
                 //String s="https://maps.googleapis.com/maps/api/directions/json?origin="+ fromLat + "," + fromLong +"&destination="+ Double.parseDouble(location.getLatitude()) + "," + Double.parseDouble(location.getLongitude()) +"&key=AIzaSyA4ofHYDv6xs_AToHZM3ZdjV4FTeq9AW0w";
 
-                String s="https://maps.googleapis.com/maps/api/distancematrix/json?origins="+ fromLat + "," + fromLong +"&destinations="+ Double.parseDouble(location.getLatitude()) + "," + Double.parseDouble(location.getLongitude()) +"&departure_time=now&key=AIzaSyA4ofHYDv6xs_AToHZM3ZdjV4FTeq9AW0w";
+                String s = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" + fromLat + "," + fromLong + "&destinations=" + Double.parseDouble(location.getLatitude()) + "," + Double.parseDouble(location.getLongitude()) + "&departure_time=now&key=AIzaSyA4ofHYDv6xs_AToHZM3ZdjV4FTeq9AW0w";
                 //String s = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" + fromLat + "," + fromLong + "&destinations=" + Double.parseDouble(location.getLatitude()) + "," + Double.parseDouble(location.getLongitude()) + "&mode=driving&language=en-EN&sensor=false";
                 DistanceModel distanceModel = networkUtility.sendDistanceRequest(s);
-               /* JSONObject jsonObject=new JSONObject(response);*/
+                /* JSONObject jsonObject=new JSONObject(response);*/
                 location.setDistanceFromLoc(distanceModel.getDistance());
                 location.setDistanceText(distanceModel.getDistanceText());
                 location.setDurationText(distanceModel.getDurationText());
                 /*String okResponse=jsonObject.get("Status").toString();*/
-              /*  Log.d("Result", okResponse);*/
+                /*  Log.d("Result", okResponse);*/
             } catch (Exception e) {
                 location.setDistanceFromLoc(abs(appUtils.distance(fromLat, fromLong, Double.parseDouble(location.getLatitude()), Double.parseDouble(location.getLongitude()))));
             }
@@ -129,8 +130,8 @@ public class LoaderTaskSortedVehicleList extends AsyncTask<Void, Void, List<Last
             e.printStackTrace();
         }
 
-        if (lastLocationList != null && lastLocationList.size() > 0)
-            vehicleListInterface.onProcessComplete(lastLocationList);
+        if (vehicleListInterface.get() != null && lastLocationList != null && lastLocationList.size() > 0)
+            vehicleListInterface.get().onProcessComplete(lastLocationList);
 
     }
 

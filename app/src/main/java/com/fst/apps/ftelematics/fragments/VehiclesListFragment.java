@@ -34,6 +34,7 @@ import com.fst.apps.ftelematics.utils.ConnectionDetector;
 import com.fst.apps.ftelematics.utils.DatabaseHelper;
 import com.fst.apps.ftelematics.utils.SharedPreferencesManager;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,8 +53,8 @@ public class VehiclesListFragment extends Fragment implements LoaderTaskVehicleL
     private RelativeLayout noInternet;
     private LoaderTaskVehicleList dataTask;
     private Handler handler = new Handler();
-    private MainActivity activity;
-    private Context context;
+    private boolean refresh;
+
     private String url;
     List<LastLocation> vehiclesList;
     private EditText filter;
@@ -64,16 +65,7 @@ public class VehiclesListFragment extends Fragment implements LoaderTaskVehicleL
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        appUtils = new AppUtils(getActivity());
-        sharedPrefs = new SharedPreferencesManager(getActivity());
-        autoRefreshInterval = sharedPrefs.getAutoRefresh();
-        progressDialog = new ProgressDialog(getActivity());
-        url = appUtils.getLastLocationUrl();
-        cd = new ConnectionDetector();
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            filterText = bundle.getString(FILTER_TEXT);
-        }
+
     }
 
     @Nullable
@@ -86,24 +78,37 @@ public class VehiclesListFragment extends Fragment implements LoaderTaskVehicleL
         filter = (EditText) v.findViewById(R.id.filter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+        refresh = true;
+        appUtils = new AppUtils(getActivity());
+        sharedPrefs = new SharedPreferencesManager(getActivity());
+        autoRefreshInterval = sharedPrefs.getAutoRefresh();
+        progressDialog = new ProgressDialog(getActivity());
+        url = appUtils.getLastLocationUrl();
+        cd = new ConnectionDetector();
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            filterText = bundle.getString(FILTER_TEXT);
+        }
         vehiclesList = new ArrayList<>();
-        adapter = new VehiclesListAdapter(vehiclesList, R.layout.fragment_home, context);
+        adapter = new VehiclesListAdapter(vehiclesList, R.layout.fragment_home, getActivity());
         recyclerView.setAdapter(adapter);
         filter.addTextChangedListener(new VehicleFilterTextWatcher());
-        DatabaseHelper databaseHelper = new DatabaseHelper(context);
-        dataTask = new LoaderTaskVehicleList(context, !databaseHelper.isVehicleListDataInDB(), url, this, true);
+        DatabaseHelper databaseHelper = new DatabaseHelper(getActivity());
+        dataTask = new LoaderTaskVehicleList(getActivity().getApplicationContext(), !databaseHelper.isVehicleListDataInDB(), url, new WeakReference<LoaderTaskVehicleList.VehicleListInterface>(this), true);
         dataTask.getDataFromDB();
-        if (ConnectionDetector.getInstance().isConnectingToInternet(context))
+        if (ConnectionDetector.getInstance().isConnectingToInternet(getActivity()))
             dataTask.execute();
 
         if (autoRefreshInterval > 0) {
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    Log.v("Auto Refresh", "Refreshing data after " + autoRefreshInterval + " seconds");
-                    dataTask = new LoaderTaskVehicleList(context, false, url, VehiclesListFragment.this, false);
-                    dataTask.execute();
-                    handler.postDelayed(this, autoRefreshInterval);
+                    if (refresh) {
+                        Log.v("Auto Refresh", "Refreshing data after " + autoRefreshInterval + " seconds");
+                        dataTask = new LoaderTaskVehicleList(getActivity().getApplicationContext(), false, url, new WeakReference<LoaderTaskVehicleList.VehicleListInterface>(VehiclesListFragment.this), false);
+                        dataTask.execute();
+                        handler.postDelayed(this, autoRefreshInterval);
+                    }
                 }
             }, autoRefreshInterval);
         }
@@ -132,15 +137,13 @@ public class VehiclesListFragment extends Fragment implements LoaderTaskVehicleL
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        activity = (MainActivity) context;
-        this.context = context;
+
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (context == null)
-            context = getActivity();
+
     }
 
     @Override
@@ -155,13 +158,13 @@ public class VehiclesListFragment extends Fragment implements LoaderTaskVehicleL
         int id = item.getItemId();
 
         if (id == R.id.action_refresh) {
-            if (ConnectionDetector.getInstance().isConnectingToInternet(context)) {
-                Toast.makeText(context, "Loading...", Toast.LENGTH_SHORT).show();
-                dataTask = new LoaderTaskVehicleList(context, false, url, VehiclesListFragment.this, false);
+            if (ConnectionDetector.getInstance().isConnectingToInternet(getActivity().getApplicationContext())) {
+                Toast.makeText(getActivity(), "Loading...", Toast.LENGTH_SHORT).show();
+                dataTask = new LoaderTaskVehicleList(getActivity().getApplicationContext(), false, url,  new WeakReference<LoaderTaskVehicleList.VehicleListInterface>(VehiclesListFragment.this), false);
                 dataTask.execute();
                 return true;
             } else {
-                Toast.makeText(context, "Not connected to internet!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Not connected to internet!", Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -207,5 +210,11 @@ public class VehiclesListFragment extends Fragment implements LoaderTaskVehicleL
         public void afterTextChanged(Editable s) {
 
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        refresh = false;
     }
 }

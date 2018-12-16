@@ -41,6 +41,7 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,8 +61,7 @@ public class NewDashBoardFragment extends Fragment implements LoaderTaskVehicleL
     private TextView totalVehiclesTextView;
     ProgressDialog progressDialog;
     private LoaderTaskVehicleList dataTask;
-    private MainActivity activity;
-    private Context context;
+
     private String url;
     private AppUtils appUtils;
     private final String FILTER_TEXT = "filterText";
@@ -72,14 +72,12 @@ public class NewDashBoardFragment extends Fragment implements LoaderTaskVehicleL
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        activity = (MainActivity) getActivity();
-        appUtils = new AppUtils(context);
-        sharedPrefs = new SharedPreferencesManager(getActivity());
-        rottweilerApplication = (RottweilerApplication) activity.getApplicationContext();
+
+
         cd = ConnectionDetector.getInstance();
         res = getResources();
         setHasOptionsMenu(true);
-        url = appUtils.getLastLocationUrl();
+
         //bus.register(getActivity());
     }
 
@@ -112,11 +110,16 @@ public class NewDashBoardFragment extends Fragment implements LoaderTaskVehicleL
         settingCard.setOnClickListener(this);
         reportCard.setOnClickListener(this);
 
+        appUtils = new AppUtils(getActivity());
+        sharedPrefs = new SharedPreferencesManager(getActivity());
+        rottweilerApplication = (RottweilerApplication) getActivity().getApplicationContext();
+        url = appUtils.getLastLocationUrl();
 
-        DatabaseHelper databaseHelper = new DatabaseHelper(context);
-        dataTask = new LoaderTaskVehicleList(context, !databaseHelper.isVehicleListDataInDB(), url, this, true);
+
+        DatabaseHelper databaseHelper = new DatabaseHelper(getActivity());
+        dataTask = new LoaderTaskVehicleList(getActivity().getApplicationContext(), !databaseHelper.isVehicleListDataInDB(), url, new WeakReference<LoaderTaskVehicleList.VehicleListInterface>(this), true);
         dataTask.getDataFromDB();
-        if (ConnectionDetector.getInstance().isConnectingToInternet(context))
+        if (ConnectionDetector.getInstance().isConnectingToInternet(getActivity()))
             dataTask.execute();
         return v;
     }
@@ -282,7 +285,7 @@ public class NewDashBoardFragment extends Fragment implements LoaderTaskVehicleL
                 ft.addToBackStack(NewDashBoardFragment.this.getClass().toString());
                 ft.commit();
             } else {
-                Toast.makeText(activity, "Not connected to internet!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Not connected to internet!", Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -310,15 +313,13 @@ public class NewDashBoardFragment extends Fragment implements LoaderTaskVehicleL
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        activity = (MainActivity) context;
-        this.context = context;
+
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (context == null)
-            context = getActivity();
+
     }
 }
 

@@ -40,6 +40,7 @@ import com.fst.apps.ftelematics.MainActivity;
 import com.fst.apps.ftelematics.R;
 import com.fst.apps.ftelematics.entities.LastLocation;
 import com.fst.apps.ftelematics.loaders.LoaderTaskVehicleList;
+import com.fst.apps.ftelematics.soapclient.IAppManager;
 import com.fst.apps.ftelematics.utils.AppUtils;
 import com.fst.apps.ftelematics.utils.ConnectionDetector;
 import com.fst.apps.ftelematics.utils.MapInfoWindow;
@@ -60,6 +61,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -67,8 +69,7 @@ import java.util.List;
 
 public class VehicleMapViewFrag extends Fragment implements LoaderTaskVehicleList.VehicleListInterface {
 
-    private MainActivity activity;
-    private Context context;
+
     private LoaderTaskVehicleList dataTask;
     private LastLocation lastLocation;
     private long autoRefreshInterval;
@@ -101,22 +102,14 @@ public class VehicleMapViewFrag extends Fragment implements LoaderTaskVehicleLis
     private TimePickerDialog timeFromDialog;
     private View rootView;
     private int retry = 0;
+    private boolean refresh = true;
+    private IAppManager distanceManager;
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        sharedPrefs = new SharedPreferencesManager(getActivity());
-        autoRefreshInterval = 30000;
-        appUtils = new AppUtils(context);
-        url = appUtils.getLastLocationUrl();
-        Bundle bundle = getArguments();
-        lastLocation = bundle.getParcelable("lastLocation");
-        activity = (MainActivity) getActivity();
-        if (lastLocation != null) {
-            origin = new LatLng(Double.valueOf(lastLocation.getLatitude()), Double.valueOf(lastLocation.getLongitude()));
-            //vehicleNumber=lastLocation.getDisplayName();
-        }
+
 
     }
 
@@ -136,35 +129,53 @@ public class VehicleMapViewFrag extends Fragment implements LoaderTaskVehicleLis
         totalDistanceTextView = rootView.findViewById(R.id.totalDistanceText);
         timestampText = rootView.findViewById(R.id.timestampText);
         shareLive = rootView.findViewById(R.id.share_live);
-        context = getActivity();
+        refresh = true;
+
+        sharedPrefs = new SharedPreferencesManager(getActivity());
+        autoRefreshInterval = 30000;
+        appUtils = new AppUtils(getActivity());
+        url = appUtils.getLastLocationUrl();
+        Bundle bundle = getArguments();
+        lastLocation = bundle.getParcelable("lastLocation");
+
+        if (lastLocation != null) {
+            origin = new LatLng(Double.valueOf(lastLocation.getLatitude()), Double.valueOf(lastLocation.getLongitude()));
+            //vehicleNumber=lastLocation.getDisplayName();
+        }
+
         //DatabaseHelper databaseHelper = new DatabaseHelper(context);
 
         MarkerPoints = new ArrayList<LatLng>();
         no_of_hits = 0;
 
 
-        new DistanceTask(sharedPrefs.getAccountId(), lastLocation.getDeviceID()).execute();
+        distanceManager = ((MainActivity) getActivity()).getSoapServiceInstance();
+        new DistanceTask(sharedPrefs.getAccountId(), lastLocation.getDeviceID(), distanceManager).execute();
         speedTextView.setText(lastLocation.getSpeedKPH() + " KMPH");
         timestampText.setText(AppUtils.getDateFromUnixTimestsmp(lastLocation.getUnixTime()));
 
 
         if (googleMap == null) {
-            ((com.google.android.gms.maps.MapFragment) getChildFragmentManager().findFragmentById(R.id.map)).getMapAsync(new OnMapReadyCallback() {
-                @Override
-                public void onMapReady(GoogleMap googleMap) {
-                    VehicleMapViewFrag.this.googleMap = googleMap;
+            com.google.android.gms.maps.MapFragment fragment = (com.google.android.gms.maps.MapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+            if (fragment != null)
+                fragment.getMapAsync(new OnMapReadyCallback() {
+                    @Override
+                    public void onMapReady(GoogleMap googleMap) {
+                        if (VehicleMapViewFrag.this.googleMap != null && googleMap != null) {
+                            VehicleMapViewFrag.this.googleMap = googleMap;
 
-                    setUpMap(lastLocation, false);
+                            setUpMap(lastLocation, false);
 
-                    Log.e("Location", lastLocation.getLatitude() + " & " + lastLocation.getLongitude());
-                    no_of_hits++; // to differentiate first hit
+                            Log.e("Location", lastLocation.getLatitude() + " & " + lastLocation.getLongitude());
+                            no_of_hits++; // to differentiate first hit
 
 
-                    if (googleMap == null) {
-                        Toast.makeText(context, "Sorry! unable to create maps", Toast.LENGTH_SHORT).show();
+                            if (googleMap == null) {
+                                Toast.makeText(getActivity(), "Sorry! unable to create maps", Toast.LENGTH_SHORT).show();
+                            }
+                        }
                     }
-                }
-            });
+                });
 
         }
 
@@ -181,12 +192,16 @@ public class VehicleMapViewFrag extends Fragment implements LoaderTaskVehicleLis
             @Override
             public void run() {
 
-                dataTask = new LoaderTaskVehicleList(context, false, url, VehicleMapViewFrag.this, true);
-                if (ConnectionDetector.getInstance().isConnectingToInternet(context)) {
-                    dataTask.execute();
-                } else {
-                    Toast.makeText(context, "Please connect to working internet!", Toast.LENGTH_SHORT).show();
-                }
+                if (refresh) {
+                    dataTask = new LoaderTaskVehicleList(getActivity().getApplicationContext(), false, url, new WeakReference<LoaderTaskVehicleList.VehicleListInterface>(VehicleMapViewFrag.this), true);
+                    if (ConnectionDetector.getInstance().isConnectingToInternet(getActivity())) {
+                        dataTask.execute();
+                    }
+                }/*else {
+
+                    if (getActivity() != null)
+                        Toast.makeText(getActivity(), "Please connect to working internet!", Toast.LENGTH_SHORT).show();
+                }*/
             }
         }, 1500);
 
@@ -224,10 +239,13 @@ public class VehicleMapViewFrag extends Fragment implements LoaderTaskVehicleLis
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    Log.v("Auto Refresh", "Refreshing data after " + autoRefreshInterval + " seconds");
-                    dataTask = new LoaderTaskVehicleList(context, false, url, VehicleMapViewFrag.this, false);
-                    dataTask.execute();
-                    handler.postDelayed(this, autoRefreshInterval);
+
+                    if (refresh) {
+                        Log.v("Auto Refresh", "Refreshing data after " + autoRefreshInterval + " seconds");
+                        dataTask = new LoaderTaskVehicleList(getActivity().getApplicationContext(), false, url, new WeakReference<LoaderTaskVehicleList.VehicleListInterface>(VehicleMapViewFrag.this), false);
+                        dataTask.execute();
+                        handler.postDelayed(this, autoRefreshInterval);
+                    }
                 }
             }, autoRefreshInterval);
         }
@@ -262,13 +280,13 @@ public class VehicleMapViewFrag extends Fragment implements LoaderTaskVehicleLis
 
                 if (calendar.getTime().getTime() < newDate.getTime().getTime()) {
                     //timeFromDialog.show();
-                    long currentTime=System.currentTimeMillis()/1000;
-                    new LiveUrlUpdate(lastLocation.getAccountID(), lastLocation.getDeviceID(), Long.toString(currentTime), Long.toString(newDate.getTime().getTime()/1000)).execute();
+                    long currentTime = System.currentTimeMillis() / 1000;
+                    new LiveUrlUpdate(lastLocation.getAccountID(), lastLocation.getDeviceID(), Long.toString(currentTime), Long.toString(newDate.getTime().getTime() / 1000)).execute();
                     String shareBody = "http://205.147.110.119:81/LiveLink.aspx?id=" + currentTime;
 
                     //String shareBody = "Visit <a href=\<%shareBody%>\">Track Your Vehicle</a> for more info.";
 
-                    String shareLink = Html.fromHtml("<a href=\""+ shareBody + "\">" + "Track Your Vehicle" + "</a>").toString();
+                    String shareLink = Html.fromHtml("<a href=\"" + shareBody + "\">" + "Track Your Vehicle" + "</a>").toString();
 
 
                     Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
@@ -315,13 +333,14 @@ public class VehicleMapViewFrag extends Fragment implements LoaderTaskVehicleLis
     */
     private void initilizeMap(int mapType, List<LastLocation> lastLocationList) {
         if (googleMap == null) {
-
-            ((com.google.android.gms.maps.MapFragment) getChildFragmentManager().findFragmentById(R.id.map)).getMapAsync(new OnMapReadyCallback() {
-                @Override
-                public void onMapReady(GoogleMap googleMap) {
-                    VehicleMapViewFrag.this.googleMap = googleMap;
-                }
-            });
+            com.google.android.gms.maps.MapFragment fragment = (com.google.android.gms.maps.MapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+            if (fragment != null)
+                fragment.getMapAsync(new OnMapReadyCallback() {
+                    @Override
+                    public void onMapReady(GoogleMap googleMap) {
+                        VehicleMapViewFrag.this.googleMap = googleMap;
+                    }
+                });
         }
 
         if (googleMap != null) {
@@ -342,7 +361,8 @@ public class VehicleMapViewFrag extends Fragment implements LoaderTaskVehicleLis
                         prevloc = new LatLng(Double.valueOf(freshLastLocation.getLatitude()), Double.valueOf(freshLastLocation.getLongitude()));
                         speedTextView.setText(freshLastLocation.getSpeedKPH() + " KMPH");
                         timestampText.setText(AppUtils.getDateFromUnixTimestsmp(freshLastLocation.getUnixTime()));
-                        new DistanceTask(sharedPrefs.getAccountId(), freshLastLocation.getDeviceID()).execute();
+                        if (distanceManager != null)
+                            new DistanceTask(sharedPrefs.getAccountId(), freshLastLocation.getDeviceID(), distanceManager).execute();
 
                         String status = freshLastLocation.getStatusCode();
                         String vehicleType = freshLastLocation.getVehicleType();
@@ -435,15 +455,11 @@ public class VehicleMapViewFrag extends Fragment implements LoaderTaskVehicleLis
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        activity = (MainActivity) context;
-        this.context = context;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (context == null)
-            context = getActivity();
     }
 
 
@@ -908,22 +924,27 @@ public class VehicleMapViewFrag extends Fragment implements LoaderTaskVehicleLis
     class DistanceTask extends AsyncTask<Void, Void, String> {
 
         String accountID, deviceID;
+        private IAppManager distanceManager;
 
-        public DistanceTask(String accountID, String deviceID) {
+        public DistanceTask(String accountID, String deviceID, IAppManager manager) {
             this.accountID = accountID;
             this.deviceID = deviceID;
+            this.distanceManager = manager;
         }
 
         @Override
         protected String doInBackground(Void... params) {
-            String result = activity.getSoapServiceInstance().getTotalDistance(accountID, deviceID);
+            String result = null;
+            if (distanceManager != null)
+                result = distanceManager.getTotalDistance(accountID, deviceID);
             return result;
         }
 
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            totalDistanceTextView.setText(result + " Kms");
+            if (result != null)
+                totalDistanceTextView.setText(result + " Kms");
         }
     }
 
@@ -955,7 +976,7 @@ public class VehicleMapViewFrag extends Fragment implements LoaderTaskVehicleLis
 
         @Override
         protected String doInBackground(Void... params) {
-            String result = ((MainActivity) context).getSoapServiceInstance().setLiveUrlParams(accountID, deviceID, currentTime, activationTime);
+            String result = ((MainActivity) getActivity()).getSoapServiceInstance().setLiveUrlParams(accountID, deviceID, currentTime, activationTime);
             return result;
         }
 
@@ -970,4 +991,9 @@ public class VehicleMapViewFrag extends Fragment implements LoaderTaskVehicleLis
         }
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        refresh = false;
+    }
 }

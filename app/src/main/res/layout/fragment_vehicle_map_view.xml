@@ -8,8 +8,9 @@
     <RadioGroup
         android:id="@+id/map_types"
         android:layout_width="fill_parent"
-        android:layout_height="20dp"
+        android:layout_height="wrap_content"
         android:gravity="center_horizontal"
+        android:padding="5dp"
         android:orientation="horizontal"
         android:layout_alignParentTop="true">
 

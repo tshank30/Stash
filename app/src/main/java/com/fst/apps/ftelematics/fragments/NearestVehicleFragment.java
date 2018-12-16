@@ -93,21 +93,23 @@ public class NearestVehicleFragment extends Fragment implements View.OnClickList
 
 
         if (googleMap == null) {
-            ((MapFragment) getChildFragmentManager().findFragmentById(R.id.map)).getMapAsync(new OnMapReadyCallback() {
-                @Override
-                public void onMapReady(GoogleMap googleMap) {
-                    NearestVehicleFragment.this.googleMap = googleMap;
+            com.google.android.gms.maps.MapFragment fragment = (com.google.android.gms.maps.MapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+            if (fragment != null)
+                fragment.getMapAsync(new OnMapReadyCallback() {
+                    @Override
+                    public void onMapReady(GoogleMap googleMap) {
+                        NearestVehicleFragment.this.googleMap = googleMap;
 
-                    //setUpMap(new LatLng(Double.valueOf(0), Double.valueOf(0)), "", "");
+                        //setUpMap(new LatLng(Double.valueOf(0), Double.valueOf(0)), "", "");
 
-                    if (googleMap == null) {
-                        if (getActivity() != null)
-                            Toast.makeText(getActivity(), "Sorry! unable to create maps", Toast.LENGTH_SHORT).show();
-                    } else {
-                        checkLocationPermission();
+                        if (googleMap == null) {
+                            if (getActivity() != null)
+                                Toast.makeText(getActivity(), "Sorry! unable to create maps", Toast.LENGTH_SHORT).show();
+                        } else {
+                            checkLocationPermission();
+                        }
                     }
-                }
-            });
+                });
 
         }
 
@@ -201,11 +203,11 @@ public class NearestVehicleFragment extends Fragment implements View.OnClickList
             Location location = mLocationManager
                     .getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-            if(location==null)
-                 location = mLocationManager
+            if (location == null)
+                location = mLocationManager
                         .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
-            if(location==null)
+            if (location == null)
                 location = mLocationManager
                         .getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
 

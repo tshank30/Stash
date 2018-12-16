@@ -86,7 +86,6 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
     @Override
     protected void onStart() {
         super.onStart();
-
     }
 
 
@@ -301,7 +300,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
 
                     if (fragment != null /*&& (fragment instanceof DashboardFragment || fragment instanceof NewDashBoardFragment)*/) {
                         Fragment currentFrag = getFragmentManager().findFragmentById(R.id.content_frame);
-                        if (!currentFrag.getClass().getName().equals(fragment.getClass())) {
+                        if ( currentFrag!=null && fragment!=null && !currentFrag.getClass().getName().equals(fragment.getClass().getName())) {
                             FragmentManager fragmentManager = getFragmentManager();
                             FragmentTransaction ft = fragmentManager.beginTransaction();
                             if ((currentFrag instanceof DashboardFragment || currentFrag instanceof NewDashBoardFragment) && getFragmentManager().getBackStackEntryCount() == 0)

@@ -86,7 +86,7 @@ public class AnimatingMarkersFragment extends Fragment {
     private TextView fromDateTextView, toDateTextView, timeFromTextView, timeToTextView, historySpeed;
     private SimpleDateFormat dateFormatter;
     private GoogleMap googleMap;
-    private MainActivity mActivity;
+    //private MainActivity mActivity;
     private TextView playButton, pauseButton;
     private SeekBar speedSeekBar;
     private LastLocation lastLocation;
@@ -128,7 +128,7 @@ public class AnimatingMarkersFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        mActivity = (MainActivity) activity;
+
     }
 
     public static AnimatingMarkersFragment newInstance(int position, String title) {
@@ -364,16 +364,21 @@ public class AnimatingMarkersFragment extends Fragment {
 
     private void getMap() {
         if (googleMap == null) {
-           ((com.google.android.gms.maps.MapFragment) getChildFragmentManager().findFragmentById(R.id.map)).getMapAsync(new OnMapReadyCallback() {
-                @Override
-                public void onMapReady(GoogleMap googleMap) {
-                    AnimatingMarkersFragment.this.googleMap = googleMap;
-                    AnimatingMarkersFragment.this.googleMap.setInfoWindowAdapter(new MapInfoWindow(getActivity(), "HISTORY"));
-                    if (AnimatingMarkersFragment.this.googleMap == null) {
-                        Toast.makeText(getActivity(), "Sorry! unable to create maps", Toast.LENGTH_SHORT).show();
+
+            com.google.android.gms.maps.MapFragment fragment = (com.google.android.gms.maps.MapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+            if (fragment != null)
+                fragment.getMapAsync(new OnMapReadyCallback() {
+                    @Override
+                    public void onMapReady(GoogleMap googleMap) {
+                        if (AnimatingMarkersFragment.this.googleMap != null && googleMap != null) {
+                            AnimatingMarkersFragment.this.googleMap = googleMap;
+                            AnimatingMarkersFragment.this.googleMap.setInfoWindowAdapter(new MapInfoWindow(getActivity(), "HISTORY"));
+                            if (AnimatingMarkersFragment.this.googleMap == null) {
+                                Toast.makeText(getActivity(), "Sorry! unable to create maps", Toast.LENGTH_SHORT).show();
+                            }
+                        }
                     }
-                }
-            });
+                });
         }
     }
 
@@ -892,7 +897,7 @@ public class AnimatingMarkersFragment extends Fragment {
                         //Log.d("HistoryFragment",response);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Toast.makeText(mActivity, "Couldn't get data at this moment, try again later!!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Couldn't get data at this moment, try again later!!", Toast.LENGTH_SHORT).show();
                     }
                     return response;
                 }
@@ -915,7 +920,7 @@ public class AnimatingMarkersFragment extends Fragment {
                             e.printStackTrace();
                         }
                     } else {
-                        Toast.makeText(mActivity, "No data for selected range!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "No data for selected range!", Toast.LENGTH_SHORT).show();
                         handlePlayPauseButton(1);
                         progressDialog.dismiss();
                     }
@@ -924,7 +929,7 @@ public class AnimatingMarkersFragment extends Fragment {
         } else {
             progressDialog.dismiss();
             handlePlayPauseButton(1);
-            Toast.makeText(mActivity, "Please select date,time from and time to!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Please select date,time from and time to!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -945,11 +950,11 @@ public class AnimatingMarkersFragment extends Fragment {
             Date date2 = sf.parse(toTime);
             Date currentDateTime = new Date();
             if (date1.compareTo(currentDateTime) > 0) {
-                Toast.makeText(mActivity, "Time from cannot be greater than current time!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Time from cannot be greater than current time!", Toast.LENGTH_SHORT).show();
                 timeFromTextView.setText("00:00");
                 return null;
             } else if (date1.compareTo(date2) > 0) {
-                Toast.makeText(mActivity, "Time from cannot be greater than time to!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Time from cannot be greater than time to!", Toast.LENGTH_SHORT).show();
                 return null;
             }
         } catch (ParseException e1) {

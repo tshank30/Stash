@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
@@ -36,7 +37,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // Database Name
     //private static final String DATABASE_NAME = DATABASE_FILE_PATH + File.separator + FOLDER_NAME + File.separator + "rottweilertrackers";
-    private static final String DATABASE_NAME ="rottweilertrackers.sqlite";
+    private static final String DATABASE_NAME = "rottweilertrackers.sqlite";
 
     // Table Names
     private static final String TABLE_ALERTS = "alerts";
@@ -353,7 +354,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     synchronized public void deleteParking(String deviceId) {
         SQLiteDatabase db = this.getWritableDatabase();
-        long id = db.delete(TABLE_PARKING, KEY_DEVICE_ID + " = '" + deviceId+"'", null);
+        long id = db.delete(TABLE_PARKING, KEY_DEVICE_ID + " = '" + deviceId + "'", null);
         Log.e(TAG, "Parking status" + id);
     }
 
@@ -386,7 +387,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     synchronized public HashMap<String, LatLong> getParkingMap() {
         Log.e(TAG, "DH:getVehicleListData:start");
         SQLiteDatabase db = this.getReadableDatabase();
-       HashMap<String,LatLong> parkingMap=new HashMap<>();
+        HashMap<String, LatLong> parkingMap = new HashMap<>();
 
         String selectQuery = "SELECT * FROM " + TABLE_PARKING;
 
@@ -394,7 +395,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         if (c.moveToFirst()) {
             do {
-                parkingMap.put(c.getString(c.getColumnIndex(KEY_DEVICE_ID)),new LatLong(c.getString(c.getColumnIndex(KEY_LATITUDE)),c.getString(c.getColumnIndex(KEY_LONGITUDE)),c.getInt(c.getColumnIndex(KEY_PARKING_ID))));
+                parkingMap.put(c.getString(c.getColumnIndex(KEY_DEVICE_ID)), new LatLong(c.getString(c.getColumnIndex(KEY_LATITUDE)), c.getString(c.getColumnIndex(KEY_LONGITUDE)), c.getInt(c.getColumnIndex(KEY_PARKING_ID))));
             } while (c.moveToNext());
         }
 
@@ -404,7 +405,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     public boolean isParking(SQLiteDatabase db, String deviceId) {
-        String selectQuery = "SELECT deviceID FROM " + TABLE_PARKING + " WHERE " + KEY_DEVICE_ID + " = '" + deviceId+"'";
+        String selectQuery = "SELECT deviceID FROM " + TABLE_PARKING + " WHERE " + KEY_DEVICE_ID + " = '" + deviceId + "'";
         Cursor c = db.rawQuery(selectQuery, null);
 
         if (c != null && c.getCount() > 0)
@@ -413,17 +414,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return false;
     }
 
+    public HashSet<String> getParkingList() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String selectQuery = "SELECT deviceID FROM " + TABLE_PARKING;
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        HashSet<String> set = new HashSet();
+
+        if (c != null && c.getCount() > 0) {
+            while (c.moveToNext())
+                set.add(c.getString(0));
+
+        }
+        return set;
+    }
+
     public int isParking(String deviceId) {
         SQLiteDatabase db = this.getReadableDatabase();
-        String selectQuery = "SELECT deviceID FROM " + TABLE_PARKING + " WHERE " + KEY_DEVICE_ID + " = '" + deviceId+"'";
+        String selectQuery = "SELECT deviceID FROM " + TABLE_PARKING + " WHERE " + KEY_DEVICE_ID + " = '" + deviceId + "'";
         Cursor c = db.rawQuery(selectQuery, null);
 
         if (c != null && c.getCount() > 0) {
             Log.e(TAG, "parking enabled");
             return 1;
-        }
-        else
-        {
+        } else {
             Log.e(TAG, "parking not enabled");
             return 0;
         }

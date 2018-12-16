@@ -64,6 +64,8 @@ public class LoginActivity extends Activity {
                 attemptLogin(accountId, userId, password);
             }
         });
+
+
     }
 
     private void attemptLogin(String accountId, String userName, String password) {
