@@ -34,8 +34,8 @@ android {
             resValue "string", "parking", "disabled"
             resValue "string", "ac", "enabled"
             resValue "string", "fuel", "enabled"
-            versionCode 38
-            versionName "3.1"
+            versionCode 41
+            versionName "3.4"
         }
 
         rottweiler {
@@ -630,8 +630,8 @@ android {
             resValue "string", "ac", "enabled"
             resValue "string", "fuel", "enabled"
 
-            versionCode 24
-            versionName "3.2"
+            versionCode 26
+            versionName "3.4"
         }
 
         triveda {

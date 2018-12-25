@@ -161,7 +161,7 @@ public class VehicleMapViewFrag extends Fragment implements LoaderTaskVehicleLis
                 fragment.getMapAsync(new OnMapReadyCallback() {
                     @Override
                     public void onMapReady(GoogleMap googleMap) {
-                        if (VehicleMapViewFrag.this.googleMap != null && googleMap != null) {
+                        if ( googleMap != null) {
                             VehicleMapViewFrag.this.googleMap = googleMap;
 
                             setUpMap(lastLocation, false);
@@ -872,32 +872,14 @@ public class VehicleMapViewFrag extends Fragment implements LoaderTaskVehicleLis
     @Override
     public void onResume() {
         super.onResume();
-
-    /*    if (sharedPrefs.getArrivalStatus() != null && !sharedPrefs.getArrivalStatus().equalsIgnoreCase("")) {
-            arrival_status.setVisibility(View.VISIBLE);
-            arrival_status.setText(sharedPrefs.getArrivalStatus());
-        }*/
-
-        // Register mMessageReceiver to receive messages.
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mMessageReceiver,
-                new IntentFilter("com.ftelematics.school"));
     }
 
     @Override
     public void onPause() {
-        // Unregister since the activity is not visible
-        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mMessageReceiver);
         super.onPause();
     }
 
-    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            // Extract data included in the Intent
-            String message = intent.getStringExtra("message");
-            // arrival_status.setText(message);
-        }
-    };
+
 
 
     private void makePolyLine(LastLocation lastHistoryLocation) {

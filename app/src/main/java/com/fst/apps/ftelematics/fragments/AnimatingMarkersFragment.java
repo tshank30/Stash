@@ -370,7 +370,7 @@ public class AnimatingMarkersFragment extends Fragment {
                 fragment.getMapAsync(new OnMapReadyCallback() {
                     @Override
                     public void onMapReady(GoogleMap googleMap) {
-                        if (AnimatingMarkersFragment.this.googleMap != null && googleMap != null) {
+                        if (googleMap != null) {
                             AnimatingMarkersFragment.this.googleMap = googleMap;
                             AnimatingMarkersFragment.this.googleMap.setInfoWindowAdapter(new MapInfoWindow(getActivity(), "HISTORY"));
                             if (AnimatingMarkersFragment.this.googleMap == null) {

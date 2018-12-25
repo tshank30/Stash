@@ -131,7 +131,7 @@
         android:id="@+id/share_live"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentLeft="true"
         android:src="@mipmap/share"
         android:layout_above="@id/info_panel"
         android:layout_margin="16dp" />
