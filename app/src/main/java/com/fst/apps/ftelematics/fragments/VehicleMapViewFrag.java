@@ -543,6 +543,7 @@ public class VehicleMapViewFrag extends Fragment implements LoaderTaskVehicleLis
          */
         private List<LatLng> decodePoly(String encoded) {
 
+
             List<LatLng> poly = new ArrayList<>();
             int index = 0, len = encoded.length();
             int lat = 0, lng = 0;
@@ -610,6 +611,8 @@ public class VehicleMapViewFrag extends Fragment implements LoaderTaskVehicleLis
                         options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bike_nw));
                     else if (vehicleType.equalsIgnoreCase("jcb"))
                         options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_jcb_nw));
+                    else if (vehicleType.equalsIgnoreCase("human"))
+                        options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.human_nw));
                     else
                         options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_nw));
                 } else if (status.equalsIgnoreCase("61714")) {
@@ -623,6 +626,8 @@ public class VehicleMapViewFrag extends Fragment implements LoaderTaskVehicleLis
                         options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bike_moving));
                     else if (vehicleType.equalsIgnoreCase("jcb"))
                         options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_jcb_moving));
+                    else if (vehicleType.equalsIgnoreCase("human"))
+                        options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.human_moving));
                     else
                         options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_moving));
                 } else if (status.equalsIgnoreCase("61715")) {
@@ -636,6 +641,8 @@ public class VehicleMapViewFrag extends Fragment implements LoaderTaskVehicleLis
                         options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bike_stop));
                     else if (vehicleType.equalsIgnoreCase("jcb"))
                         options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_jcb_stop));
+                    else if (vehicleType.equalsIgnoreCase("human"))
+                        options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.human_stop));
                     else
                         options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_stop));
                 } else if (status.equalsIgnoreCase("61716")) {
@@ -649,6 +656,8 @@ public class VehicleMapViewFrag extends Fragment implements LoaderTaskVehicleLis
                         options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bike_dormant));
                     else if (vehicleType.equalsIgnoreCase("jcb"))
                         options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_jcb_dormant));
+                    else if (vehicleType.equalsIgnoreCase("human"))
+                        options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.human_dormant));
                     else
                         options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_dormant));
                 }
@@ -677,10 +686,10 @@ public class VehicleMapViewFrag extends Fragment implements LoaderTaskVehicleLis
             // FetchUrl.execute(url);
             // move map camera
 
-            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(origin, 17);
-            googleMap.animateCamera(cameraUpdate);
-            // googleMap.moveCamera(CameraUpdateFactory.newLatLng(origin));
-            // googleMap.animateCamera(CameraUpdateFactory.zoomTo(17));
+            /*CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(origin, 17);
+            googleMap.animateCamera(cameraUpdate);*/
+             googleMap.moveCamera(CameraUpdateFactory.newLatLng(origin));
+             //googleMap.animateCamera(CameraUpdateFactory.zoomTo(17));
 
         }
     }

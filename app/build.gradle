@@ -685,8 +685,8 @@ android {
             resValue "string", "parking", "disabled"
             resValue "string", "ac", "disabled"
             resValue "string", "fuel", "disabled"
-            versionCode 7
-            versionName "1.6"
+            versionCode 8
+            versionName "1.7"
         }
 
         meher {
@@ -806,8 +806,8 @@ android {
             resValue "string", "parking", "disabled"
             resValue "string", "ac", "enabled"
             resValue "string", "fuel", "enabled"
-            versionCode 15
-            versionName "2.4"
+            versionCode 16
+            versionName "2.5"
         }
 
         efts {
