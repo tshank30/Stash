@@ -67,8 +67,8 @@ android {
             resValue "string", "parking", "disabled"
             resValue "string", "ac", "enabled"
             resValue "string", "fuel", "enabled"
-            versionCode 13
-            versionName "2.2"
+            versionCode 14
+            versionName "2.3"
         }
 
         gpspro {
@@ -529,8 +529,8 @@ android {
             resValue "string", "parking", "disabled"
             resValue "string", "ac", "disabled"
             resValue "string", "fuel", "disabled"
-            versionCode 11
-            versionName "1.9"
+            versionCode 12
+            versionName "2.0"
             //done
         }
 
@@ -541,8 +541,8 @@ android {
             resValue "string", "parking", "disabled"
             resValue "string", "ac", "disabled"
             resValue "string", "fuel", "disabled"
-            versionCode 4
-            versionName "1.3"
+            versionCode 5
+            versionName "1.4"
         }
 
         tfstracker {
@@ -630,8 +630,8 @@ android {
             resValue "string", "ac", "enabled"
             resValue "string", "fuel", "enabled"
 
-            versionCode 26
-            versionName "3.4"
+            versionCode 27
+            versionName "3.5"
         }
 
         triveda {
@@ -685,8 +685,8 @@ android {
             resValue "string", "parking", "disabled"
             resValue "string", "ac", "disabled"
             resValue "string", "fuel", "disabled"
-            versionCode 8
-            versionName "1.7"
+            versionCode 9
+            versionName "1.8"
         }
 
         meher {
@@ -806,8 +806,8 @@ android {
             resValue "string", "parking", "disabled"
             resValue "string", "ac", "enabled"
             resValue "string", "fuel", "enabled"
-            versionCode 16
-            versionName "2.5"
+            versionCode 17
+            versionName "2.6"
         }
 
         efts {
@@ -850,8 +850,8 @@ android {
             resValue "string", "parking", "disabled"
             resValue "string", "ac", "disabled"
             resValue "string", "fuel", "enabled"
-            versionCode 1
-            versionName "1.0"
+            versionCode 2
+            versionName "1.1"
         }
 
         a1 {

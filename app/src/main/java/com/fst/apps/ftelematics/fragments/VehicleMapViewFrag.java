@@ -161,7 +161,7 @@ public class VehicleMapViewFrag extends Fragment implements LoaderTaskVehicleLis
                 fragment.getMapAsync(new OnMapReadyCallback() {
                     @Override
                     public void onMapReady(GoogleMap googleMap) {
-                        if ( googleMap != null) {
+                        if (googleMap != null) {
                             VehicleMapViewFrag.this.googleMap = googleMap;
 
                             setUpMap(lastLocation, false);
@@ -282,7 +282,7 @@ public class VehicleMapViewFrag extends Fragment implements LoaderTaskVehicleLis
                     //timeFromDialog.show();
                     long currentTime = System.currentTimeMillis() / 1000;
                     new LiveUrlUpdate(lastLocation.getAccountID(), lastLocation.getDeviceID(), Long.toString(currentTime), Long.toString(newDate.getTime().getTime() / 1000)).execute();
-                    String shareBody = "http://205.147.110.119:81/LiveLink.aspx?id=" + currentTime;
+                    String shareBody = "http://livepage.in/LiveLink.aspx?id=" + currentTime;
 
                     //String shareBody = "Visit <a href=\<%shareBody%>\">Track Your Vehicle</a> for more info.";
 
@@ -374,10 +374,14 @@ public class VehicleMapViewFrag extends Fragment implements LoaderTaskVehicleLis
                                     marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bus_nw));
                                 else if (vehicleType.equalsIgnoreCase("truck"))
                                     marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_truck_nw));
-                                else if (vehicleType.equalsIgnoreCase("bike"))
+                                else if (vehicleType.equalsIgnoreCase("Motorcycle"))
                                     marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bike_nw));
                                 else if (vehicleType.equalsIgnoreCase("jcb"))
                                     marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_jcb_nw));
+                                else if (vehicleType.equalsIgnoreCase("personal"))
+                                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.human_nw));
+                                else if (vehicleType.equalsIgnoreCase("Ultrasound"))
+                                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ultrasound_nw));
                                 else
                                     marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_nw));
                             } else if (status.equalsIgnoreCase("61714")) {
@@ -387,10 +391,14 @@ public class VehicleMapViewFrag extends Fragment implements LoaderTaskVehicleLis
                                     marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bus_moving));
                                 else if (vehicleType.equalsIgnoreCase("truck"))
                                     marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_truck_moving));
-                                else if (vehicleType.equalsIgnoreCase("bike"))
+                                else if (vehicleType.equalsIgnoreCase("Motorcycle"))
                                     marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bike_moving));
                                 else if (vehicleType.equalsIgnoreCase("jcb"))
                                     marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_jcb_moving));
+                                else if (vehicleType.equalsIgnoreCase("personal"))
+                                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.human_moving));
+                                else if (vehicleType.equalsIgnoreCase("Ultrasound"))
+                                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ultrasound_moving));
                                 else
                                     marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_moving));
                             } else if (status.equalsIgnoreCase("61715")) {
@@ -400,10 +408,14 @@ public class VehicleMapViewFrag extends Fragment implements LoaderTaskVehicleLis
                                     marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bus_stop));
                                 else if (vehicleType.equalsIgnoreCase("truck"))
                                     marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_truck_stop));
-                                else if (vehicleType.equalsIgnoreCase("bike"))
+                                else if (vehicleType.equalsIgnoreCase("Motorcycle"))
                                     marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bike_stop));
                                 else if (vehicleType.equalsIgnoreCase("jcb"))
                                     marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_jcb_stop));
+                                else if (vehicleType.equalsIgnoreCase("personal"))
+                                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.human_stop));
+                                else if (vehicleType.equalsIgnoreCase("Ultrasound"))
+                                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ultrasound_stop));
                                 else
                                     marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_stop));
                             } else if (status.equalsIgnoreCase("61716")) {
@@ -413,10 +425,14 @@ public class VehicleMapViewFrag extends Fragment implements LoaderTaskVehicleLis
                                     marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bus_dormant));
                                 else if (vehicleType.equalsIgnoreCase("truck"))
                                     marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_truck_dormant));
-                                else if (vehicleType.equalsIgnoreCase("bike"))
+                                else if (vehicleType.equalsIgnoreCase("Motorcycle"))
                                     marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bike_dormant));
                                 else if (vehicleType.equalsIgnoreCase("jcb"))
                                     marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_jcb_dormant));
+                                else if (vehicleType.equalsIgnoreCase("personal"))
+                                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.human_dormant));
+                                else if (vehicleType.equalsIgnoreCase("Ultrasound"))
+                                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ultrasound_dormant));
                                 else
                                     marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_dormant));
                             }
@@ -607,12 +623,14 @@ public class VehicleMapViewFrag extends Fragment implements LoaderTaskVehicleLis
                         options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bus_nw));
                     else if (vehicleType.equalsIgnoreCase("truck"))
                         options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_truck_nw));
-                    else if (vehicleType.equalsIgnoreCase("bike"))
+                    else if (vehicleType.equalsIgnoreCase("Motorcycle"))
                         options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bike_nw));
                     else if (vehicleType.equalsIgnoreCase("jcb"))
                         options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_jcb_nw));
-                    else if (vehicleType.equalsIgnoreCase("human"))
+                    else if (vehicleType.equalsIgnoreCase("personal"))
                         options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.human_nw));
+                    else if (vehicleType.equalsIgnoreCase("Ultrasound"))
+                        options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ultrasound_nw));
                     else
                         options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_nw));
                 } else if (status.equalsIgnoreCase("61714")) {
@@ -622,12 +640,14 @@ public class VehicleMapViewFrag extends Fragment implements LoaderTaskVehicleLis
                         options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bus_moving));
                     else if (vehicleType.equalsIgnoreCase("truck"))
                         options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_truck_moving));
-                    else if (vehicleType.equalsIgnoreCase("bike"))
+                    else if (vehicleType.equalsIgnoreCase("Motorcycle"))
                         options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bike_moving));
                     else if (vehicleType.equalsIgnoreCase("jcb"))
                         options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_jcb_moving));
-                    else if (vehicleType.equalsIgnoreCase("human"))
+                    else if (vehicleType.equalsIgnoreCase("personal"))
                         options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.human_moving));
+                    else if (vehicleType.equalsIgnoreCase("Ultrasound"))
+                        options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ultrasound_moving));
                     else
                         options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_moving));
                 } else if (status.equalsIgnoreCase("61715")) {
@@ -637,12 +657,14 @@ public class VehicleMapViewFrag extends Fragment implements LoaderTaskVehicleLis
                         options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bus_stop));
                     else if (vehicleType.equalsIgnoreCase("truck"))
                         options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_truck_stop));
-                    else if (vehicleType.equalsIgnoreCase("bike"))
+                    else if (vehicleType.equalsIgnoreCase("Motorcycle"))
                         options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bike_stop));
                     else if (vehicleType.equalsIgnoreCase("jcb"))
                         options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_jcb_stop));
-                    else if (vehicleType.equalsIgnoreCase("human"))
+                    else if (vehicleType.equalsIgnoreCase("personal"))
                         options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.human_stop));
+                    else if (vehicleType.equalsIgnoreCase("Ultrasound"))
+                        options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ultrasound_stop));
                     else
                         options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_stop));
                 } else if (status.equalsIgnoreCase("61716")) {
@@ -652,12 +674,14 @@ public class VehicleMapViewFrag extends Fragment implements LoaderTaskVehicleLis
                         options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bus_dormant));
                     else if (vehicleType.equalsIgnoreCase("truck"))
                         options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_truck_dormant));
-                    else if (vehicleType.equalsIgnoreCase("bike"))
+                    else if (vehicleType.equalsIgnoreCase("Motorcycle"))
                         options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_bike_dormant));
                     else if (vehicleType.equalsIgnoreCase("jcb"))
                         options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_jcb_dormant));
-                    else if (vehicleType.equalsIgnoreCase("human"))
+                    else if (vehicleType.equalsIgnoreCase("personal"))
                         options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.human_dormant));
+                    else if (vehicleType.equalsIgnoreCase("Ultrasound"))
+                        options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ultrasound_dormant));
                     else
                         options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_car_dormant));
                 }
@@ -686,10 +710,10 @@ public class VehicleMapViewFrag extends Fragment implements LoaderTaskVehicleLis
             // FetchUrl.execute(url);
             // move map camera
 
-            /*CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(origin, 17);
-            googleMap.animateCamera(cameraUpdate);*/
-             googleMap.moveCamera(CameraUpdateFactory.newLatLng(origin));
-             //googleMap.animateCamera(CameraUpdateFactory.zoomTo(17));
+            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(origin, 17);
+            googleMap.animateCamera(cameraUpdate);
+            //googleMap.moveCamera(CameraUpdateFactory.newLatLng(origin));
+            //googleMap.animateCamera(CameraUpdateFactory.zoomTo(17));
 
         }
     }
@@ -887,8 +911,6 @@ public class VehicleMapViewFrag extends Fragment implements LoaderTaskVehicleLis
     public void onPause() {
         super.onPause();
     }
-
-
 
 
     private void makePolyLine(LastLocation lastHistoryLocation) {
